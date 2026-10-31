@@ -1,0 +1,1188 @@
+{% extends 'home_page.html' %}
+
+{% block content %}
+
+<div class="registration-page">
+
+    <div class="registration-container">
+
+        <!-- ==========================================
+             LEFT INFORMATION SECTION
+        =========================================== -->
+        <div class="registration-info">
+
+            <div class="info-logo">
+                <div class="info-logo-ring">
+                    <span>L</span>
+
+                    <div class="heartbeat-line">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                </div>
+            </div>
+
+
+            <h2>Join LHospital</h2>
+
+            <p>
+                Register your account and become part of a connected
+                hospital management system designed for smooth day-to-day
+                healthcare operations.
+            </p>
+
+
+            <div class="registration-steps">
+
+                <!-- STEP 1 -->
+                <div class="info-step">
+
+                    <div class="step-icon">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+
+                    <div>
+                        <h5>1. Choose Your Role</h5>
+                        <p>Select your hospital department or user role.</p>
+                    </div>
+
+                </div>
+
+
+                <!-- STEP 2 -->
+                <div class="info-step">
+
+                    <div class="step-icon">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
+
+                    <div>
+                        <h5>2. Complete Registration</h5>
+                        <p>Enter your details and submit your request.</p>
+                    </div>
+
+                </div>
+
+
+                <!-- STEP 3 -->
+                <div class="info-step">
+
+                    <div class="step-icon">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+
+                    <div>
+                        <h5>3. Admin Approval</h5>
+                        <p>Your request will be reviewed before login access.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-footer">
+                <i class="fa-solid fa-shield-halved"></i>
+                Secure role-based hospital access
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             RIGHT FORM SECTION
+        =========================================== -->
+        <div class="registration-form-section">
+            {% if messages %}
+
+<div class="django-messages">
+
+    {% for message in messages %}
+
+        <div class="message {{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+            <div class="registration-header">
+
+                <h2>Create Your Account</h2>
+
+                <p>
+                    Fill in your details to submit your registration request.
+                </p>
+
+            </div>
+
+
+            <form method="POST"
+                  action=""
+                  enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <!-- REGISTER AS -->
+                <div class="form-group">
+
+                    <label>
+                        <i class="fa-solid fa-hospital-user"></i>
+                        Register As
+                    </label>
+
+                    <select name="role"
+                            id="role"
+                            required
+                            onchange="handleRoleChange()">
+
+                        <option value="">Select your role</option>
+
+                        <option value="manager">Manager</option>
+                        <option value="super_admin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="accountant">Accountant</option>
+                        <option value="receptionist">Receptionist</option>
+                        <option value="pharmacist">Pharmacist</option>
+                        <option value="pathologist">Pathologist</option>
+                        <option value="radiologist">Radiologist</option>
+                        <option value="head_nurse">Head Nurse</option>
+                        <option value="nurse">Nurse</option>
+                        <option value="billing_executive">Billing Executive</option>
+                        <option value="patient">Patient</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- PROFILE IMAGE -->
+                <div class="form-group">
+
+                    <label>
+                        <i class="fa-solid fa-camera"></i>
+                        Profile Image
+                    </label>
+
+
+                    <div class="profile-upload-wrapper">
+
+                        <div class="profile-preview">
+
+                            <img id="profilePreview"
+                                 src=""
+                                 alt="Profile Preview"
+                                 style="display:none;">
+
+                            <i id="profilePlaceholder"
+                               class="fa-solid fa-user"></i>
+
+                        </div>
+
+
+                        <div class="profile-upload-content">
+
+                            <input type="file"
+                                   name="profile_image"
+                                   id="profileImage"
+                                   accept="image/*"
+                                   required
+                                   onchange="previewProfileImage(event)">
+
+                            <small>
+                                Upload your profile photo (JPG, JPEG or PNG).
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AADHAAR NUMBER -->
+                <!-- AADHAAR -->
+<div class="form-group">
+
+    <label>
+        <i class="fa-solid fa-id-card"></i>
+        Aadhaar Number
+    </label>
+
+    <input type="text"
+           name="aadhar_number"
+           id="aadhar"
+           placeholder="Enter 12 digit Aadhaar number"
+           maxlength="12"
+           required>
+
+    <small id="aadharError" class="error-text"></small>
+
+</div>
+
+
+                <!-- FIRST NAME + LAST NAME -->
+                <div class="form-row">
+
+                    <div class="form-group col-md-6">
+
+                        <label>
+                            <i class="fa-solid fa-user"></i>
+                            First Name
+                        </label>
+
+                        <input type="text"
+                               name="first_name"
+                               placeholder="Enter first name"
+                               required>
+
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+
+                        <label>
+                            <i class="fa-solid fa-user"></i>
+                            Last Name
+                        </label>
+
+                        <input type="text"
+                               name="last_name"
+                               placeholder="Enter last name"
+                               required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+               <!-- EMAIL -->
+<div class="form-group">
+
+    <label>
+        <i class="fa-solid fa-envelope"></i>
+        Email Address
+    </label>
+
+    <input type="email"
+           name="email"
+           id="email"
+           placeholder="Enter your email address"
+           required>
+
+    <small id="emailError" class="error-text"></small>
+
+</div>
+
+                <!-- USERNAME + PHONE -->
+                <div class="form-row">
+
+                    <div class="form-group col-md-6">
+
+                        <label>
+                            <i class="fa-solid fa-at"></i>
+                            Username
+                        </label>
+
+                        <input type="text"
+                               name="username"
+                               placeholder="Choose username"
+                               required>
+
+                    </div>
+
+
+                   <!-- PHONE -->
+<div class="form-group col-md-6">
+
+    <label>
+        <i class="fa-solid fa-phone"></i>
+        Phone Number
+    </label>
+
+    <input type="tel"
+           name="phone"
+           id="phone"
+           placeholder="Enter phone number"
+           maxlength="10"
+           required>
+
+    <small id="phoneError" class="error-text"></small>
+
+</div>
+                </div>
+
+
+                <!-- DATE OF BIRTH - DEFAULT -->
+                <div class="form-group">
+
+                    <label>
+                        <i class="fa-solid fa-calendar"></i>
+                        Date of Birth
+                    </label>
+
+                    <input type="date"
+                           name="date_of_birth"
+                           required>
+
+                </div>
+
+                <!-- PASSWORD + CONFIRM PASSWORD -->
+                <div class="form-row">
+
+                   <!-- PASSWORD -->
+<div class="form-group col-md-6">
+
+    <label>
+        <i class="fa-solid fa-lock"></i>
+        Password
+    </label>
+
+    <input type="password"
+           name="password"
+           id="password"
+           placeholder="Create password"
+           required>
+
+    <small id="passwordError" class="error-text"></small>
+
+</div>
+
+
+                   <!-- CONFIRM PASSWORD -->
+<div class="form-group col-md-6">
+
+    <label>
+        <i class="fa-solid fa-lock"></i>
+        Confirm Password
+    </label>
+
+    <input type="password"
+           name="confirm_password"
+           id="confirmPassword"
+           placeholder="Confirm password"
+           required>
+
+    <small id="confirmPasswordError" class="error-text"></small>
+
+</div>
+
+                </div>
+
+
+                <button type="submit" class="register-btn">
+
+                    <i class="fa-solid fa-user-plus"></i>
+                    Submit Registration Request
+
+                </button>
+
+            </form>
+
+
+            <div class="registration-footer">
+
+                <p>
+                    Already have an account?
+
+                    <a href="{% url 'login_page' %}">
+                        Login Here
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+/* ==========================================
+   PAGE
+========================================== */
+
+.registration-page {
+    min-height: calc(100vh - 90px);
+    background: #f4faf7;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* ==========================================
+   MAIN CONTAINER
+========================================== */
+
+.registration-container {
+    width: 100%;
+    max-width: 1150px;
+    display: flex;
+    background: #ffffff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(11, 61, 46, 0.16);
+}
+
+.error-text {
+    display: block;
+    color: red !important;
+    font-size: 12px !important;
+    margin-top: 5px;
+    min-height: 16px;
+}
+/* ==========================================
+   LEFT SECTION
+========================================== */
+
+.registration-info {
+    width: 42%;
+    min-height: 850px;
+    padding: 60px 45px;
+    background: #0b3d2e;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ==========================================
+   LOGO
+========================================== */
+
+.info-logo {
+    width: 82px;
+    height: 82px;
+    border: 2px solid rgba(255,255,255,0.65);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+
+.info-logo-ring {
+    width: 64px;
+    height: 64px;
+    background: #ffffff;
+    color: #0b3d2e;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transform: rotate(-8deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+
+.info-logo-ring span {
+    font-size: 36px;
+    font-weight: 800;
+    transform: rotate(8deg);
+}
+
+
+.heartbeat-line {
+    position: absolute;
+    right: -12px;
+    bottom: -9px;
+    width: 28px;
+    height: 28px;
+    background: #0b3d2e;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(8deg);
+}
+
+
+.heartbeat-line i {
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.django-messages {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    z-index: 999999;
+    width: 350px;
+}
+
+.message {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.message.success {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+.message.error {
+    background: #ffffff;
+    color: #b42318;
+    border-left: 4px solid #b42318;
+}
+/* ==========================================
+   LEFT TEXT
+========================================== */
+
+.registration-info h2 {
+    color: #ffffff;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+
+.registration-info > p {
+    color: #ffffff;
+    opacity: 0.85;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+
+/* ==========================================
+   STEPS
+========================================== */
+
+.registration-steps {
+    margin-top: 55px;
+}
+
+
+.info-step {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+
+.step-icon {
+    min-width: 45px;
+    height: 45px;
+    border: 1px solid #ffffff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+
+.info-step h5 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+
+.info-step p {
+    font-size: 12px;
+    opacity: 0.8;
+    line-height: 1.5;
+    margin: 0;
+}
+
+
+.info-footer {
+    margin-top: auto;
+    font-size: 12px;
+    opacity: 0.85;
+    padding-top: 30px;
+}
+
+
+.info-footer i {
+    margin-right: 8px;
+}
+
+
+/* ==========================================
+   RIGHT FORM SECTION
+========================================== */
+
+.registration-form-section {
+    width: 58%;
+    padding: 55px 60px;
+}
+
+
+.registration-header {
+    margin-bottom: 30px;
+}
+
+
+.registration-header h2 {
+    color: #0b3d2e;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+
+.registration-header p {
+    color: #6a8178;
+    font-size: 13px;
+    margin: 0;
+}
+
+
+/* ==========================================
+   FORM
+========================================== */
+
+.registration-form-section .form-group {
+    margin-bottom: 18px;
+}
+
+
+.registration-form-section label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #244f3f;
+    margin-bottom: 7px;
+}
+
+
+.registration-form-section label i {
+    color: #0b3d2e;
+    margin-right: 6px;
+}
+
+
+.registration-form-section input,
+.registration-form-section select {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #cbdcd5;
+    border-radius: 10px;
+    outline: none;
+    color: #244f3f;
+    background: #ffffff;
+    font-size: 13px;
+    transition: 0.25s;
+}
+
+
+.registration-form-section input:focus,
+.registration-form-section select:focus {
+    border-color: #0b3d2e;
+    box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.08);
+}
+
+
+/* ==========================================
+   PROFILE IMAGE
+========================================== */
+
+.profile-upload-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 15px;
+    border: 1px dashed #9bb9ad;
+    border-radius: 14px;
+    background: #f8fcfa;
+}
+
+
+.profile-preview {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    border-radius: 50%;
+    background: #0b3d2e;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(11, 61, 46, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+.profile-preview i {
+    font-size: 28px;
+    color: #ffffff;
+}
+
+
+.profile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* FILE INPUT */
+
+.profile-upload-content {
+    flex: 1;
+}
+
+
+.profile-upload-content input[type="file"] {
+    width: 100%;
+    height: auto;
+    border: none;
+    padding: 5px 0;
+    background: transparent;
+}
+
+
+/* ==========================================
+   AADHAAR
+========================================== */
+#aadhar {
+    letter-spacing: 1px;
+}
+/* ==========================================
+   DOCUMENT
+========================================== */
+
+.registration-form-section input[type="file"] {
+    padding: 9px;
+    height: auto;
+}
+
+
+.registration-form-section small {
+    display: block;
+    color: #71877e;
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.register-btn {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    background: #0b3d2e;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: 0.3s;
+}
+
+
+.register-btn:hover {
+    background: #176b50;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(11, 61, 46, 0.18);
+}
+
+
+.register-btn i {
+    margin-right: 8px;
+}
+
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.registration-footer {
+    text-align: center;
+    margin-top: 22px;
+}
+
+
+.registration-footer p {
+    margin: 0;
+    color: #71877e;
+    font-size: 13px;
+}
+
+
+.registration-footer a {
+    color: #0b3d2e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+
+.registration-footer a:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+
+    .registration-container {
+        flex-direction: column;
+        max-width: 600px;
+    }
+
+
+    .registration-info,
+    .registration-form-section {
+        width: 100%;
+    }
+
+
+    .registration-info {
+        min-height: auto;
+        padding: 45px 35px;
+    }
+
+
+    .registration-steps {
+        margin-top: 35px;
+    }
+
+
+    .info-footer {
+        margin-top: 15px;
+    }
+
+
+    .registration-form-section {
+        padding: 45px 35px;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .registration-page {
+        padding: 30px 12px;
+    }
+
+
+    .registration-info {
+        padding: 35px 25px;
+    }
+
+
+    .registration-form-section {
+        padding: 35px 20px;
+    }
+
+
+    .registration-info h2 {
+        font-size: 28px;
+    }
+
+
+    .registration-header h2 {
+        font-size: 26px;
+    }
+
+
+    .registration-form-section .form-row {
+        display: block;
+    }
+
+
+    .registration-form-section .col-md-6 {
+        width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+
+    .profile-upload-wrapper {
+        gap: 12px;
+    }
+
+
+    .profile-preview {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+    }
+
+}
+
+</style>
+
+
+<script>
+   /* ================= LIVE EXISTENCE CHECK ================= */
+
+let emailTimer;
+let phoneTimer;
+let aadharTimer;
+
+
+/* ================= EMAIL ================= */
+
+document.getElementById("email").addEventListener("input", function () {
+
+    const input = this;
+    const email = input.value.trim();
+    const error = document.getElementById("emailError");
+
+    clearTimeout(emailTimer);
+
+    const pattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+    if (email === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (!pattern.test(email)) {
+        error.textContent = "Enter a valid Gmail address";
+        return;
+    }
+
+    error.textContent = "Checking...";
+
+    emailTimer = setTimeout(() => {
+
+        fetch(`/check-registration-field/?field=email&value=${encodeURIComponent(email)}`)
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.exists) {
+                    error.textContent = "Email address already exists";
+                } else {
+                    error.textContent = "";
+                }
+
+            })
+            .catch(error => {
+                console.error("Email check error:", error);
+            });
+
+    }, 500);
+
+});
+
+
+/* ================= PHONE ================= */
+document.getElementById("phone").addEventListener("input", function () {
+
+    const input = this;
+    const error = document.getElementById("phoneError");
+
+    clearTimeout(phoneTimer);
+
+    const cursorPosition = input.selectionStart;
+
+    input.value = input.value.replace(/\D/g, "");
+
+    input.setSelectionRange(cursorPosition, cursorPosition);
+
+    if (input.value === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (input.value.length !== 10) {
+        error.textContent = "Phone number must contain exactly 10 digits";
+        return;
+    }
+
+    error.textContent = "Checking...";
+
+    phoneTimer = setTimeout(() => {
+
+        fetch(`/check-registration-field/?field=phone&value=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.exists) {
+                    error.textContent = "Phone number already exists";
+                } else {
+                    error.textContent = "";
+                }
+
+            })
+            .catch(err => {
+                console.error("Phone check error:", err);
+            });
+
+    }, 500);
+
+});
+
+
+/* ================= AADHAAR ================= */
+
+document.getElementById("aadhar").addEventListener("input", function () {
+
+    const input = this;
+    const aadhar = input.value;
+    const error = document.getElementById("aadharError");
+
+    clearTimeout(aadharTimer);
+
+    input.value = input.value.replace(/\D/g, "");
+
+    if (input.value === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (input.value.length !== 12) {
+        error.textContent = "Aadhaar number must contain exactly 12 digits";
+        return;
+    }
+
+    error.textContent = "Checking...";
+
+    aadharTimer = setTimeout(() => {
+
+        fetch(`/check-registration-field/?field=aadhar&value=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.exists) {
+                    error.textContent = "Aadhaar number already exists";
+                } else {
+                    error.textContent = "";
+                }
+
+            })
+            .catch(error => {
+                console.error("Aadhaar check error:", error);
+            });
+
+    }, 500);
+
+});
+
+    /* ================= PASSWORD ================= */
+
+    document.getElementById("password").addEventListener("input", function () {
+
+        const password = this.value;
+        const error = document.getElementById("passwordError");
+
+        if (password === "") {
+            error.textContent = "";
+        }
+        else if (password.length < 6) {
+            error.textContent = "Password must be at least 6 characters";
+        }
+        else if (!/[A-Z]/.test(password)) {
+            error.textContent = "Password must contain at least one uppercase letter";
+        }
+        else if (!/[a-z]/.test(password)) {
+            error.textContent = "Password must contain at least one lowercase letter";
+        }
+        else if (!/[0-9]/.test(password)) {
+            error.textContent = "Password must contain at least one number";
+        }
+        else if (!/[!@#$%^&*]/.test(password)) {
+            error.textContent = "Password must contain at least one special character";
+        }
+        else {
+            error.textContent = "";
+        }
+
+        validateConfirmPassword();
+
+    });
+
+
+    /* ================= CONFIRM PASSWORD ================= */
+
+    document.getElementById("confirmPassword").addEventListener("input", function () {
+
+        validateConfirmPassword();
+
+    });
+
+
+    function validateConfirmPassword() {
+
+        const password =
+            document.getElementById("password").value;
+
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+        const error =
+            document.getElementById("confirmPasswordError");
+
+        if (confirmPassword === "") {
+            error.textContent = "";
+        }
+        else if (password !== confirmPassword) {
+            error.textContent = "Password does not match";
+        }
+        else {
+            error.textContent = "";
+        }
+
+    }
+
+    /* ==========================================
+       PROFILE IMAGE PREVIEW
+    ========================================== */
+
+    function previewProfileImage(event) {
+
+        const input = event.target;
+
+        const preview =
+            document.getElementById("profilePreview");
+
+        const placeholder =
+            document.getElementById("profilePlaceholder");
+
+
+        if (input.files && input.files[0]) {
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+
+                preview.src = e.target.result;
+
+                preview.style.display = "block";
+
+                placeholder.style.display = "none";
+
+            };
+
+            reader.readAsDataURL(input.files[0]);
+
+        }
+
+    }
+
+</script>
+
+{% endblock %}

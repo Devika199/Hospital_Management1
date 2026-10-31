@@ -1,0 +1,1664 @@
+{% extends base %}
+
+{% block content %}
+
+<style>
+   
+    .fo-setup-page {
+        margin-top: 90px;
+        margin-left: 255px;
+        padding: 24px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    .fo-setup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .fo-setup-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+
+    .fo-setup-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+    
+    .fo-setup-grid {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+   
+    .fo-options-card {
+        width: 240px;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        flex-shrink: 0;
+    }
+
+    .fo-option-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 12px 16px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        background: #ffffff;
+        color: #315347;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: 0.25s;
+    }
+
+    .fo-option-btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .fo-option-btn:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        text-decoration: none;
+    }
+
+    .fo-option-btn.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+    }
+
+    
+    .fo-content-card {
+        flex-grow: 1;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        min-width: 0;
+    }
+
+
+    .fo-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .fo-search-box {
+        display: flex;
+        gap: 8px;
+        width: 320px;
+    }
+
+    .fo-search-input {
+        flex-grow: 1;
+        padding: 9px 14px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+        outline: none;
+    }
+
+    .fo-search-input:focus {
+        border-color: #0b3d2e;
+    }
+
+    .btn-search {
+        background: #ffffff;
+        border: 1px solid #d8e7e0;
+        color: #315347;
+        padding: 9px 15px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-search:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+    }
+
+    .btn-add-main {
+        background: #0b3d2e;
+        color: #ffffff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-add-main:hover {
+        background: #176b50;
+        transform: translateY(-1px);
+    }
+
+   
+    .badge-role {
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 6px;
+        text-transform: uppercase;
+        margin-left: 8px;
+        letter-spacing: 0.5px;
+        vertical-align: middle;
+    }
+    .badge-manager {
+        background-color: #ffe8e8;
+        color: #c53030;
+        border: 1px solid #feb2b2;
+    }
+    .badge-super-admin {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #90cdf4;
+    }
+    .badge-admin {
+        background-color: #fefcbf;
+        color: #b7791f;
+        border: 1px solid #faf089;
+    }
+    .badge-system {
+        background-color: #edf2f7;
+        color: #4a5568;
+        border: 1px solid #cbd5e0;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #edf3f0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fo-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .fo-table thead {
+        background: #0b3d2e;
+    }
+
+    .fo-table th {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .fo-table td {
+        padding: 14px;
+        border-bottom: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #315347;
+        vertical-align: middle;
+    }
+
+    .fo-table td.actions-cell {
+        white-space: nowrap;
+    }
+
+    .fo-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .fo-table tbody tr:hover {
+        background: #f7fbf9;
+    }
+
+    .fo-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Action Buttons in Table */
+    .btn-edit {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1px solid #c3e2d5;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 5px;
+    }
+
+    .btn-edit:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .btn-delete {
+        background: #fde4e4;
+        color: #b42318;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-delete:hover {
+        background: #f7cccc;
+        transform: translateY(-1px);
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px !important;
+        color: #71877e !important;
+        font-size: 13px !important;
+    }
+
+    .django-messages {
+        position: fixed;
+        top: 100px;
+        right: 25px;
+        z-index: 999999;
+        width: 350px;
+    }
+
+    .message {
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        font-size: 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .message.success {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .message.error {
+        background: #ffffff;
+        color: #b42318;
+        border-left: 4px solid #b42318;
+    }
+
+    
+    .modal-content {
+        border-radius: 18px;
+        border: 1px solid #e1ece7;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(11, 61, 46, 0.1);
+    }
+
+    .modal-header {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        opacity: 0.85;
+        cursor: pointer;
+        transition: 0.2s;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-close-custom:hover {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-body label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #173e31;
+        margin-bottom: 6px;
+        display: inline-block;
+    }
+
+    .modal-body .form-control {
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+    }
+
+    .modal-body .form-control:focus {
+        border-color: #0b3d2e;
+        box-shadow: none;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf3f0;
+        padding: 12px 20px;
+    }
+
+    
+    @media (max-width: 768px) {
+        .fo-setup-page {
+            margin-left: 0 !important;
+            margin-top: 80px !important;
+            padding: 15px !important;
+        }
+
+        .fo-setup-grid {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .fo-options-card {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            padding: 10px !important;
+        }
+
+        .fo-option-btn {
+            flex: 1 1 calc(33.333% - 8px);
+            min-width: 80px;
+            margin-bottom: 0 !important;
+            text-align: center !important;
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+        }
+
+        .fo-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px !important;
+        }
+
+        .fo-search-box {
+            width: 100% !important;
+        }
+
+        .btn-add-main {
+            width: 100% !important;
+            justify-content: center;
+        }
+        .radiology-select {
+    width: 310px !important;
+   
+    border-radius: 9px;
+    border: 1px solid #d8e7e0;
+    font-size: 13px;
+    color: #315347;
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+}
+    }
+    .actions{
+         display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+.smallbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.smallbox .modal-dialog {
+    width: 100%;
+    max-width: 500px;
+    margin: 0;
+}
+
+.smallbox .modal-content {
+    background: #fff;
+    opacity: 1;
+}
+@media print {
+
+    body * {
+        visibility: hidden;
+    }
+
+    #newtableid,
+    #newtableid * ,
+    
+    #newtableid1,
+    #newtableid1 *,
+    
+    #newtableid2,
+    #newtableid2 *{
+        visibility: visible;
+    }
+
+    #newtableid,
+    #newtableid2,
+    #newtableid1 {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        font-weight: 600;
+    
+    }
+
+    
+    #newtableid th:last-child,
+    #newtableid td:last-child,
+     #newtableid1 th:last-child,
+    #newtableid1 td:last-child,
+     #newtableid2 th:last-child,
+    #newtableid2 td:last-child {
+        display: none;
+    }
+
+    .fo-table {
+        border-collapse: collapse !important;
+        width: 100%;
+    }
+
+    .fo-table th,
+    .fo-table td {
+        border: 2px solid #000 !important;
+        padding: 8px !important;
+        font-weight: 600;
+    }
+
+    .fo-table th {
+        font-weight: 700 !important;
+    }
+    .fo-table th {
+        color: #000 !important;
+        font-weight: 700 !important;
+        background-color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .fo-table td {
+        color: #000 !important;
+    }
+
+    .fo-table th,
+    .fo-table td {
+        border: 2px solid #000 !important;
+    }
+
+
+}
+.radiology-select {
+    width: 450px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    border: 1px solid #d8e7e0;
+    font-size: 13px;
+    color: #315347;
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+}
+
+.radiology-select:focus {
+    border-color: #0b3d2e;
+    box-shadow: none;
+}
+
+</style>
+
+<div class="fo-setup-page">
+
+    <div class="fo-setup-header">
+        <div>
+            <h2>Radiology</h2>
+            <p>Manage radiology services, imaging procedures and diagnostic options.</p>
+        </div>
+    </div>
+
+   
+    {% if messages %}
+    <div class="django-messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="fo-setup-grid">
+
+        <div class="fo-options-card">
+            <a href="?category=category" class="fo-option-btn {% if active_category == 'category' %}active{% endif %}">
+                Category
+            </a>
+            <a href="?category=unit" class="fo-option-btn {% if active_category == 'unit' %}active{% endif %}">
+                Unit
+            </a>
+            <a href="?category=parameter" class="fo-option-btn {% if active_category == 'parameter' %}active{% endif %}">
+                Parameter
+            </a>
+        </div>
+{% if active_category == 'category' %}
+        <div class="fo-content-card" id="category1">
+
+            <div class="fo-toolbar">
+                <form method="GET" class="fo-search-box">
+                    <input type="hidden" name="category" value="{{ active_category }}">
+             <input type="text" id="search1" placeholder="Search" class="fo-search-input" oninput="searchfunction()">
+            <button id="search" type="button" class="btn-search" > <i class="fa fa-search"></i></button>
+            
+
+                </form>
+
+             
+              <div class="actions">     
+        <button  type="button" class="btn btn-info btn-sm" onclick="pdfpage()">PDF</button>
+        <button type="button" class="btn btn-warning btn-sm" onclick="window.print()">Print</button>
+        <button   type="button" class="btn btn-danger btn-sm" onclick="Excel()">Excel</button>
+         <button class="btn-add-main btn-sm" onclick="openaddmodal()">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
+        </div> 
+           
+             </div>  
+
+            <div class="table-responsive">
+                <table class="fo-table" id="newtableid">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th >Description</th>
+                            <th >Action</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in cat %}
+                        <tr class="voucher-item">
+                            <td>
+                                <strong>{{ c.title }}</strong>
+                            </td>
+                            <td>{{ c.description|default:"-" }}</td>
+
+                            <td class="actions-cell">
+                                <button class="btn-edit" onclick="openEditModal( '{{ c.title }}', '{{ c.description }}','{{ c.id }}')">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                               
+                              
+                               
+                                <button class="btn-delete" onclick="deleteitem('{{ c.id }}')">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                               
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="no-data">
+                                <i class="fa-solid fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
+                                <br>
+                                No category records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="smallbox" id="addcatmodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="catid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add Category
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('addcatmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           Category Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="title" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="desc" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="savecat()">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="smallbox" id="editcatmodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="catid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add Category
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('editcatmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           Category Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="title1" 
+                               name="title" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="desc1" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="editcat()">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="tableid" style="display: none;">
+      <table class="fo-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for c in cat %}
+            <tr>
+                <td>{{ c.title }}</td>
+                <td>{{ c.description|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+ {% endif %}
+
+{% if active_category == 'unit' %}
+<div class="fo-content-card" id="unit1">
+
+            <div class="fo-toolbar">
+                <form method="GET" class="fo-search-box">
+                    <input type="hidden" name="category" value="{{ active_category }}">
+             <input type="text" id="search2" placeholder="Search" class="fo-search-input" oninput="searchfunction1()">
+            <button id="search" type="button" class="btn-search" > <i class="fa fa-search"></i></button>
+            
+
+                </form>
+
+             
+              <div class="actions">     
+        <button  type="button" class="btn btn-info btn-sm" onclick="pdfpage1()">PDF</button>
+        <button type="button" class="btn btn-warning btn-sm" onclick="window.print()">Print</button>
+        <button   type="button" class="btn btn-danger btn-sm" onclick="Excel1()">Excel</button>
+         <button class="btn-add-main btn-sm" onclick="openaddunitmodal()">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
+        </div> 
+           
+             </div>  
+
+            <div class="table-responsive">
+                <table class="fo-table" id="newtableid1">
+                    <thead>
+                        <tr>
+                            <th >Unit</th>
+                            <th >Description</th>
+                            <th >Action</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in unit %}
+                        <tr class="voucher-item1">
+                            <td >
+                                <strong>{{ c.title }}</strong>
+                            </td>
+                            <td>{{ c.description|default:"-" }}</td>
+
+                            <td class="actions-cell">
+                                <button class="btn-edit" onclick="openEditunitModal( '{{ c.title }}', '{{ c.description }}','{{ c.id }}')">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                               
+                              
+                               
+                                <button class="btn-delete" onclick="deleteunititem('{{ c.id }}')">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                               
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="no-data">
+                                <i class="fa-solid fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
+                                <br>
+                                No unit records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+ 
+
+<div class="smallbox" id="addunitmodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="unitid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add Unit
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('addunitmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           Unit Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="name" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="udesc" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="saveunit()">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="smallbox" id="editunitmodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="unitid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add Unit
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('addunitmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           Unit Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="name1" 
+                               name="" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="udesc1" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="editunit()">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="tableid1" style="display:none;">
+    <table class="fo-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for c in unit %}
+            <tr>
+                <td>{{ c.title }}</td>
+                <td>{{ c.description|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+ {% endif %}
+
+{% if active_category == 'parameter' %}
+<div class="fo-content-card" id="unit1">
+
+            <div class="fo-toolbar">
+                <form method="GET" class="fo-search-box">
+                    <input type="hidden" name="category" value="{{ active_category }}">
+               <input type="text" id="search3" placeholder="Search" class="fo-search-input" oninput="searchfunction2()">
+            <button id="search" type="button" class="btn-search" > <i class="fa fa-search"></i></button>
+            
+                </form>
+
+             
+              <div class="actions">     
+        <button  type="button" class="btn btn-info btn-sm" onclick="pdfpage2()">PDF</button>
+        <button type="button" class="btn btn-warning btn-sm" onclick="window.print()">Print</button>
+        <button   type="button" class="btn btn-danger btn-sm" onclick="Excel2()">Excel</button>
+         <button class="btn-add-main btn-sm" onclick="openaddparametermodal()">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
+        </div> 
+           
+             </div>  
+
+            <div class="table-responsive">
+                <table class="fo-table" id="newtableid2">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center !important;" >Parameter</th>
+                              <th colspan="2" style="text-align: center !important;">Reference Range</th>
+                            <th  style="text-align: center !important;">Unit</th>
+
+                            <th style="text-align: center !important;" >Description</th>
+                            <th style="text-align: center !important;" >Action</th>
+                           
+                        </tr>
+                        <tr>
+                            <th ></th>
+                             <th style="text-align: center !important;">From</th>
+    <th style="text-align: center !important;">To</th>
+                            <th ></th>
+                            <th></th>
+                            <th></th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in param %}
+                        <tr class="voucher-item2">
+                            <td style="text-align: center !important;">
+                                <strong>{{ c.title }}</strong>
+                            </td>
+                            <td style="text-align: center !important;">
+                                <strong>{{ c.fromrange }}</strong>
+                            </td>
+                           
+                            <td style="text-align: center !important;">  <strong>{{ c.torange }}</strong></td>
+                             <td style="text-align: center !important;">
+                                <strong>{{ c.unit.title }}</strong>
+                            </td>
+                            <td style="text-align: center !important;">{{ c.description|default:"-" }}</td>
+
+                            <td class="actions-cell" style="text-align: center !important;">
+                                <button class="btn-edit" onclick="openEditparameterModal( '{{ c.title }}', '{{ c.description }}','{{ c.unit.id }}','{{ c.fromrange}}','{{ c.torange }}','{{ c.id }}')">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                               
+                              
+                               
+                                <button class="btn-delete" onclick="deleteparameteritem('{{ c.id }}')">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                               
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fa-solid fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
+                                <br>
+                                No parameter records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+ 
+
+<div class="smallbox" id="addparametermodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="unitid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add Parameter
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('addparametermodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           Parameter Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="pname" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           From <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" 
+                               id="fromdate" 
+                               class="form-control" 
+                               
+                               required>
+                     <label for="inputTitle" id="labelTitle">
+                           To <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" 
+                               id="todate" 
+                               class="form-control" 
+                               
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                        <label for="unitSelect">
+    Select Unit <span class="text-danger">*</span>
+</label><br>
+
+<select id="unitselect" class="radiology-select">
+    <option value="">Select Unit</option>
+
+    {% for u in unit %}
+        <option value="{{ u.id }}">{{ u.title }}</option>
+    {% endfor %}
+</select>
+                    
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="pdesc" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="saveparameter()">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="smallbox" id="editparametermodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="paramid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Edit Parameter
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('editparametermodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           Parameter Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="pname1" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                           From <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" 
+                               id="fromdate1" 
+                               class="form-control" 
+                               
+                               required>
+                     <label for="inputTitle" id="labelTitle">
+                           To <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" 
+                               id="todate1" 
+                               class="form-control" 
+                               
+                               required>
+                    </div>
+                   
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                        <label for="unitSelect">
+    Select Unit <span class="text-danger">*</span>
+</label>
+
+<select id="unitselect1" class="radiology-select">
+    <option value="">Select Unit</option>
+
+    {% for u in unit %}
+        <option value="{{ u.id }}">{{ u.title }}</option>
+    {% endfor %}
+</select>
+                    
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="pdesc1" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="editparameter()">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="tableid2" style="display:none;">
+    <table class="fo-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for c in param %}
+            <tr>
+                <td>{{ c.title }}</td>
+                <td>{{ c.description|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+ {% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+
+
+function searchfunction(){
+   var  v=document.getElementById('search1').value.trim().replace(/ +/g, ' ').toLowerCase();
+     var item=document.querySelectorAll('.voucher-item')
+    item.forEach(function(i){
+        items=i.textContent.replace(/\s+/g, ' ').toLowerCase();
+      i.style.display = items.includes(v) ? '' : 'none';
+    
+})}
+
+
+function openaddmodal() {
+   document.getElementById('addcatmodal').style.display='flex'
+}
+
+function openEditModal(a, b, c) {
+    document.getElementById('title1').value=a
+    document.getElementById('desc1').value=b
+  document.getElementById('catid').value=c
+document.getElementById('editcatmodal').style.display='flex'
+}
+function deleteitem(id) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    type: 'POST',
+                   url: "{% url 'delete_radiocatgegory' %}",
+                    data: {
+                        'id': id,
+                          
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(r) {
+                          if(r.success){
+                    location.reload()
+                }
+
+                    }
+                });
+            }
+        } 
+
+  
+function pdfpage() {
+
+    var element = document.getElementById("newtableid");
+
+    element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+        cell.style.display = "none";
+    });
+
+    var opt = {
+        margin: 1,
+        filename: "Radiology.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "landscape" },
+    };
+    html2pdf().set(opt).from(element).save().then(function() {
+        element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+            cell.style.display = "";
+        });
+
+    });
+}
+function Excel() {
+    const Table =document.getElementById("newtableid").cloneNode(true);
+
+    Table.querySelectorAll("tr").forEach(function(row) {
+        if (row.lastElementChild) {
+            row.lastElementChild.remove();
+        }
+    });
+    const ws = XLSX.utils.table_to_sheet(Table);
+   
+     ws['!cols'] = [
+        { wch: 10 }, 
+        { wch: 15 }, ]
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb,  "Radiology.xlsx");
+  } 
+ 
+function savecat(){
+        var name=$('#title').val();
+        var desc=$('#desc').val();
+             
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'manager_category' %}",
+                data: {
+               
+                    'desc': desc,
+                    'name':name,
+                    
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+
+function editcat(){
+        var name=$('#title1').val();
+        var desc=$('#desc1').val();
+        var catid=$('#catid').val();
+             
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'manager_editcategory' %}",
+                data: {
+               
+                    'desc': desc,
+                    'name':name,
+                    'catid':catid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+// for unit
+function pdfpage1() {
+  
+        var element = document.getElementById("newtableid1");
+
+    element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+        cell.style.display = "none";
+    });
+
+    var opt = {
+        margin: 1,
+        filename: "Radiology.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "landscape" },
+    };
+    html2pdf().set(opt).from(element).save().then(function() {
+        element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+            cell.style.display = "";
+        });
+
+    });
+      }
+function Excel1() {
+    const Table = document.getElementById("newtableid1").cloneNode(true);
+
+    Table.querySelectorAll("tr").forEach(function(row) {
+        if (row.lastElementChild) {
+            row.lastElementChild.remove();
+        }
+    });
+    const ws = XLSX.utils.table_to_sheet(Table);
+   
+     ws['!cols'] = [
+        { wch: 10 }, 
+        { wch: 15 }, ]
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb,  "Radiology.xlsx");
+  } 
+function searchfunction1(){
+   var  v=document.getElementById('search2').value.trim().replace(/ +/g, ' ').toLowerCase();
+     var item=document.querySelectorAll('.voucher-item1')
+    item.forEach(function(i){
+        items=i.textContent.replace(/\s+/g, ' ').toLowerCase();
+      i.style.display = items.includes(v) ? '' : 'none';
+    
+})}
+function openaddunitmodal() {
+   document.getElementById('addunitmodal').style.display='flex'
+}
+
+function openEditunitModal(a, b, c) {
+    document.getElementById('name1').value=a
+    document.getElementById('udesc1').value=b
+  document.getElementById('unitid').value=c
+document.getElementById('editunitmodal').style.display='flex'
+}
+function deleteunititem(id) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    type: 'POST',
+                   url: "{% url 'delete_radiounit' %}",
+                    data: {
+                        'id': id,
+                          
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(r) {
+                          if(r.success){
+                    location.reload()
+                }
+
+                    }
+                });
+            }
+        } 
+ 
+function saveunit(){
+        var name=$('#name').val();
+        var desc=$('#udesc').val();
+             
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'manager_unit' %}",
+                data: {
+               
+                    'desc': desc,
+                    'name':name,
+                    
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+
+function editunit(){
+        var name=$('#name1').val();
+        var desc=$('#udesc1').val();
+        var unitid=$('#unitid').val();
+             
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'manager_editunit' %}",
+                data: {
+               
+                    'desc': desc,
+                    'name':name,
+                    'unitid':unitid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+// for parameter
+function pdfpage2() {
+  
+       var element = document.getElementById("newtableid2");
+
+    element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+        cell.style.display = "none";
+    });
+
+    var opt = {
+        margin: 1,
+        filename: "Radiology.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "landscape" },
+    };
+    html2pdf().set(opt).from(element).save().then(function() {
+        element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+            cell.style.display = "";
+        });
+
+    });}
+function Excel2() {
+    const Table = document.getElementById("newtableid2").cloneNode(true);
+
+    Table.querySelectorAll("tr").forEach(function(row) {
+        if (row.lastElementChild) {
+            row.lastElementChild.remove();
+        }
+    });
+    const ws = XLSX.utils.table_to_sheet(Table);
+   
+     ws['!cols'] = [
+        { wch: 10 }, 
+        { wch: 15 }, ]
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb,  "Radiology.xlsx");
+  } 
+function searchfunction2(){
+   var  v=document.getElementById('search3').value.trim().replace(/ +/g, ' ').toLowerCase();
+     var item=document.querySelectorAll('.voucher-item2')
+    item.forEach(function(i){
+        items=i.textContent.replace(/\s+/g, ' ').toLowerCase();
+      i.style.display = items.includes(v) ? '' : 'none';
+    
+})}
+function openaddparametermodal() {
+   document.getElementById('addparametermodal').style.display='flex'
+}
+
+function openEditparameterModal(a, b, c,d,e,f) {
+    document.getElementById('pname1').value=a
+    document.getElementById('pdesc1').value=b
+     document.getElementById('unitselect1').value=c
+      document.getElementById('fromdate1').value=d
+       document.getElementById('todate1').value=e
+
+  document.getElementById('paramid').value=f
+document.getElementById('editparametermodal').style.display='flex'
+}
+function deleteparameteritem(id) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    type: 'POST',
+                   url: "{% url 'delete_radioparameter' %}",
+                    data: {
+                        'id': id,
+                          
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(r) {
+                          if(r.success){
+                    location.reload()
+                }
+
+                    }
+                });
+            }
+        } 
+ 
+function saveparameter(){
+        var name=$('#pname').val();
+        var desc=$('#pdesc').val();
+        var fromdate=$('#fromdate').val();
+        var todate=$('#todate').val();
+        var unit=$('#unitselect').val()
+             
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'manager_parameter' %}",
+                data: {
+               
+                    'desc': desc,
+                    'name':name,
+                  'fromdate':fromdate,
+                    'todate':todate,
+                    'unit':unit,
+                    
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+
+function editparameter(){
+        var name=$('#pname1').val();
+        var desc=$('#pdesc1').val();
+        var fromdate=$('#fromdate1').val();
+        var todate=$('#todate1').val();
+         var unit=$('#unitselect1').val();
+        var paramid=$('#paramid').val();
+             
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'manager_editparameter' %}",
+                data: {
+               
+                    'desc': desc,
+                    'name':name,
+                    'paramid':paramid,
+                    'unit':unit,
+                    'fromdate':fromdate,
+                    'todate':todate,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+  function openModal(mid){
+    document.getElementById(mid).style.display='flex';
+  }
+  function closeModal(mid){
+    document.getElementById(mid).style.display='none';
+  }
+</script>
+{% endblock %}

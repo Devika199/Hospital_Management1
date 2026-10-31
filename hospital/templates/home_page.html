@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LHospital | Hospital Management System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+
+    body {
+        background: #ffffff;
+        color: #163d31;
+        overflow-x: hidden;
+    }
+
+
+    /* =====================================================
+       NAVBAR
+    ===================================================== */
+
+    .main-navbar {
+        background: #0b3d2e;
+        padding: 15px 6%;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.12);
+    }
+
+
+    .navbar-brand {
+        color: #ffffff !important;
+        font-size: 30px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+
+    .hospital-logo {
+        width: 45px;
+        height: 45px;
+        background: #ffffff;
+        color: #0b3d2e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+
+    .navbar-nav {
+        gap: 12px;
+    }
+
+
+    .nav-pill {
+        background: #ffffff;
+        color: #0b3d2e !important;
+        padding: 8px 22px;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none !important;
+        transition: 0.3s;
+    }
+
+
+    .nav-pill:hover {
+        transform: translateY(-2px);
+        background: #dcefe7;
+        color: #0b3d2e !important;
+    }
+
+    .hospital-brand {
+display: flex !important;
+align-items: center;
+gap: 12px;
+text-decoration: none !important;
+color: #ffffff !important;
+}
+
+/* LOGO */
+
+.hospital-logo {
+width: 50px;
+height: 50px;
+position: relative;
+background: #ffffff;
+color: #0b3d2e;
+border-radius: 14px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 30px;
+font-weight: 700;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+transition: 0.3s;
+}
+
+.hospital-brand:hover .hospital-logo {
+transform: rotate(-5deg) scale(1.06);
+}
+
+.logo-l {
+font-size: 32px;
+font-weight: 700;
+line-height: 1;
+}
+
+/* SMALL MEDICAL PLUS */
+
+.logo-plus {
+position: absolute;
+width: 17px;
+height: 17px;
+right: -5px;
+bottom: -4px;
+background: #0b3d2e;
+color: #ffffff;
+border: 2px solid #ffffff;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.logo-plus i {
+font-size: 8px;
+}
+
+/* BRAND TEXT */
+
+.brand-text {
+display: flex;
+flex-direction: column;
+line-height: 1;
+}
+
+.brand-name {
+font-size: 27px;
+font-weight: 600;
+letter-spacing: 0.3px;
+color: #ffffff;
+}
+
+.brand-l {
+font-size: 32px;
+font-weight: 700;
+margin-right: 1px;
+}
+
+.brand-text small {
+margin-top: 5px;
+font-size: 8px;
+letter-spacing: 1.8px;
+font-weight: 500;
+color: #ffffff;
+opacity: 0.75;
+}
+
+/* MOBILE */
+
+@media (max-width: 576px) {
+
+.hospital-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+}
+
+.logo-l {
+    font-size: 27px;
+}
+
+.brand-name {
+    font-size: 22px;
+}
+
+.brand-l {
+    font-size: 26px;
+}
+
+.brand-text small {
+    font-size: 6px;
+    letter-spacing: 1.2px;
+}
+
+}
+
+
+
+    /* =====================================================
+       HERO
+    ===================================================== */
+
+    .hero {
+        background: #ffffff;
+        padding: 90px 6%;
+        min-height: 620px;
+        display: flex;
+        align-items: center;
+    }
+
+
+    .hero-content {
+        width: 100%;
+        max-width: 1250px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 60px;
+    }
+
+
+    .hero-text {
+        flex: 1;
+    }
+
+
+    .hero-text h1 {
+        font-size: 56px;
+        font-weight: 700;
+        line-height: 1.18;
+        color: #0b3d2e;
+    }
+
+
+    .hero-text h1 span {
+        color: #176b50;
+    }
+
+
+    .hero-text p {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #456258;
+        margin: 25px 0;
+        max-width: 600px;
+    }
+
+
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 30px;
+        background: #0b3d2e;
+        color: #ffffff;
+        border: 2px solid #0b3d2e;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: 0.3s;
+    }
+
+
+    .hero-btn:hover {
+        background: #176b50;
+        border-color: #176b50;
+        color: #ffffff;
+        transform: translateY(-3px);
+    }
+
+
+    .hero-btn-outline {
+        background: #ffffff;
+        color: #0b3d2e;
+    }
+
+
+    .hero-btn-outline:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+
+    @keyframes floatImage {
+
+        0% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+
+        100% {
+            transform: translateY(0);
+        }
+
+    }
+
+
+    /* =====================================================
+       TRUST STRIP
+    ===================================================== */
+
+    .trust-strip {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 28px 6%;
+    }
+
+
+    .trust-container {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+
+    .trust-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+
+    .trust-item i {
+        width: 45px;
+        height: 45px;
+        border: 1px solid #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+
+    .trust-item h5 {
+        margin: 0;
+        font-size: 15px;
+    }
+
+
+    .trust-item p {
+        margin: 0;
+        font-size: 12px;
+        opacity: 0.8;
+    }
+
+
+    /* =====================================================
+       COMMON SECTION
+    ===================================================== */
+
+    .section {
+        padding: 90px 6%;
+    }
+
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 55px;
+    }
+
+
+    .section-title h2 {
+        font-size: 40px;
+        font-weight: 700;
+        color: #0b3d2e;
+    }
+
+
+    .section-title p {
+        color: #527065;
+        max-width: 720px;
+        margin: 15px auto 0;
+        line-height: 1.7;
+    }
+
+
+    /* =====================================================
+       FEATURES
+    ===================================================== */
+
+    .features {
+        background: #f6fbf8;
+    }
+
+
+    .feature-boxes {
+        max-width: 1250px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+
+    .feature-card {
+        background: #ffffff;
+        border-left: 6px solid #0b3d2e;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(11, 61, 46, 0.08);
+        transition: 0.3s;
+    }
+
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(11, 61, 46, 0.16);
+    }
+
+
+    .feature-card i {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #0b3d2e;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+
+    .feature-card h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #0b3d2e;
+    }
+
+
+    .feature-card p {
+        color: #5d756c;
+        font-size: 14px;
+        line-height: 1.7;
+        margin: 10px 0 0;
+    }
+
+
+    /* =====================================================
+       IMAGE CONTENT SECTION
+    ===================================================== */
+
+    .operations {
+        background: #ffffff;
+    }
+
+
+    .operation-row {
+        max-width: 1200px;
+        margin: 0 auto 90px;
+        display: flex;
+        align-items: center;
+        gap: 70px;
+    }
+
+
+    .operation-row.reverse {
+        flex-direction: row-reverse;
+    }
+
+
+    .operation-image {
+        flex: 1;
+    }
+
+
+    .operation-image img {
+        width: 100%;
+        height: 360px;
+        object-fit: cover;
+        border-radius: 30px;
+        box-shadow: 0 15px 35px rgba(11, 61, 46, 0.18);
+    }
+
+
+    .operation-content {
+        flex: 1;
+    }
+
+
+    .operation-content h2 {
+        font-size: 36px;
+        color: #0b3d2e;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+
+    .operation-content p {
+        color: #567067;
+        line-height: 1.8;
+    }
+
+
+    .operation-list {
+        list-style: none;
+        margin-top: 20px;
+    }
+
+
+    .operation-list li {
+        color: #234d3d;
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+
+
+    .operation-list i {
+        margin-right: 10px;
+        color: #0b3d2e;
+    }
+
+
+    /* =====================================================
+       USER MODULES
+    ===================================================== */
+
+    .modules {
+        background: #0b3d2e;
+    }
+
+
+    .modules .section-title h2,
+    .modules .section-title p {
+        color: #ffffff;
+    }
+
+
+    .module-grid {
+        max-width: 1250px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+
+    .module-card {
+        background: #ffffff;
+        color: #0b3d2e;
+        padding: 28px 20px;
+        border-radius: 18px;
+        text-align: center;
+        transition: 0.3s;
+    }
+
+
+    .module-card:hover {
+        transform: translateY(-8px);
+    }
+
+
+    .module-card i {
+        font-size: 35px;
+        margin-bottom: 15px;
+    }
+
+
+    .module-card h4 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+
+    /* =====================================================
+       HOW IT WORKS
+    ===================================================== */
+
+    .how-it-works {
+        background: #f6fbf8;
+    }
+
+
+    .steps {
+        max-width: 1200px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+
+
+    .step-card {
+        background: #ffffff;
+        padding: 30px 20px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(11, 61, 46, 0.08);
+    }
+
+
+    .step-number {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 20px;
+        background: #0b3d2e;
+        color: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+
+    .step-card h4 {
+        color: #0b3d2e;
+        font-weight: 600;
+    }
+
+
+    .step-card p {
+        font-size: 13px;
+        color: #5d756c;
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       STATISTICS
+    ===================================================== */
+
+    .stats {
+        background: #ffffff;
+        padding: 80px 6%;
+    }
+
+
+    .stats-numbers {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+
+    .stat {
+        flex: 1;
+        min-width: 180px;
+    }
+
+
+    .stat h1 {
+        font-size: 54px;
+        font-weight: 700;
+        color: #0b3d2e;
+    }
+
+
+    .stat p {
+        color: #5d756c;
+        font-size: 15px;
+    }
+
+
+    /* =====================================================
+       SECURITY
+    ===================================================== */
+
+    .security {
+        background: #f6fbf8;
+    }
+
+
+    .security-grid {
+        max-width: 1100px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+
+    .security-item {
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 5px 18px rgba(11, 61, 46, 0.08);
+    }
+
+
+    .security-item i {
+        font-size: 24px;
+        color: #0b3d2e;
+    }
+
+
+    .security-item span {
+        color: #355d4d;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       CTA
+    ===================================================== */
+
+    .cta {
+        background: #0b3d2e;
+        color: #ffffff;
+        text-align: center;
+        padding: 100px 6%;
+    }
+
+
+    .cta h2 {
+        font-size: 42px;
+        font-weight: 700;
+    }
+
+
+    .cta p {
+        max-width: 700px;
+        margin: 18px auto 30px;
+        opacity: 0.9;
+    }
+
+
+    .cta .hero-btn {
+        background: #ffffff;
+        color: #0b3d2e;
+        border-color: #ffffff;
+    }
+
+
+    .cta .hero-btn:hover {
+        transform: translateY(-3px);
+    }
+
+
+    /* =====================================================
+       CONTACT
+    ===================================================== */
+
+    .contact {
+        background: #ffffff;
+        padding: 80px 6%;
+        text-align: center;
+    }
+
+
+    .contact h2 {
+        font-size: 38px;
+        color: #0b3d2e;
+        font-weight: 700;
+    }
+
+
+    .contact > p {
+        color: #60786f;
+        margin: 15px 0 30px;
+    }
+
+
+    .contact-info {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+
+    .contact-info p {
+        color: #355d4d;
+        margin: 0;
+    }
+
+
+    .contact-info i {
+        color: #0b3d2e;
+        margin-right: 8px;
+    }
+
+
+    .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+
+    .social-icons a {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #0b3d2e;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+
+    .social-icons a:hover {
+        transform: translateY(-4px);
+        background: #176b50;
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    footer {
+        background: #082f24;
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 992px) {
+
+        .hero-content,
+        .operation-row,
+        .operation-row.reverse {
+            flex-direction: column;
+        }
+
+        .hero-content {
+            text-align: center;
+        }
+
+        .hero-text p {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            justify-content: center;
+        }
+
+        .feature-boxes {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .module-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .steps {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+
+    @media (max-width: 576px) {
+
+        .main-navbar {
+            padding: 12px 15px;
+        }
+
+        .navbar-brand {
+            font-size: 21px;
+        }
+
+        .hospital-logo {
+            width: 38px;
+            height: 38px;
+            font-size: 21px;
+        }
+
+        .navbar-nav {
+            margin-top: 15px;
+            align-items: stretch !important;
+        }
+
+        .nav-pill {
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .hero {
+            margin-top: -220px !important;
+            padding: 60px 20px;
+            height: 1100px;
+        }
+
+        .hero-text h1 {
+            font-size: 34px;
+        }
+
+        .hero-text p {
+            font-size: 14px;
+        }
+
+        .hero-image img {
+            height: 260px;
+            border-radius: 25px;
+        }
+
+        .section {
+            padding: 60px 20px;
+        }
+
+        .section-title h2 {
+            font-size: 28px;
+        }
+
+        .feature-boxes,
+        .module-grid,
+        .steps,
+        .security-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .operation-row {
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .operation-content h2 {
+            font-size: 28px;
+        }
+
+        .operation-image img {
+            height: 250px;
+        }
+
+        .cta {
+            padding: 70px 20px;
+        }
+
+        .cta h2 {
+            font-size: 30px;
+        }
+
+        .stats-numbers {
+            flex-direction: column;
+        }
+
+        .contact-info {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+    }
+    .hero-image {
+    flex: 1;
+    position: relative;
+    height: 430px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hospital-img {
+    object-fit: cover;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(11, 61, 46, 0.22);
+    position: absolute;
+     animation: floatImage 4s ease-in-out infinite;
+}
+
+/* Main large hospital image */
+.main-img {
+    width: 82%;
+    height: 350px;
+    left: 0;
+    top: 20px;
+    z-index: 1;
+}
+
+/* Second smaller image */
+.second-img {
+    width: 48%;
+    height: 210px;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    border: 7px solid #ffffff;
+}
+@media (max-width: 576px) {
+
+    .hero-image {
+        height: 330px;
+    }
+
+    .main-img {
+        width: 85%;
+        height: 270px;
+    }
+
+    .second-img {
+        width: 48%;
+        height: 140px;
+        border-width: 5px;
+    }
+
+}
+.doctor-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.doctor-viewport {
+    overflow: hidden;
+    width: 100%;
+}
+
+.doctor-track {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.4s ease;
+}
+
+.doctor-card {
+    flex: 0 0 calc((100% - 48px) / 3);
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(11,61,46,0.10);
+}
+
+.doctor-card img,
+.doctor-no-image {
+    width: 80%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+.doctors-section {
+    background: #f6fbf8;
+}
+
+.doctors-section .section-title {
+    margin-bottom: 45px;
+}
+
+.doctors-section .section-title h2 {
+    color: #0b3d2e;
+}
+
+.doctors-section .section-title p {
+    max-width: 700px;
+}
+/* =====================================================
+   DOCTOR CARD HOVER EFFECT
+===================================================== */
+
+.doctor-card {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e1ece7;
+    border-radius: 20px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(11, 61, 46, 0.10);
+    transition: 
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+/* Card hover */
+.doctor-card:hover {
+    transform: translateY(-8px);
+    border-color: #176b50;
+    box-shadow: 0 18px 40px rgba(11, 61, 46, 0.18);
+}
+
+
+/* Doctor name */
+.doctor-card h4 {
+    margin: 15px 0 5px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #0b3d2e;
+    transition: color 0.3s ease;
+}
+
+.doctor-card:hover h4 {
+    color: #176b50;
+}
+.doctor-no-image {
+    background: #e8f4ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: #0b3d2e;
+}
+
+.doctor-card h4 {
+    margin: 15px 0 5px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #0b3d2e;
+}
+
+.doctor-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: #176b50;
+    color: white;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.doctor-prev {
+    left: -20px;
+}
+
+.doctor-next {
+    right: -20px;
+}
+
+.doctor-arrow:hover {
+    background: #0b3d2e;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 576px) {
+
+    .doctor-carousel {
+        width: calc(100% - 40px);
+        margin: 0 auto;
+    }
+
+    .doctor-viewport {
+        width: 100%;
+    }
+
+    .doctor-track {
+        gap: 0;
+    }
+
+    .doctor-card {
+        flex: 0 0 100%;
+        width: 100%;
+        padding: 16px;
+    }
+
+    .doctor-card img,
+    .doctor-no-image {
+        height: 270px;
+    }
+
+    .doctor-prev {
+        left: -8px;
+    }
+
+    .doctor-next {
+        right: -8px;
+    }
+
+}
+/* ================================
+   HERO IMAGE
+================================ */
+
+.hero-image {
+    flex: 1;
+    width: 100%;
+    max-width: 600px;
+    height: 430px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Common image style */
+.hospital-img {
+    position: absolute;
+    object-fit: cover;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(11, 61, 46, 0.22);
+    animation: floatImage 4s ease-in-out infinite;
+}
+
+/* Main image */
+.main-img {
+    width: 82%;
+    height: 350px;
+    left: 0;
+    top: 20px;
+    z-index: 1;
+}
+
+/* Small image */
+.second-img {
+    width: 48%;
+    height: 210px;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    border: 7px solid #ffffff;
+}
+
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 992px) {
+
+    .hero-image {
+        width: 100%;
+        max-width: 650px;
+        height: 400px;
+        margin-top: 30px;
+    }
+
+    .main-img {
+        width: 82%;
+        height: 330px;
+        left: 2%;
+    }
+
+    .second-img {
+        width: 45%;
+        height: 190px;
+        right: 2%;
+        border-width: 6px;
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    .hero-image {
+        width: 100%;
+        max-width: 100%;
+        height: 120px;
+        margin-top: 25px;
+        overflow: visible;
+    }
+
+    .main-img {
+        width: 86%;
+        height: 245px;
+        left: -5px;
+        top: -50px !important;
+        border-radius: 20px;
+    }
+
+    .second-img {
+        width: 60%;
+        height: 150px !important;
+        right: 0;
+        left: 140px;
+         bottom: -230px !important;
+        border: 5px solid #ffffff;
+        border-radius: 18px;
+    }
+}
+
+
+@media (max-width: 400px) {
+
+    .hero-image {
+        height: 285px;
+    }
+
+    .main-img {
+        width: 88%;
+        height: 220px;
+        left: -5px;
+        top: -50px !important;
+    }
+
+    .second-img {
+        width: 60%;
+        height: 150px !important;
+        right: 0;
+        left: 140px;
+        bottom: -230px !important;
+        border-width: 4px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     NAVBAR
+====================================================== -->
+
+<nav class="navbar navbar-expand-lg navbar-dark main-navbar">
+
+   <a class="navbar-brand hospital-brand" href="#">
+
+<div class="hospital-logo">
+    <span class="logo-l">L</span>
+    <span class="logo-plus">
+        <i class="fa-solid fa-plus"></i>
+    </span>
+</div>
+
+<div class="brand-text">
+    <div class="brand-name">
+        <span class="brand-l">L</span><span>Hospital</span>
+    </div>
+    <small style="font-size: 10px;">SMART HEALTHCARE MANAGEMENT</small>
+</div>
+
+</a>
+
+
+    <button class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navMenu">
+
+        <span class="navbar-toggler-icon"></span>
+
+    </button>
+
+
+    <div class="collapse navbar-collapse" id="navMenu">
+
+        <ul class="navbar-nav ml-auto align-items-center">
+
+            <li class="nav-item">
+                <a href="{% url 'home_page' %}" class="nav-pill">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a href="{% url 'login_page' %}" class="nav-pill">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Login
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a href="{% url 'signup_page' %}" class="nav-pill">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Register
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+</nav>
+
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     HERO
+====================================================== -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+
+        <div class="hero-text">
+
+           <h1>
+    Smarter Healthcare.
+    <span>Better Hospital Management.</span>
+</h1>
+
+
+
+            <p>
+                LHospital helps hospitals manage their day-to-day operations
+                from one secure platform. Handle patients, OPD, IPD,
+                appointments, billing, pharmacy, laboratory, radiology,
+                staff, approvals and more.
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a href="{% url 'signup_page' %}" class="hero-btn">
+
+                    <i class="fa-solid fa-user-plus"></i>
+                    Register Now
+
+                </a>
+
+
+                <a href="{% url 'login_page' %}"
+                    class="hero-btn hero-btn-outline">
+
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Login
+
+                </a>
+
+            </div>
+
+        </div>
+
+<div class="hero-image">
+    <img
+        class="hospital-img main-img"
+        src="https://thumbs.dreamstime.com/b/hospital-building-modern-parking-lot-59693686.jpg"
+        alt="">
+
+     <img
+        class="hospital-img second-img"
+        src="https://w0.peakpx.com/wallpaper/315/432/HD-wallpaper-medical-hospital.jpg"
+        alt="">
+</div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TRUST STRIP
+====================================================== -->
+
+<section class="trust-strip">
+
+    <div class="trust-container">
+
+        <div class="trust-item">
+
+            <i class="fa-solid fa-hospital"></i>
+
+            <div>
+                <h5>Complete Operations</h5>
+                <p>Manage hospital activities in one system</p>
+            </div>
+
+        </div>
+
+
+        <div class="trust-item">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            <div>
+                <h5>Secure Access</h5>
+                <p>Role-based login and approvals</p>
+            </div>
+
+        </div>
+
+
+        <div class="trust-item">
+
+            <i class="fa-solid fa-user-doctor"></i>
+
+            <div>
+                <h5>Multiple Departments</h5>
+                <p>Connected hospital workflows</p>
+            </div>
+
+        </div>
+
+
+        <div class="trust-item">
+
+            <i class="fa-solid fa-clock"></i>
+
+            <div>
+                <h5>Daily Management</h5>
+                <p>Designed for day-to-day operations</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CORE FEATURES
+====================================================== -->
+
+<section class="section features">
+
+    <div class="section-title">
+
+        <h2>Everything Your Hospital Needs</h2>
+
+        <p>
+            A centralized hospital management platform designed to simplify
+            clinical, administrative, financial and departmental operations.
+        </p>
+
+    </div>
+
+
+    <div class="feature-boxes">
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-calendar-check"></i>
+
+            <h3>Appointments</h3>
+
+            <p>
+                Manage patient appointments, doctor schedules,
+                OPD visits and daily consultations efficiently.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-bed"></i>
+
+            <h3>OPD & IPD Management</h3>
+
+            <p>
+                Track outpatient and inpatient treatment,
+                admissions, beds and patient records.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+
+            <h3>Billing & Cash</h3>
+
+            <p>
+                Handle department billing, patient payments,
+                invoices and cash transactions.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-pills"></i>
+
+            <h3>Pharmacy Management</h3>
+
+            <p>
+                Manage medicine sales, prescriptions
+                and medicine stock operations.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-flask"></i>
+
+            <h3>Pathology</h3>
+
+            <p>
+                Organize pathology tests, patient samples
+                and laboratory reports.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-x-ray"></i>
+
+            <h3>Radiology</h3>
+
+            <p>
+                Manage radiology tests, diagnostic services
+                and report-related operations.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-user-nurse"></i>
+
+            <h3>Nursing Management</h3>
+
+            <p>
+                Support nurses and head nurses with
+                patient treatment and care operations.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-users-gear"></i>
+
+            <h3>Staff Management</h3>
+
+            <p>
+                Manage doctors, receptionists, accountants,
+                nurses and other hospital staff.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-user-check"></i>
+
+            <h3>Approval Workflow</h3>
+
+            <p>
+                Review registration requests and approve
+                authorized users before login access.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PATIENT OPERATIONS
+====================================================== -->
+
+<section class="section operations">
+
+    <div class="operation-row">
+
+
+        <div class="operation-image">
+
+            <img
+                src="https://images.unsplash.com/photo-1516841273335-e39b37888115?auto=format&fit=crop&w=1000&q=80"
+                alt="Patient Management">
+
+        </div>
+
+
+        <div class="operation-content">
+
+            <h2>Manage Every Patient Journey</h2>
+
+            <p>
+                From the first appointment to OPD consultation,
+                admission, treatment, billing and follow-up,
+                LHospital keeps patient operations organized.
+            </p>
+
+
+            <ul class="operation-list">
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Patient registration and profile management
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    OPD appointments and doctor consultations
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    IPD admission and treatment tracking
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Patient billing and payment management
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Access to patient visit and treatment details
+                </li>
+
+            </ul>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="operation-row reverse">
+
+
+        <div class="operation-image">
+
+            <img
+                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80"
+                alt="Doctor and Hospital Staff">
+
+        </div>
+
+
+        <div class="operation-content">
+
+            <h2>Connected Departments & Staff</h2>
+
+            <p>
+                Each department can operate with its own responsibilities
+                while remaining connected to the overall hospital workflow.
+            </p>
+
+
+            <ul class="operation-list">
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Doctors manage OPD, IPD and OT-related treatment
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Receptionists manage appointments and visitors
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Accountants manage billing and payroll operations
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Pharmacists manage medicine sales and stock
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Laboratory and radiology teams manage tests and reports
+                </li>
+
+            </ul>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     USER MODULES
+====================================================== -->
+
+<section class="section modules">
+
+    <div class="section-title">
+
+        <h2>One System. Multiple Hospital Roles.</h2>
+
+        <p>
+            LHospital supports different user roles with
+            dedicated access to relevant operations.
+        </p>
+
+    </div>
+
+
+    <div class="module-grid">
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-user-shield"></i>
+            <h4>Super Admin</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-user-gear"></i>
+            <h4>Admin</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-user-doctor"></i>
+            <h4>Doctor</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-calculator"></i>
+            <h4>Accountant</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-headset"></i>
+            <h4>Receptionist</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-pills"></i>
+            <h4>Pharmacist</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-flask"></i>
+            <h4>Pathology</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-x-ray"></i>
+            <h4>Radiology</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-user-nurse"></i>
+            <h4>Head Nurse</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <h4>Nurse</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-cash-register"></i>
+            <h4>Billing Executive</h4>
+        </div>
+
+
+        <div class="module-card">
+            <i class="fa-solid fa-hospital-user"></i>
+            <h4>Patient</h4>
+        </div>
+
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     OUR DOCTORS
+====================================================== -->
+
+<section class="section doctors-section">
+
+    <div class="section-title">
+
+        <h2>Meet Our Doctors</h2>
+
+        <p>
+            Meet our experienced and dedicated medical professionals
+            committed to providing quality healthcare and personalized
+            care to every patient.
+        </p>
+
+    </div>
+
+
+    <div class="doctor-carousel">
+
+
+        <button class="doctor-arrow doctor-prev"
+                onclick="moveDoctors(-1)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+
+        <div class="doctor-viewport">
+
+            <div class="doctor-track" id="doctorTrack">
+
+                {% for doctor in doctors %}
+
+                <div class="doctor-card">
+
+                    {% if doctor.profile_image %}
+
+                        <img src="{{ doctor.profile_image.url }}"
+                             alt="Dr. {{ doctor.first_name }} {{ doctor.last_name }}">
+
+                    {% else %}
+
+                        <div class="doctor-no-image">
+                            <i class="fa-solid fa-user-doctor"></i>
+                        </div>
+
+                    {% endif %}
+
+
+                    <h4>
+                        Dr. {{ doctor.first_name }} {{ doctor.last_name }}
+                    </h4>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <button class="doctor-arrow doctor-next"
+                onclick="moveDoctors(1)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+
+    </div>
+
+</section>
+<!-- =====================================================
+     HOW IT WORKS
+====================================================== -->
+
+<section class="section how-it-works">
+
+    <div class="section-title">
+
+        <h2>Simple Registration & Approval Process</h2>
+
+        <p>
+            Hospital users can register through their respective
+            role-based registration process.
+        </p>
+
+    </div>
+
+
+    <div class="steps">
+
+
+        <div class="step-card">
+
+            <div class="step-number">1</div>
+
+            <h4>Select Role</h4>
+
+            <p>
+                Choose the appropriate registration type such as
+                Doctor, Accountant, Receptionist or other hospital roles.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <div class="step-number">2</div>
+
+            <h4>Complete Registration</h4>
+
+            <p>
+                Enter name, email, username, phone number
+                and secure login details.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <div class="step-number">3</div>
+
+            <h4>Admin Review</h4>
+
+            <p>
+                Registration requests can be reviewed
+                and accepted or rejected by the administrator.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <div class="step-number">4</div>
+
+            <h4>Start Managing</h4>
+
+            <p>
+                After approval, the user can log in and
+                access their authorized hospital operations.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     HOSPITAL STATISTICS
+====================================================== -->
+
+<section class="stats">
+
+    <div class="stats-numbers">
+
+
+        <div class="stat">
+            <h1>12+</h1>
+            <p>Dedicated User Roles</p>
+        </div>
+
+
+        <div class="stat">
+            <h1>8+</h1>
+            <p>Hospital Departments</p>
+        </div>
+
+
+        <div class="stat">
+            <h1>24/7</h1>
+            <p>Operational Management</p>
+        </div>
+
+
+        <div class="stat">
+            <h1>1</h1>
+            <p>Centralized Platform</p>
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     SECURITY
+====================================================== -->
+
+<section class="section security">
+
+    <div class="section-title">
+
+        <h2>Secure & Controlled Access</h2>
+
+        <p>
+            LHospital is designed with role-based access and
+            registration approval workflows for controlled operations.
+        </p>
+
+    </div>
+
+
+    <div class="security-grid">
+
+
+        <div class="security-item">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <span>
+                Secure username and password authentication
+            </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <i class="fa-solid fa-user-check"></i>
+
+            <span>
+                Admin approval before authorized user access
+            </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <i class="fa-solid fa-users-viewfinder"></i>
+
+            <span>
+                Role-based access for different hospital departments
+            </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <i class="fa-solid fa-file-circle-check"></i>
+
+            <span>
+                Structured registration and validation process
+            </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <i class="fa-solid fa-folder-open"></i>
+
+            <span>
+                Centralized access to operational information
+            </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <i class="fa-solid fa-clock"></i>
+
+            <span>
+                Efficient day-to-day hospital workflow management
+            </span>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CALL TO ACTION
+====================================================== -->
+
+<section class="cta">
+
+    <h2>Ready to Simplify Hospital Operations?</h2>
+
+    <p>
+        Manage patients, staff, departments, appointments,
+        billing and daily hospital operations from one place
+        with LHospital.
+    </p>
+
+
+    <a href="{% url 'signup_page' %}" class="hero-btn">
+
+        <i class="fa-solid fa-hospital-user"></i>
+        Register with LHospital
+
+    </a>
+
+</section>
+
+
+
+<!-- =====================================================
+     CONTACT
+====================================================== -->
+
+<section class="contact">
+
+    <h2>Contact LHospital</h2>
+
+    <p>
+        A complete digital solution for modern hospital operations.
+    </p>
+
+
+    <div class="contact-info">
+
+        <p>
+            <i class="fa-solid fa-phone"></i>
+            +91 98765 43210
+        </p>
+
+
+        <p>
+            <i class="fa-solid fa-envelope"></i>
+            support@lhospital.com
+        </p>
+
+
+        <p>
+            <i class="fa-solid fa-location-dot"></i>
+            Kerala, India
+        </p>
+
+    </div>
+
+
+    <div class="social-icons">
+
+        <a href="#">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+        <a href="#">
+            <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <a href="#">
+            <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+
+
+<footer>
+
+    © 2026 LHospital | Hospital Management System | All Rights Reserved.
+
+</footer>
+<script>
+
+let doctorIndex = 0;
+
+function moveDoctors(direction) {
+
+    const track = document.getElementById("doctorTrack");
+    const cards = document.querySelectorAll(".doctor-card");
+
+    if (!track || cards.length === 0) {
+        return;
+    }
+
+    const totalDoctors = cards.length;
+
+    // Mobile = 1 doctor
+    // Desktop = 3 doctors
+    let visibleDoctors = window.innerWidth <= 576 ? 1 : 3;
+
+    const maxIndex = Math.max(0, totalDoctors - visibleDoctors);
+
+    doctorIndex += direction;
+
+    // Stop at first/last doctor
+    if (doctorIndex < 0) {
+        doctorIndex = 0;
+    }
+
+    if (doctorIndex > maxIndex) {
+        doctorIndex = maxIndex;
+    }
+
+    const cardWidth = cards[0].offsetWidth;
+
+    track.style.transform =
+        `translateX(-${doctorIndex * cardWidth}px)`;
+}
+
+window.addEventListener("resize", function () {
+
+    doctorIndex = 0;
+
+    const track = document.getElementById("doctorTrack");
+
+    if (track) {
+        track.style.transform = "translateX(0)";
+    }
+
+});
+
+</script>
+</body>
+
+</html>

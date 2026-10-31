@@ -1,0 +1,6900 @@
+{% extends home_template %}
+
+{% block content %}
+<!-- Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+
+/* =========================================================
+   PATIENT PAGE
+========================================================= */
+
+.patient-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.patient-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   PAGE TITLE
+========================================================= */
+
+.patient-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.patient-heading-icon {
+    width: 56px;
+    height: 56px;
+
+    border-radius: 15px;
+
+    background: #e5f3ed;
+    color: #0b3d2e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+.patient-heading-text h2 {
+    margin: 0 0 5px;
+
+    color: #0b3d2e;
+
+    font-size: 34px;
+    font-weight: 800;
+
+    letter-spacing: -0.6px;
+}
+
+.patient-heading-text p {
+    margin: 0;
+
+    color: #71877e;
+
+    font-size: 15px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   HEADER BUTTONS
+========================================================= */
+
+.patient-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.patient-action-btn {
+    height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #c8d9d2;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #294f42;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-action-btn i {
+    font-size: 15px;
+}
+
+
+/* ONLY HOVER HAS COLOUR */
+
+.patient-add-btn:hover {
+    background: #f38c17;
+    border-color: #f38c17;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(243,140,23,0.25);
+}
+
+.patient-import-btn:hover {
+    background: #078a55;
+    border-color: #078a55;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(7,138,85,0.22);
+}
+
+.patient-delete-btn:hover {
+    background: #dc2638;
+    border-color: #dc2638;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(220,38,56,0.22);
+}
+
+.patient-disable-btn:hover {
+    background: #168c87;
+    border-color: #168c87;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(22,140,135,0.22);
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.patient-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #d7e5df;
+
+    border-radius: 17px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(11,61,46,0.08);
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.patient-toolbar {
+    min-height: 78px;
+
+    padding: 16px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e0ebe6;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.patient-search {
+    width: 420px;
+    max-width: 100%;
+
+    position: relative;
+}
+
+.patient-search i {
+    position: absolute;
+
+    left: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #6b887c;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+.patient-search input {
+    width: 100%;
+
+    height: 46px;
+
+    padding: 0 16px 0 46px;
+
+    border: 1px solid #c9dad3;
+
+    border-radius: 9px;
+
+    background: #f9fcfb;
+
+    color: #173e31;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: all 0.2s ease;
+}
+
+.patient-search input::placeholder {
+    color: #91a39b;
+}
+
+.patient-search input:focus {
+    background: #ffffff;
+
+    border-color: #176b50;
+
+    box-shadow:
+        0 0 0 3px rgba(23,107,80,0.10);
+}
+
+
+/* =========================================================
+   EXPORT BUTTONS
+========================================================= */
+
+.patient-export {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.patient-export-btn {
+    height: 42px;
+
+    padding: 0 17px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #c9dad3;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #34594c;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-export-btn i {
+    font-size: 15px;
+}
+
+
+/* EXPORT HOVER */
+
+.patient-excel:hover {
+      background: #078a55;
+    border-color: #078a55;
+    color: #ffffff;
+}
+
+.patient-pdf:hover {
+     background: #dc2638;
+    border-color: #dc2638;
+    color: #ffffff;
+}
+
+.patient-print:hover {
+     background: #168c87;
+    border-color: #168c87;
+    color: #ffffff;
+}
+
+.patient-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 500px;
+    -webkit-overflow-scrolling: touch;
+}
+.patient-table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+}
+
+
+/* =========================================================
+   DARK GREEN TABLE HEADER
+========================================================= */
+
+.patient-table thead {
+    background: #0b3d2e;
+}
+
+.patient-table thead th {
+    height: 58px;
+
+    padding: 0 15px;
+
+    background: #0b3d2e;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-align: left;
+
+    border: none;
+
+    border-bottom: 3px solid #176b50;
+
+    white-space: nowrap;
+
+    letter-spacing: 0.2px;
+}
+
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+.patient-table th:nth-child(1) {
+    width: 55px;
+}
+
+.patient-table th:nth-child(2) {
+    width: 17%;
+}
+
+.patient-table th:nth-child(3) {
+    width: 7%;
+}
+
+.patient-table th:nth-child(4) {
+    width: 10%;
+}
+
+.patient-table th:nth-child(5) {
+    width: 12%;
+}
+
+.patient-table th:nth-child(6) {
+    width: 14%;
+}
+
+.patient-table th:nth-child(7) {
+    width: 18%;
+}
+
+.patient-table th:nth-child(8) {
+    width: 7%;
+}
+
+.patient-table th:nth-child(9) {
+    width: 10%;
+}
+
+
+/* =========================================================
+   CENTER COLUMNS
+========================================================= */
+
+.patient-table th:nth-child(1),
+.patient-table td:nth-child(1),
+
+.patient-table th:nth-child(3),
+.patient-table td:nth-child(3),
+
+.patient-table th:nth-child(4),
+.patient-table td:nth-child(4),
+
+.patient-table th:nth-child(8),
+.patient-table td:nth-child(8),
+
+.patient-table th:nth-child(9),
+.patient-table td:nth-child(9) {
+    text-align: center;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.patient-table tbody tr {
+    background: #ffffff;
+
+    transition: background 0.18s ease;
+}
+
+.patient-table tbody tr:hover {
+    background: #f0f8f5;
+}
+.patient-table tbody td {
+    height: 68px;
+
+    padding: 11px 15px;
+
+    border-bottom: 1px solid #dfe9e5;
+
+    color: #405b50;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    vertical-align: middle;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.patient-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.patient-checkbox {
+    width: 18px;
+    height: 18px;
+
+    margin: 0;
+
+    accent-color: #176b50;
+
+    cursor: pointer;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   PATIENT NAME
+========================================================= */
+
+.patient-name {
+    display: block;
+
+    color: #143f31;
+
+    font-size: 15px;
+
+    font-weight: 750;
+}
+
+.patient-id {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #84968f;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   GENDER BADGE
+========================================================= */
+
+.gender-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 65px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    background: #e3f1eb;
+
+    color: #176b50;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DEAD BADGE
+========================================================= */
+
+.dead-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 48px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.dead-no {
+    background: #e5f4eb;
+    color: #167447;
+}
+
+.dead-yes {
+    background: #fde9eb;
+    color: #b4232f;
+}
+
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.patient-view {
+    height: 36px;
+
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 1px solid #c8d9d2;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #31594d;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-view i {
+    font-size: 13px;
+}
+
+.patient-view:hover {
+    background: #176b50;
+
+    border-color: #176b50;
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px rgba(23,107,80,0.18);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.patient-empty {
+    height: 250px;
+
+    text-align: center !important;
+
+    vertical-align: middle !important;
+
+    color: #82948d !important;
+
+    font-size: 14px !important;
+}
+
+.patient-empty-icon {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 13px;
+
+    border-radius: 50%;
+
+    background: #eef6f2;
+
+    color: #72a18d;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.patient-footer {
+    min-height: 72px;
+
+    padding: 14px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    background: #f9fcfb;
+
+    border-top: 1px solid #e0ebe6;
+}
+
+
+/* =========================================================
+   ENTRIES
+========================================================= */
+
+.entries-control {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #647a70;
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+.entries-select {
+    width: 78px;
+
+    height: 37px;
+
+    padding: 0 9px;
+
+    border: 1px solid #c8d9d2;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #31594d;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+.entries-select:focus {
+    border-color: #176b50;
+
+    box-shadow:
+        0 0 0 3px rgba(23,107,80,0.08);
+}
+
+
+/* =========================================================
+   PAGINATION INFO
+========================================================= */
+
+.pagination-info {
+    color: #71877e;
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin: 0;
+}
+
+.pagination-btn {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #c8d9d2;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #31594d;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+    background: #176b50;
+
+    border-color: #176b50;
+
+    color: #ffffff;
+}
+
+.pagination-btn.active {
+    background: #0b3d2e;
+
+    border-color: #0b3d2e;
+
+    color: #ffffff;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .patient-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .patient-header-actions {
+        width: 100%;
+    }
+
+    .patient-table thead th {
+        font-size: 13px;
+    }
+
+    .patient-table tbody td {
+        font-size: 13px;
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .patient-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .patient-search {
+        width: 100%;
+    }
+
+    .patient-export {
+        justify-content: flex-end;
+    }
+
+    .patient-footer {
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .patient-heading-text h2 {
+        font-size: 27px;
+    }
+
+    .patient-heading-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .patient-header-actions {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        width: 100%;
+    }
+
+    .patient-action-btn {
+        width: 100%;
+    }
+
+    .patient-footer {
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE TABLE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .patient-table {
+        min-width: 1100px;
+    }
+
+    .patient-table-wrapper {
+          width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+
+    .patient-table thead th {
+        height: 50px;
+
+        font-size: 12px;
+    }
+
+    .patient-table tbody td {
+        height: 58px;
+
+        font-size: 12px;
+    }
+
+    .patient-name {
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+    .patient-page-header,
+    .patient-toolbar,
+    .patient-footer {
+        display: none !important;
+    }
+
+    .patient-card {
+        border: none;
+        box-shadow: none;
+    }
+
+    .patient-table thead {
+        background: #eeeeee !important;
+    }
+
+    .patient-table thead th {
+        background: #eeeeee !important;
+        color: #000000 !important;
+    }
+
+    .patient-view {
+        border: none;
+        background: transparent;
+        color: #000000;
+    }
+
+}
+
+.django-messages {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    z-index: 999999;
+    width: 350px;
+}
+
+.message {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.message.success {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+.message.error {
+    background: #ffffff;
+    color: #b42318;
+    border-left: 4px solid #b42318;
+}
+
+@media (max-width: 600px) {
+
+    .django-messages {
+        top: 310px !important;
+        right: 12px !important;
+        left: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .message {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px 14px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        border-radius: 8px !important;
+        word-break: break-word !important;
+    }
+}
+
+
+/* Small mobile */
+@media (max-width: 400px) {
+
+    .django-messages {
+        top: 310px !important;
+        right: 8px !important;
+        left: 8px !important;
+    }
+
+    .message {
+        padding: 11px 12px !important;
+        font-size: 12px !important;
+    }
+}
+/* =========================================================
+   PATIENT DETAILS MODAL
+========================================================= */
+
+.patient-details-modal {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 999999;
+
+    padding: 25px;
+}
+
+.patient-details-modal.active {
+    display: flex;
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.patient-details-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(5, 30, 22, 0.60);
+
+    backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   MODAL BOX
+========================================================= */
+
+.patient-details-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 950px;
+
+    max-height: 90vh;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.25);
+
+    display: flex;
+    flex-direction: column;
+
+    animation: patientModalOpen 0.25s ease;
+}
+
+@keyframes patientModalOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.patient-details-header {
+    min-height: 82px;
+
+    padding: 16px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #f9fcfb;
+
+    border-bottom: 1px solid #dfe9e5;
+}
+
+.patient-details-title {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+}
+
+.patient-modal-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 13px;
+
+    background: #e5f3ed;
+
+    color: #0b3d2e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+.patient-details-title h3 {
+    margin: 0;
+
+    color: #0b3d2e;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.patient-details-title p {
+    margin: 3px 0 0;
+
+    color: #81958d;
+
+    font-size: 12px;
+}
+
+
+.patient-modal-close {
+    width: 38px;
+    height: 38px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #6d8279;
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    transition: all 0.2s ease;
+}
+
+.patient-modal-close:hover {
+    background: #dc2638;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.patient-details-body {
+
+    padding: 24px;
+
+    overflow-y: auto;
+
+    flex: 1;
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.patient-profile-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 18px;
+
+    margin-bottom: 22px;
+
+    border: 1px solid #dce9e4;
+
+    border-radius: 12px;
+
+    background: #fbfefd;
+}
+
+.patient-modal-profile {
+
+    width: 72px;
+    height: 72px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    background: #e5f3ed;
+
+    color: #176b50;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+}
+
+.patient-modal-profile img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.patient-profile-info h4 {
+
+    margin: 0 0 5px;
+
+    color: #143f31;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+.patient-profile-info span {
+
+    display: inline-flex;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    background: #e3f1eb;
+
+    color: #176b50;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.patient-modal-section {
+
+    margin-bottom: 22px;
+
+    padding: 20px;
+
+    border: 1px solid #dfe9e5;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+.patient-modal-section-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 18px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #e8efec;
+
+    color: #0b3d2e;
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+.patient-modal-section-title i {
+
+    color: #176b50;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   DETAILS GRID
+========================================================= */
+
+.patient-details-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.patient-detail-item {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.patient-detail-item.full {
+
+    grid-column: 1 / -1;
+}
+
+.patient-detail-item span {
+
+    color: #879a92;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+.patient-detail-item strong {
+
+    color: #294f42;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   TEXT DETAILS
+========================================================= */
+
+.patient-detail-text {
+
+    margin-bottom: 16px;
+}
+
+.patient-detail-text:last-child {
+    margin-bottom: 0;
+}
+
+.patient-detail-text span {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #879a92;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+.patient-detail-text p {
+
+    margin: 0;
+
+    padding: 12px 14px;
+
+    min-height: 45px;
+
+    border-radius: 8px;
+
+    background: #f7faf9;
+
+    color: #405b50;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.patient-details-footer {
+
+    min-height: 76px;
+
+    padding: 14px 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    background: #f9fcfb;
+
+    border-top: 1px solid #dfe9e5;
+}
+
+.patient-details-footer button {
+
+    height: 40px;
+
+    padding: 0 16px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 8px;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+
+/* DELETE */
+
+.modal-delete-btn {
+
+    border: 1px solid #f0c5ca;
+
+    background: #ffffff;
+
+    color: #c52232;
+}
+
+.modal-delete-btn:hover {
+
+    background: #dc2638;
+
+    border-color: #dc2638;
+
+    color: #ffffff;
+}
+
+
+/* DISABLE */
+
+.modal-disable-btn {
+
+    border: 1px solid #b9d9d6;
+
+    background: #ffffff;
+
+    color: #168c87;
+}
+
+.modal-disable-btn:hover {
+
+    background: #168c87;
+
+    border-color: #168c87;
+
+    color: #ffffff;
+}
+
+
+/* EDIT */
+
+.modal-edit-btn {
+
+    border: 1px solid #f0c57b;
+
+    background: #ffffff;
+
+    color: #d77b00;
+}
+
+.modal-edit-btn:hover {
+
+    background: #f38c17;
+
+    border-color: #f38c17;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .patient-details-modal {
+        padding: 10px;
+    }
+
+    .patient-details-box {
+        max-height: 95vh;
+
+        border-radius: 14px;
+    }
+
+    .patient-details-body {
+        padding: 15px;
+    }
+
+    .patient-details-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 15px;
+        
+    }
+
+    .patient-details-footer {
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .patient-details-header {
+        padding: 13px 15px;
+    }
+
+    .patient-details-title h3 {
+        font-size: 17px;
+    }
+
+    .patient-modal-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .patient-details-grid {
+        grid-template-columns: 1fr;
+        overflow-x: hidden !important;
+    }
+
+    .patient-modal-section {
+        padding: 15px;
+    }
+
+    .patient-details-footer {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        padding: 12px;
+    }
+
+    .patient-details-footer button {
+        width: 100%;
+
+        padding: 0 7px;
+
+        font-size: 11px;
+    }
+
+}
+.patient-status-badge {
+
+    display: inline-flex;
+
+    width: fit-content;
+
+    padding: 5px 12px;
+
+    border-radius: 20px;
+
+    font-size: 12px !important;
+
+    font-weight: 700 !important;
+
+}
+
+
+.patient-status-alive {
+
+    background: #e5f4eb;
+
+    color: #167447;
+
+}
+
+
+.patient-status-dead {
+
+    background: #fde9eb;
+
+    color: #b4232f;
+
+}
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background: #fff !important;
+
+        writing-mode: horizontal-tb !important;
+        direction: ltr !important;
+        transform: none !important;
+    }
+
+    /* Hide everything */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Show heading and table */
+    #patientPrintHeading,
+    #patientPrintHeading *,
+    #patientsTable,
+    #patientsTable * {
+        visibility: visible !important;
+    }
+
+    /* Heading */
+    #patientPrintHeading {
+
+        display: block !important;
+
+        width: 100% !important;
+
+        text-align: center !important;
+
+        font-family: Arial, sans-serif !important;
+
+        font-size: 20px !important;
+
+        font-weight: bold !important;
+
+        margin: 0 0 8mm 0 !important;
+
+        padding: 0 !important;
+
+        writing-mode: horizontal-tb !important;
+
+        transform: none !important;
+    }
+
+    /* Table wrapper */
+    .patient-table-wrapper {
+
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        overflow: visible !important;
+
+        writing-mode: horizontal-tb !important;
+
+        transform: none !important;
+    }
+
+    /* TABLE */
+
+    #patientsTable {
+
+        display: table !important;
+
+        width: 100% !important;
+
+        margin: 0 auto !important;
+
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+
+        /* Complete outside border */
+        border: 1px solid #000 !important;
+         outline: 1px solid #000 !important;
+        outline-offset: -1px !important;
+
+          table-layout: auto !important;
+
+        font-family: Arial, sans-serif !important;
+
+        font-size: 16px !important;
+
+        writing-mode: horizontal-tb !important;
+
+        direction: ltr !important;
+
+        transform: none !important;
+    }
+
+    #patientsTable tr {
+
+        display: table-row !important;
+
+        writing-mode: horizontal-tb !important;
+
+        transform: none !important;
+
+        page-break-inside: avoid !important;
+    }
+
+    #patientsTable th,
+    #patientsTable td {
+
+        display: table-cell !important;
+
+        border: 1px solid #000 !important;
+
+        padding: 5px !important;
+
+        font-family: Arial, sans-serif !important;
+
+        font-size: 16px !important;
+
+        line-height: 1.2 !important;
+
+        color: #000 !important;
+
+        background: #fff !important;
+
+        vertical-align: middle !important;
+
+        white-space: normal !important;
+
+        word-break: normal !important;
+
+        writing-mode: horizontal-tb !important;
+
+        direction: ltr !important;
+
+        transform: none !important;
+    }
+
+    /* Header */
+    #patientsTable th {
+
+        font-size: 16px !important;
+
+        font-weight: bold !important;
+
+        text-align: center !important;
+    }
+
+    /* Hide checkbox */
+    #patientsTable th:first-child,
+    #patientsTable td:first-child {
+        display: none !important;
+    }
+
+    /* Hide action */
+    #patientsTable th:last-child,
+    #patientsTable td:last-child {
+        display: none !important;
+    }
+
+    /* Patient Name */
+    #patientsTable th:nth-child(2),
+    #patientsTable td:nth-child(2) {
+        width: 32mm !important;
+        text-align: left !important;
+    }
+
+    /* Age */
+    #patientsTable th:nth-child(3),
+    #patientsTable td:nth-child(3) {
+        width: 12mm !important;
+        text-align: center !important;
+    }
+
+    /* Gender */
+    #patientsTable th:nth-child(4),
+    #patientsTable td:nth-child(4) {
+        width: 18mm !important;
+        text-align: center !important;
+    }
+
+    /* Phone */
+    #patientsTable th:nth-child(5),
+    #patientsTable td:nth-child(5) {
+        width: 28mm !important;
+        text-align: center !important;
+    }
+
+    /* Guardian */
+    #patientsTable th:nth-child(6),
+    #patientsTable td:nth-child(6) {
+        width: 32mm !important;
+        text-align: left !important;
+    }
+
+    /* Address */
+    #patientsTable th:nth-child(7),
+    #patientsTable td:nth-child(7) {
+        width: 50mm !important;
+        text-align: left !important;
+    }
+
+    /* Dead */
+    #patientsTable th:nth-child(8),
+    #patientsTable td:nth-child(8) {
+        width: 15mm !important;
+        text-align: center !important;
+    }
+
+    /* Hide page UI */
+    .patient-page-header,
+    .patient-toolbar,
+    .patient-footer,
+    .patient-search,
+    .patient-export,
+    .patient-header-actions,
+    .patient-action-btn,
+    .patient-export-btn {
+        display: none !important;
+    }
+
+    .patient-page,
+    .patient-card {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #fff !important;
+    }
+
+}
+/* =========================================================
+   HOSPITAL CHARGES LAYOUT
+========================================================= */
+
+.charges-layout {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+
+/* =========================================================
+   LEFT MENU CARD
+========================================================= */
+
+.charges-menu-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d7e5df;
+    border-radius: 17px;
+    padding: 14px;
+    box-shadow: 0 10px 30px rgba(11,61,46,0.08);
+}
+
+
+/* =========================================================
+   LEFT MENU BUTTON
+========================================================= */
+
+.charge-menu-item {
+    width: 100%;
+    min-height: 54px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 16px;
+
+    margin-bottom: 10px;
+
+    border: 1px solid #d3e3dc;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #294f42;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+
+.charge-menu-item:last-child {
+    margin-bottom: 0;
+}
+
+
+.charge-menu-item i {
+    width: 22px;
+
+    color: #176b50;
+
+    font-size: 15px;
+
+    text-align: center;
+}
+
+
+/* HOVER */
+
+.charge-menu-item:hover {
+    background: #f0f8f5;
+    border-color: #9bc7b5;
+}
+
+
+/* ACTIVE */
+
+.charge-menu-item.active {
+    background: #0b3d2e;
+
+    border-color: #0b3d2e;
+
+    color: #ffffff;
+}
+
+
+.charge-menu-item.active i {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   RIGHT CARD
+========================================================= */
+
+.charges-table-card {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   CHARGE TABLE
+========================================================= */
+
+#chargesTable {
+    width: 100%;
+}
+
+
+#chargesTable thead th {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.charge-edit-btn {
+    height: 34px;
+
+    padding: 0 12px;
+
+    border: 1px solid #c8d9d2;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #176b50;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.charge-delete-btn {
+    height: 34px;
+
+    padding: 0 12px;
+
+    margin-left: 5px;
+
+    border: 1px solid #f0c5ca;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #c52232;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.charge-edit-btn:hover {
+    background: #176b50;
+    border-color: #176b50;
+    color: #ffffff;
+}
+
+
+.charge-delete-btn:hover {
+    background: #dc2638;
+    border-color: #dc2638;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .charges-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .charges-menu-card {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 10px;
+    }
+
+
+    .charge-menu-item {
+        margin-bottom: 0;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .charges-menu-card {
+        grid-template-columns: 1fr;
+    }
+
+
+    .patient-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .patient-search {
+        width: 100%;
+    }
+
+
+    .patient-export {
+        display: flex;
+        flex-direction: row !important;
+    }
+    #un{
+        width: 275px !important;
+    }
+    input[name="tax_name"]{
+         width: 275px !important;
+    }
+     input[name="percentage"]{
+         width: 275px !important;
+         margin-left: 1px !important;
+    }
+    #per{
+        margin-left: 1px !important;
+    }
+     input[name="category_name"]{
+         width: 275px !important;
+    }
+     select[name="charge_type"]{
+         width: 275px !important;
+         margin-left: 1px !important;
+    }
+    #cType{
+        margin-left: 1px !important;
+    }
+
+
+}
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.action-edit-btn,
+.action-delete-btn,
+.action-view-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 3px;
+    transition: 0.2s ease;
+}
+
+/* EDIT */
+
+.action-edit-btn {
+    background: #e8f1ff;
+    color: #2563eb;
+}
+
+.action-edit-btn:hover {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+/* DELETE */
+
+.action-delete-btn {
+    background: #ffe9e9;
+    color: #dc3545;
+}
+
+.action-delete-btn:hover {
+    background: #dc3545;
+    color: #ffffff;
+}
+
+.action-view-btn {
+    background: #d9f8e9;
+    color: #179e5b;
+}
+
+.action-view-btn:hover {
+    background: #179e5b;
+     color: #ffffff;
+}
+
+/* ICON SIZE */
+
+.action-edit-btn i,
+.action-delete-btn i ,
+.action-view-btn i {
+    font-size: 14px;
+}
+/* S.NO COLUMN */
+#chargesTable th:first-child,
+#chargesTable td:first-child {
+    width: 55px !important;
+    min-width: 55px !important;
+    max-width: 55px !important;
+    text-align: center;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+#chargesTable th:last-child,
+#chargesTable td:last-child {
+    width: 145px !important;
+    min-width: 145px !important;
+    max-width: 145px !important;
+
+    text-align: center !important;
+    white-space: nowrap !important;
+
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+#chargesTable .action-edit-btn,
+#chargesTable .action-delete-btn ,
+#chargesTable .action-view-btn{
+    flex-shrink: 0 !important;
+}
+#chargesTable td:last-child {
+    overflow: visible !important;
+    text-overflow: unset !important;
+    white-space: nowrap !important;
+}
+.charge-status-yes {
+    color: #198754;
+    font-size: 16px;
+}
+
+.charge-status-no {
+    color: #dc3545;
+    font-size: 16px;
+}
+.module-mark {
+    text-align: center !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+</style>
+<main class="main-content">
+
+    {% if messages %}
+    <div class="django-messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+
+    <div class="patient-page">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="patient-page-header">
+
+            <div class="patient-heading">
+
+                <div class="patient-heading-icon">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+
+                <div class="patient-heading-text">
+
+                    <h2 id="chargePageTitle">
+                       Hospital Charges
+                    </h2>
+
+                    <p id="chargePageDescription">
+                        Manage hospital charges and related configurations.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="patient-header-actions">
+
+                <button
+                    type="button"
+                    class="patient-action-btn patient-add-btn"
+                    onclick="openChargeModal()">
+
+                    <i class="fa-solid fa-plus"></i>
+                    Add
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TWO COLUMN AREA
+        ====================================================== -->
+
+        <div class="charges-layout">
+
+            <!-- =================================================
+                 LEFT MENU
+            ================================================== -->
+
+            <div class="charges-menu-card">
+
+                <button
+                    type="button"
+                    class="charge-menu-item active"
+                    data-type="unit"
+                    onclick="changeChargeSection('unit', this)">
+
+                    <i class="fa-solid fa-ruler"></i>
+                    <span>Unit</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="charge-menu-item"
+                    data-type="tax"
+                    onclick="changeChargeSection('tax', this)">
+
+                    <i class="fa-solid fa-percent"></i>
+                    <span>Tax</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="charge-menu-item"
+                    data-type="charge_type"
+                    onclick="changeChargeSection('charge_type', this)">
+
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Charge Type</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="charge-menu-item"
+                    data-type="charge_category"
+                    onclick="changeChargeSection('charge_category', this)">
+
+                    <i class="fa-solid fa-folder-tree"></i>
+                    <span>Charge Category</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="charge-menu-item"
+                    data-type="charge"
+                    onclick="changeChargeSection('charge', this)">
+
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Charge</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT TABLE
+            ================================================== -->
+
+            <div class="patient-card charges-table-card">
+
+                <div class="patient-toolbar">
+
+                    <div class="patient-search">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            type="text"
+                            id="chargeSearch"
+                            placeholder="Search Unit..."
+                            onkeyup="searchCharges()">
+
+                    </div>
+
+
+                    <div class="patient-export">
+
+                        <button
+                            type="button"
+                            class="patient-export-btn patient-excel"
+                            onclick="exportChargesExcel()">
+
+                            <i class="fa-solid fa-file-excel"></i>
+                            Excel
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="patient-export-btn patient-pdf"
+                            onclick="exportChargesPDF()">
+
+                            <i class="fa-solid fa-file-pdf"></i>
+                            PDF
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="patient-export-btn patient-print"
+                            onclick="printChargesList()">
+
+                            <i class="fa-solid fa-print"></i>
+                            Print
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRINT TITLE -->
+
+                <div
+                    id="chargePrintHeading"
+                    style="display:none;">
+                    Unit List
+                </div>
+
+
+                <!-- TABLE -->
+
+                <div class="patient-table-wrapper">
+
+                    <table
+                        class="patient-table"
+                        id="chargesTable">
+
+                        <thead id="chargesTableHead">
+                        </thead>
+
+                        <tbody id="chargesTableBody">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="patient-footer">
+
+                    <div class="entries-control">
+
+                        <span>Show</span>
+
+                        <select
+                            id="entriesCount"
+                            class="entries-select"
+                            onchange="changeChargeEntriesCount()">
+
+                            <option value="10">10</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+
+                        </select>
+
+                        <span>entries</span>
+
+                    </div>
+
+
+                    <div
+                        class="pagination-info"
+                        id="paginationInfo">
+
+                        Showing 0 of 0
+
+                    </div>
+
+
+                    <div
+                        class="pagination"
+                        id="chargePagination">
+
+                        <button
+                            type="button"
+                            class="pagination-btn"
+                            id="previousChargePage"
+                            onclick="previousChargePage()">
+
+                            <i class="fa-solid fa-chevron-left"></i>
+
+                        </button>
+
+
+                        <div
+                            id="chargePageNumbers"
+                            style="display:flex; gap:6px;">
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="pagination-btn"
+                            id="nextChargePage"
+                            onclick="nextChargePage()">
+
+                            <i class="fa-solid fa-chevron-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     COMMON CHARGE MODAL
+========================================================= -->
+
+<div
+    class="patient-details-modal"
+    id="chargeModal">
+
+    <div
+        class="patient-details-overlay"
+        onclick="closeChargeModal()">
+    </div>
+
+
+    <div class="patient-details-box">
+
+        <div class="patient-details-header">
+
+            <div class="patient-details-title">
+
+                <div class="patient-modal-icon">
+                    <i
+                        class="fa-solid fa-money-bill-wave"
+                        id="chargeModalIcon">
+                    </i>
+                    
+                </div>
+
+                <div>
+
+                    <h3 id="chargeModalTitle">
+                        Add Unit
+                    </h3>
+
+                    <p id="chargeModalDescription">
+                        Enter unit details
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="patient-modal-close"
+                onclick="closeChargeModal()">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <div class="patient-details-body">
+
+            <form id="chargeForm">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    id="chargeId"
+                    name="id">
+
+
+                <!-- =================================================
+                     DYNAMIC FORM
+                ================================================== -->
+
+                <div
+                    class="patient-modal-section"
+                    id="chargeFormContent">
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div class="patient-details-footer">
+
+            <button
+                type="button"
+                class="modal-delete-btn"
+                onclick="closeChargeModal()">
+
+                <i class="fa-solid fa-xmark"></i>
+                Cancel
+
+            </button>
+
+
+            <button
+                type="button"
+                class="modal-edit-btn"
+                onclick="saveCharge()">
+
+                <i class="fa-solid fa-save"></i>
+                Save
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     VIEW CHARGE MODAL
+===================================================== -->
+
+<div
+    class="modal fade"
+    id="viewChargeModal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true">
+
+    <div
+        class="modal-dialog modal-lg modal-dialog-centered"
+        role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    Charge Details
+                </h5>
+
+               <button
+    type="button"
+    class="close"
+    onclick="closeViewChargeModal()"
+    aria-label="Close">
+
+    <span aria-hidden="true">&times;</span>
+
+</button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div
+                    id="viewChargeContent"
+                    class="patient-details-grid">
+
+                    <!-- Details will be loaded here -->
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+               <button
+    type="button"
+    class="btn btn-secondary"
+    onclick="closeViewChargeModal()">
+
+    Close
+
+</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+
+<script>
+function viewCharge(chargeId) {
+
+    const content =
+        document.getElementById("viewChargeContent");
+
+    content.innerHTML = `
+        <div style="text-align:center; padding:30px;">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Loading...
+        </div>
+    `;
+
+    const modal = document.getElementById("viewChargeModal");
+
+modal.classList.add("show");
+modal.style.display = "block";
+modal.setAttribute("aria-hidden", "false");
+document.body.classList.add("modal-open");
+
+const backdrop = document.createElement("div");
+backdrop.className = "modal-backdrop fade show";
+backdrop.id = "viewChargeBackdrop";
+
+document.body.appendChild(backdrop);
+
+    fetch(
+        `/hospital-charges/view/${chargeId}/`
+    )
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (!data.success) {
+
+            content.innerHTML = `
+                <div class="alert alert-danger">
+                    ${data.message || "Unable to load charge."}
+                </div>
+            `;
+
+            return;
+        }
+
+        const charge = data.charge;
+
+        let tpaHTML = "";
+
+        if (
+            charge.tpa_charges &&
+            charge.tpa_charges.length > 0
+        ) {
+
+            tpaHTML = `
+
+                <div
+                    style="
+                        grid-column:1 / -1;
+                        margin-top:15px;
+                    ">
+
+                    <h6
+                        style="
+                            font-weight:600;
+                            margin-bottom:10px;
+                        ">
+
+                        TPA-wise Charge
+
+                    </h6>
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table table-bordered">
+
+                            <thead>
+
+                                <tr>
+                                    <th>TPA Name</th>
+                                    <th>Amount</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                ${charge.tpa_charges.map(tpa => `
+
+                                    <tr>
+
+                                        <td>
+                                            ${escapeHtml(
+                                                tpa.tpa_name
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            ${escapeHtml(
+                                                tpa.amount
+                                            )}
+                                        </td>
+
+                                    </tr>
+
+                                `).join("")}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        } else {
+
+            tpaHTML = `
+
+                <div
+                    style="
+                        grid-column:1 / -1;
+                        margin-top:15px;
+                    ">
+
+                    <h6 style="font-weight:600;">
+                        TPA-wise Charge
+                    </h6>
+
+                    <div class="text-muted">
+                        No TPA-wise charges added.
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        content.innerHTML = `
+
+            <div class="patient-detail-item">
+
+                <span>Charge Name</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.charge_name
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="patient-detail-item">
+
+                <span>Charge Type</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.charge_type
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="patient-detail-item">
+
+                <span>Charge Category</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.category
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="patient-detail-item">
+
+                <span>Unit</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.unit
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="patient-detail-item">
+
+                <span>Tax</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.tax
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="patient-detail-item">
+
+                <span>Tax Percentage</span>
+
+                <strong>
+                    ${
+                        charge.tax_percentage !== "-"
+                            ? escapeHtml(
+                                charge.tax_percentage
+                            ) + "%"
+                            : "-"
+                    }
+                </strong>
+
+            </div>
+
+
+            <div class="patient-detail-item">
+
+                <span>Standard Charge</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.standard_charge
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div
+                class="patient-detail-item full">
+
+                <span>Description</span>
+
+                <strong>
+                    ${escapeHtml(
+                        charge.description
+                    )}
+                </strong>
+
+            </div>
+
+
+            ${tpaHTML}
+
+        `;
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        content.innerHTML = `
+
+            <div class="alert alert-danger">
+
+                Failed to load charge details.
+
+            </div>
+
+        `;
+
+    });
+
+}
+function closeViewChargeModal() {
+
+    const modal =
+        document.getElementById("viewChargeModal");
+
+    modal.classList.remove("show");
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+
+    document.body.classList.remove("modal-open");
+
+    const backdrop =
+        document.getElementById("viewChargeBackdrop");
+
+    if (backdrop) {
+        backdrop.remove();
+    }
+}
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let currentChargeSection = "unit";
+let chargeCurrentPage = 1;
+
+let chargeData = [];
+
+
+/* =========================================================
+   SECTION CONFIGURATION
+========================================================= */
+
+const chargeSectionData = {
+
+    unit: {
+
+        title: "Unit",
+
+        description:
+            "Manage hospital charge units.",
+
+        searchPlaceholder:
+            "Search Unit..."
+
+    },
+
+
+    tax: {
+
+        title: "Tax",
+
+        description:
+            "Manage hospital taxes.",
+
+        searchPlaceholder:
+            "Search Tax..."
+
+    },
+
+
+    charge_type: {
+
+        title: "Charge Type",
+
+        description:
+            "Manage hospital charge types.",
+
+        searchPlaceholder:
+            "Search Charge Type..."
+
+    },
+
+
+    charge_category: {
+
+        title: "Charge Category",
+
+        description:
+            "Manage hospital charge categories.",
+
+        searchPlaceholder:
+            "Search Charge Category..."
+
+    },
+
+
+    charge: {
+
+        title: "Charge",
+
+        description:
+            "Manage hospital charges.",
+
+        searchPlaceholder:
+            "Search Charge..."
+
+    }
+
+};
+
+function getNoDataMessage() {
+
+    switch (currentChargeSection) {
+
+        case "unit":
+            return "No units found";
+
+        case "tax":
+            return "No taxes found";
+
+        case "charge_type":
+            return "No charge types found";
+
+        case "charge_category":
+            return "No charge categories found";
+
+        case "charge":
+            return "No charges found";
+
+        default:
+            return "No data found";
+    }
+}
+
+/* =========================================================
+   CHANGE SECTION
+========================================================= */
+
+function changeChargeSection(type, element) {
+
+    currentChargeSection = type;
+
+    chargeCurrentPage = 1;
+
+    document
+        .querySelectorAll(".charge-menu-item")
+        .forEach(function(item) {
+
+            item.classList.remove("active");
+
+        });
+
+
+    if (element) {
+
+        element.classList.add("active");
+
+    }
+
+
+    const data =
+        chargeSectionData[type];
+
+
+    document.getElementById(
+        "chargeSearch"
+    ).value = "";
+
+
+    document.getElementById(
+        "chargeSearch"
+    ).placeholder =
+        data.searchPlaceholder;
+
+
+    loadChargeSection(type);
+
+}
+
+
+/* =========================================================
+   LOAD DATA FROM BACKEND
+========================================================= */
+
+function loadChargeSection(type) {
+
+    const tbody =
+        document.getElementById(
+            "chargesTableBody"
+        );
+
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="10"
+                style="text-align:center;">
+                Loading...
+            </td>
+        </tr>
+    `;
+
+
+    fetch(`/hospital-charges/data/${type}/`, {
+
+        method: "GET",
+
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+    })
+
+    .then(function(response) {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load data"
+            );
+
+        }
+
+        return response.json();
+
+    })
+
+    .then(function(data) {
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load data"
+            );
+
+        }
+
+
+        chargeData =
+            data.rows ||
+            data.data ||
+            [];
+
+
+        renderBackendChargeTable(
+            chargeData
+        );
+
+    })
+
+    .catch(function(error) {
+
+        console.error(error);
+
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10"
+                    style="text-align:center;">
+                    Unable to load data.
+                </td>
+            </tr>
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   TABLE HEADINGS
+========================================================= */
+
+function getChargeHeaders() {
+
+    switch (currentChargeSection) {
+
+        case "unit":
+
+            return [
+                "S.No",
+                "Unit Type/Name",
+                "Action"
+            ];
+
+
+        case "tax":
+
+            return [
+                "S.No",
+                "Tax Name",
+                "Percentage",
+                "Action"
+            ];
+
+
+        case "charge_type":
+
+            return [
+                "S.No",
+                "Charge Type",
+                "Appointment",
+                "OPD",
+                "IPD",
+                "Pathology",
+                "Radiology",
+                "Blood Bank",
+                "Ambulance",
+                "Action"
+            ];
+
+
+        case "charge_category":
+
+            return [
+                "S.No",
+                "Category Name",
+                "Charge Type",
+                "Description",
+                "Action"
+            ];
+
+
+        case "charge":
+
+            return [
+                "S.No",
+                "Charge Name",
+                "Category",
+                "Type",
+                "Unit",
+                "Tax",
+                "Standard Charge",
+                "Action"
+            ];
+
+
+        default:
+
+            return [];
+
+    }
+
+}
+
+
+function renderBackendChargeTable(data) {
+
+    const thead = document.getElementById("chargesTableHead");
+    const tbody = document.getElementById("chargesTableBody");
+
+    thead.innerHTML = "";
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+
+     thead.innerHTML = `
+            <tr>
+                ${getChargeHeaders().map(function(header) {
+                    return `<th>${escapeHtml(header)}</th>`;
+                }).join("")}
+            </tr>
+        `;
+
+    tbody.innerHTML = `
+        <tr>
+            <td
+                colspan="${getChargeHeaders().length}"
+                style="
+                    text-align:center;
+                    padding:30px;
+                    font-weight:500;
+                    color:#777;
+                ">
+                ${getNoDataMessage()}
+            </td>
+        </tr>
+    `;
+
+    updateChargePaginationInfo(0, 0, 0);
+    updateChargePagination(0, 0);
+
+    return;
+    }
+
+    /* =====================================================
+       UNIT
+    ===================================================== */
+
+    if (currentChargeSection === "unit") {
+
+        thead.innerHTML = `
+            <tr>
+                <th>S.No</th>
+                <th>Unit</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+        data.forEach(item => {
+
+            tbody.innerHTML += `
+                <tr data-charge-id="${item.id}">
+                    <td class="serial-number"></td>
+                    <td>${item.name}</td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="action-edit-btn"
+                            onclick="editChargeItem(${item.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-delete-btn"
+                            onclick="deleteChargeItem(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+        });
+    }
+
+
+    /* =====================================================
+       TAX
+    ===================================================== */
+
+    else if (currentChargeSection === "tax") {
+
+        thead.innerHTML = `
+            <tr>
+                <th>S.No</th>
+                <th>Tax Name</th>
+                <th>Percentage</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+        data.forEach(item => {
+
+            tbody.innerHTML += `
+                <tr data-charge-id="${item.id}">
+                    <td class="serial-number"></td>
+                    <td>${item.name}</td>
+
+                    <td>${item.percentage}%</td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="action-edit-btn"
+                            onclick="editChargeItem(${item.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-delete-btn"
+                            onclick="deleteChargeItem(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
+    }
+
+
+    /* =====================================================
+       CHARGE TYPE
+    ===================================================== */
+
+    else if (currentChargeSection === "charge_type") {
+
+        thead.innerHTML = `
+            <tr>
+                <th>S.No</th>
+                <th>Name</th>
+                <th>Appointment</th>
+                <th>OPD</th>
+                <th>IPD</th>
+                <th>Pathology</th>
+                <th>Radiology</th>
+                <th>Blood Bank</th>
+                <th>Ambulance</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+        data.forEach(item => {
+
+            tbody.innerHTML += `
+                <tr data-charge-id="${item.id}">
+                    <td class="serial-number"></td>
+
+                    <td>${item.name}</td>
+
+                   <td>
+    ${item.appointment
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+<td>
+    ${item.opd
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+<td>
+    ${item.ipd
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+<td>
+    ${item.pathology
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+<td>
+    ${item.radiology
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+<td>
+    ${item.blood_bank
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+<td>
+    ${item.ambulance
+        ? '<i class="fa-solid fa-check charge-status-yes"></i>'
+        : '<i class="fa-solid fa-xmark charge-status-no"></i>'}
+</td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="action-edit-btn"
+                            onclick="editChargeItem(${item.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-delete-btn"
+                            onclick="deleteChargeItem(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
+    }
+
+
+    /* =====================================================
+       CHARGE CATEGORY
+    ===================================================== */
+
+    else if (currentChargeSection === "charge_category") {
+
+        thead.innerHTML = `
+            <tr>
+                <th>S.No</th>
+                <th>Category</th>
+                <th>Charge Type</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+        data.forEach(item => {
+
+            tbody.innerHTML += `
+                <tr data-charge-id="${item.id}">
+                    <td class="serial-number"></td>
+
+                    <td>${item.name}</td>
+
+                    <td>${item.charge_type}</td>
+
+                    <td>${item.description}</td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="action-edit-btn"
+                            onclick="editChargeItem(${item.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-delete-btn"
+                            onclick="deleteChargeItem(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
+    }
+
+
+    /* =====================================================
+       CHARGE
+    ===================================================== */
+
+    else if (currentChargeSection === "charge") {
+
+        thead.innerHTML = `
+            <tr>
+                <th>S.No</th>
+                <th>Charge Name</th>
+                <th>Charge Type</th>
+                <th>Category</th>
+                <th>Unit</th>
+                <th>Tax</th>
+                <th>Standard Charge</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+        data.forEach(item => {
+
+            tbody.innerHTML += `
+                <tr data-charge-id="${item.id}">
+                    <td class="serial-number"></td>
+
+                    <td>${item.name}</td>
+
+                    <td>${item.charge_type}</td>
+
+                    <td>${item.category}</td>
+
+                    <td>${item.unit}</td>
+
+                    <td>${item.tax || "-"}</td>
+
+                    <td>${item.standard_charge}</td>
+
+                    <td>
+
+                        <button
+    type="button"
+    class="action-view-btn"
+    onclick="viewCharge(${item.id})"
+    title="View">
+
+    <i class="fa-solid fa-eye"></i>
+</button>
+
+                        <button
+                            type="button"
+                            class="action-edit-btn"
+                            onclick="editChargeItem(${item.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-delete-btn"
+                            onclick="deleteChargeItem(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
+    }
+
+    paginateCharges();
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+function getActionButtons(id) {
+
+    return `
+
+        <td class="action-cell">
+
+            <button
+                type="button"
+                class="action-btn edit-btn"
+                onclick="editChargeItem(${id})"
+                title="Edit">
+
+                <i class="fa-solid fa-pen"></i>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="action-btn delete-btn"
+                onclick="deleteChargeItem(${id})"
+                title="Delete">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </button>
+
+        </td>
+
+    `;
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchCharges() {
+
+    chargeCurrentPage = 1;
+
+    paginateCharges();
+
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+function paginateCharges() {
+
+    const tbody = document.getElementById("chargesTableBody");
+
+    const rows = Array.from(
+        tbody.querySelectorAll("tr[data-charge-id]")
+    );
+
+    const search = document.getElementById("chargeSearch")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    /* =====================================================
+       REMOVE OLD "NO DATA" ROW
+    ===================================================== */
+
+    const noDataRow = document.getElementById("noChargeDataRow");
+
+    if (noDataRow) {
+        noDataRow.remove();
+    }
+
+
+    /* =====================================================
+       FIND MATCHING ROWS
+    ===================================================== */
+
+    const matchingRows = rows.filter(function(row) {
+
+        return row.innerText
+            .toLowerCase()
+            .includes(search);
+
+    });
+
+
+    /* =====================================================
+       NO SEARCH RESULT
+    ===================================================== */
+
+    if (matchingRows.length === 0) {
+
+        rows.forEach(function(row) {
+
+            row.style.display = "none";
+
+        });
+
+        tbody.insertAdjacentHTML("beforeend", `
+            <tr id="noChargeDataRow">
+                <td
+                    colspan="${getChargeHeaders().length}"
+                    style="
+                        text-align:center;
+                        padding:30px;
+                        font-weight:500;
+                        color:#777;
+                    ">
+                    ${search
+                        ? "No matching data found"
+                        : getNoDataMessage()}
+                </td>
+            </tr>
+        `);
+
+        updateChargePaginationInfo(0, 0, 0);
+        updateChargePagination(0, 0);
+
+        return;
+    }
+
+
+    /* =====================================================
+       UPDATE SERIAL NUMBERS
+    ===================================================== */
+
+    matchingRows.forEach(function(row, index) {
+
+        const serialCell =
+            row.querySelector(".serial-number");
+
+        if (serialCell) {
+
+            serialCell.innerText = index + 1;
+
+        }
+
+    });
+
+
+    /* =====================================================
+       HIDE ALL ROWS FIRST
+    ===================================================== */
+
+    rows.forEach(function(row) {
+
+        row.style.display = "none";
+
+    });
+
+
+    /* =====================================================
+       ENTRIES
+    ===================================================== */
+
+    const entries =
+        document.getElementById("entriesCount").value;
+
+
+    /* =====================================================
+       SHOW ALL
+    ===================================================== */
+
+    if (entries === "all") {
+
+        matchingRows.forEach(function(row) {
+
+            row.style.display = "";
+
+        });
+
+        chargeCurrentPage = 1;
+
+        updateChargePagination(
+            matchingRows.length,
+            1
+        );
+
+        updateChargePaginationInfo(
+            matchingRows.length,
+            1,
+            matchingRows.length
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       PAGINATION
+    ===================================================== */
+
+    const perPage = parseInt(entries);
+
+    const totalPages = Math.ceil(
+        matchingRows.length / perPage
+    );
+
+
+    if (chargeCurrentPage > totalPages) {
+
+        chargeCurrentPage =
+            totalPages || 1;
+
+    }
+
+
+    const start =
+        (chargeCurrentPage - 1) * perPage;
+
+    const end =
+        start + perPage;
+
+
+    matchingRows.forEach(function(row, index) {
+
+        if (
+            index >= start &&
+            index < end
+        ) {
+
+            row.style.display = "";
+
+        }
+
+    });
+
+
+    /* =====================================================
+       PAGINATION INFO
+    ===================================================== */
+
+    updateChargePaginationInfo(
+
+        matchingRows.length,
+
+        matchingRows.length
+            ? start + 1
+            : 0,
+
+        Math.min(
+            end,
+            matchingRows.length
+        )
+
+    );
+
+
+    /* =====================================================
+       PAGINATION BUTTONS
+    ===================================================== */
+
+    updateChargePagination(
+        matchingRows.length,
+        totalPages
+    );
+
+}
+
+
+/* =========================================================
+   PAGINATION INFO
+========================================================= */
+
+function updateChargePaginationInfo(
+    total,
+    start,
+    end
+) {
+
+    const info =
+        document.getElementById(
+            "paginationInfo"
+        );
+
+
+    if (!info) {
+
+        return;
+
+    }
+
+
+    if (total === 0) {
+
+        info.innerText =
+            "Showing 0 of 0";
+
+        return;
+
+    }
+
+
+    info.innerText =
+        "Showing " +
+        start +
+        " to " +
+        end +
+        " of " +
+        total;
+
+}
+
+
+/* =========================================================
+   PAGE NUMBERS
+========================================================= */
+
+function updateChargePagination(
+    total,
+    totalPages
+) {
+
+    const numbers =
+        document.getElementById(
+            "chargePageNumbers"
+        );
+
+
+    const previous =
+        document.getElementById(
+            "previousChargePage"
+        );
+
+
+    const next =
+        document.getElementById(
+            "nextChargePage"
+        );
+
+
+    numbers.innerHTML =
+        "";
+
+
+    if (
+        total === 0 ||
+        totalPages <= 1
+    ) {
+
+        previous.disabled =
+            true;
+
+        next.disabled =
+            true;
+
+        return;
+
+    }
+
+
+    previous.disabled =
+        chargeCurrentPage === 1;
+
+
+    next.disabled =
+        chargeCurrentPage ===
+        totalPages;
+
+
+    for (
+        let page = 1;
+        page <= totalPages;
+        page++
+    ) {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            "pagination-btn";
+
+
+        button.innerText =
+            page;
+
+
+        if (
+            page ===
+            chargeCurrentPage
+        ) {
+
+            button.classList.add(
+                "active"
+            );
+
+        }
+
+
+        button.onclick =
+            function() {
+
+                chargeCurrentPage =
+                    page;
+
+                paginateCharges();
+
+            };
+
+
+        numbers.appendChild(
+            button
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PREVIOUS PAGE
+========================================================= */
+
+function previousChargePage() {
+
+    if (
+        chargeCurrentPage > 1
+    ) {
+
+        chargeCurrentPage--;
+
+        paginateCharges();
+
+    }
+
+}
+
+
+/* =========================================================
+   NEXT PAGE
+========================================================= */
+
+function nextChargePage() {
+
+    const search =
+        document.getElementById(
+            "chargeSearch"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    const rows =
+        Array.from(
+            document.querySelectorAll(
+                "#chargesTableBody tr[data-charge-id]"
+            )
+        )
+        .filter(function(row) {
+
+            return row.innerText
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+
+    const value =
+        document.getElementById(
+            "entriesCount"
+        ).value;
+
+
+    if (value === "all") {
+
+        return;
+
+    }
+
+
+    const perPage =
+        parseInt(value);
+
+
+    const totalPages =
+        Math.ceil(
+            rows.length /
+            perPage
+        );
+
+
+    if (
+        chargeCurrentPage <
+        totalPages
+    ) {
+
+        chargeCurrentPage++;
+
+        paginateCharges();
+
+    }
+
+}
+
+
+/* =========================================================
+   CHANGE ENTRIES
+========================================================= */
+
+function changeChargeEntriesCount() {
+
+    chargeCurrentPage = 1;
+
+    paginateCharges();
+
+}
+
+
+/* =========================================================
+   OPEN ADD MODAL
+========================================================= */
+
+function openChargeModal() {
+
+    const modal =
+        document.getElementById(
+            "chargeModal"
+        );
+
+
+    const form =
+        document.getElementById(
+            "chargeForm"
+        );
+
+
+    form.reset();
+
+
+    document.getElementById(
+        "chargeId"
+    ).value = "";
+
+
+    document.getElementById(
+        "chargeModalTitle"
+    ).innerText =
+        "Add " +
+        chargeSectionData[
+            currentChargeSection
+        ].title;
+
+
+    document.getElementById(
+        "chargeModalDescription"
+    ).innerText =
+        "Enter " +
+        chargeSectionData[
+            currentChargeSection
+        ].title.toLowerCase() +
+        " details";
+
+
+    renderChargeForm();
+
+
+    modal.classList.add(
+        "active"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeChargeModal() {
+
+    document
+        .getElementById(
+            "chargeModal"
+        )
+        .classList.remove(
+            "active"
+        );
+
+}
+
+
+/* =========================================================
+   FORM BUILDER
+========================================================= */
+
+function renderChargeForm(item = null) {
+
+    const container =
+        document.getElementById(
+            "chargeFormContent"
+        );
+
+
+    const value =
+        function(key, fallback = "") {
+
+            if (!item) {
+
+                return fallback;
+
+            }
+
+            return item[key] ??
+                   fallback;
+
+        };
+
+
+    /* =====================================================
+       UNIT
+    ===================================================== */
+
+    if (
+        currentChargeSection ===
+        "unit"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="patient-modal-section-title">
+
+                <i class="fa-solid fa-ruler"></i>
+
+                Unit Information
+
+            </div>
+
+
+            <div class="patient-details-grid">
+
+
+                <div class="patient-detail-item">
+
+                    <span>Unit Type/Name</span>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        style="width:860px"
+                        id="un"
+                        name="unit_name"
+                        placeholder="Enter unit type/name"
+                        value="${escapeHtml(
+                            value(
+                                "unit_name"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    /* =====================================================
+       TAX
+    ===================================================== */
+
+    else if (
+        currentChargeSection ===
+        "tax"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="patient-modal-section-title">
+
+                <i class="fa-solid fa-percent"></i>
+
+                Tax Information
+
+            </div>
+
+
+            <div class="patient-details-grid">
+
+                <div class="patient-detail-item">
+
+                    <span>Tax Name</span>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        style="width:420px"
+                        name="tax_name"
+                        placeholder="Enter tax name"
+                        value="${escapeHtml(
+                            value(
+                                "tax_name"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+
+                <div class="patient-detail-item">
+
+                    <span style="width:420px; margin-left:150px" id="per">Percentage</span>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        name="percentage"
+                        placeholder="Enter percentage"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        style="width:420px; margin-left:150px"
+                        value="${escapeHtml(
+                            value(
+                                "percentage"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    /* =====================================================
+       CHARGE TYPE
+    ===================================================== */
+
+    else if (
+        currentChargeSection ===
+        "charge_type"
+    ) {
+
+        let modules =
+            value(
+                "modules",
+                []
+            );
+
+
+        if (
+            typeof modules ===
+            "string"
+        ) {
+
+            try {
+
+                modules =
+                    JSON.parse(
+                        modules
+                    );
+
+            }
+            catch {
+
+                modules =
+                    modules
+                    .split(",")
+                    .map(
+                        x =>
+                            x.trim()
+                    );
+
+            }
+
+        }
+
+
+        const moduleList = [
+
+            "Appointment",
+            "OPD",
+            "IPD",
+            "Pathology",
+            "Radiology",
+            "Blood Bank",
+            "Ambulance"
+
+        ];
+
+
+        container.innerHTML = `
+
+            <div class="patient-modal-section-title">
+
+                <i class="fa-solid fa-tags"></i>
+
+                Charge Type Information
+
+            </div>
+
+
+            <div class="patient-details-grid">
+
+                <div class="patient-detail-item full">
+
+                    <span>Charge Type</span>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="charge_type"
+                        placeholder="Enter charge type"
+                        value="${escapeHtml(
+                            value(
+                                "charge_type"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+
+                <div class="patient-detail-item full">
+
+                    <span>Applicable Modules</span>
+
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:
+                            repeat(2, minmax(0, 1fr));
+                            gap:10px;
+                            margin-top:8px;
+                        ">
+
+                        ${moduleList.map(
+                            function(module) {
+
+                                const checked =
+                                    modules.includes(
+                                        module
+                                    )
+                                        ? "checked"
+                                        : "";
+
+                                return `
+
+                                    <label
+                                        style="
+                                            display:flex;
+                                            align-items:center;
+                                            gap:8px;
+                                        ">
+
+                                        <input
+                                            type="checkbox"
+                                            name="modules"
+                                            value="${module}"
+                                            ${checked}>
+
+                                        <span>
+                                            ${module}
+                                        </span>
+
+                                    </label>
+
+                                `;
+
+                            }
+                        ).join("")}
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    /* =====================================================
+       CHARGE CATEGORY
+    ===================================================== */
+
+    else if (
+        currentChargeSection ===
+        "charge_category"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="patient-modal-section-title">
+
+                <i class="fa-solid fa-folder-tree"></i>
+
+                Charge Category Information
+
+            </div>
+
+
+            <div class="patient-details-grid">
+
+                <div class="patient-detail-item">
+
+                    <span>Category Name</span>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="category_name"
+                          style="width:420px"
+                        placeholder="Enter category name"
+                        value="${escapeHtml(
+                            value(
+                                "category_name"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+
+                <div class="patient-detail-item">
+
+                    <span style="width:420px; margin-left:150px" id="cType">Charge Type</span>
+
+                    <select
+                        class="form-control"
+                        name="charge_type"
+                        style="width:420px; margin-left:150px"
+                        id="categoryChargeType"
+                        required>
+
+                        <option value="">
+                            Select charge type
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="patient-detail-item full">
+
+                    <span>Description</span>
+
+                    <textarea
+                        class="form-control"
+                        name="description"
+                        rows="3"
+                        placeholder="Enter description">${escapeHtml(
+                            value(
+                                "description"
+                            )
+                        )}</textarea>
+
+                </div>
+
+            </div>
+        `;
+
+
+        loadChargeTypeOptions(
+            value(
+                "charge_type_id",
+                value(
+                    "charge_type"
+                )
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       CHARGE
+    ===================================================== */
+
+    else if (
+        currentChargeSection ===
+        "charge"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="patient-modal-section-title">
+
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                Charge Information
+
+            </div>
+
+
+            <div class="patient-details-grid">
+
+                <div class="patient-detail-item">
+
+                    <span>Charge Name</span>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="charge_name"
+                        placeholder="Enter charge name"
+                        value="${escapeHtml(
+                            value(
+                                "charge_name"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+
+                <div class="patient-detail-item">
+
+                    <span>Charge Type</span>
+
+                    <select
+                        class="form-control"
+                        name="charge_type"
+                        id="chargeTypeSelect"
+                        required>
+
+                        <option value="">
+                            Select charge type
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="patient-detail-item">
+
+                    <span>Charge Category</span>
+
+                    <select
+                        class="form-control"
+                        name="category"
+                        id="chargeCategorySelect"
+                        required>
+
+                        <option value="">
+                            Select category
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="patient-detail-item">
+
+                    <span>Unit</span>
+
+                    <select
+                        class="form-control"
+                        name="unit"
+                        id="chargeUnitSelect"
+                        required>
+
+                        <option value="">
+                            Select unit
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+               <div class="patient-detail-item">
+
+    <span>Tax</span>
+
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:8px;
+        width:100%;
+    ">
+
+        <select
+            class="form-control"
+            name="tax"
+            id="chargeTaxSelect"
+            style="flex:1;">
+
+            <option value="">
+                No Tax
+            </option>
+
+        </select>
+
+        <input
+            type="text"
+            class="form-control"
+            id="chargeTaxPercentage"
+            placeholder="%"
+            readonly
+            style="
+                width:100px;
+                min-width:100px;
+                max-width:100px;
+                background:#f5f5f5;
+                text-align:center;
+            ">
+
+    </div>
+
+</div>
+
+
+                <div class="patient-detail-item">
+
+                    <span>Standard Charge</span>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        name="standard_charge"
+                        id="standardCharge"
+                        placeholder="Enter standard charge"
+                        min="0"
+                        step="0.01"
+                        value="${escapeHtml(
+                            value(
+                                "standard_charge"
+                            )
+                        )}"
+                        required>
+
+                </div>
+
+
+                <div class="patient-detail-item full">
+
+                    <span>Description</span>
+
+                    <textarea
+                        class="form-control"
+                        name="description"
+                        rows="3"
+                        placeholder="Enter description">${escapeHtml(
+                            value(
+                                "description"
+                            )
+                        )}</textarea>
+
+                </div>
+
+
+                <div class="patient-detail-item full">
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            margin-bottom:10px;
+                        ">
+
+                        <span>
+                            TPA-wise Charge
+                        </span>
+
+                        <button
+                            type="button"
+                            class="patient-action-btn patient-add-btn"
+                            onclick="applyStandardCharge()">
+
+                            <i class="fa-solid fa-copy"></i>
+
+                            Apply to All
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="tpaChargesContainer"
+                        style="
+                            display:grid;
+                            grid-template-columns:
+                            repeat(2,minmax(0,1fr));
+                            gap:12px;
+                        ">
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+
+        loadChargeDropdowns(
+            item
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD CHARGE TYPE OPTIONS
+========================================================= */
+
+function loadChargeTypeOptions(
+    selectedValue = ""
+) {
+
+    const select =
+        document.getElementById(
+            "categoryChargeType"
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    fetch(
+        "/hospital-charges/data/charge_type/"
+    )
+
+    .then(
+        response =>
+            response.json()
+    )
+
+    .then(
+        data => {
+
+            const rows =
+                data.rows ||
+                data.data ||
+                [];
+
+
+            rows.forEach(
+                function(item) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        item.id;
+
+
+                    option.textContent =
+                        item.charge_type ||
+                        item.name ||
+                        "";
+
+
+                    if (
+                        String(
+                            item.id
+                        ) ===
+                        String(
+                            selectedValue
+                        )
+                    ) {
+
+                        option.selected =
+                            true;
+
+                    }
+
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+    )
+
+    .catch(
+        console.error
+    );
+
+}
+
+
+/* =========================================================
+   LOAD CHARGE DROPDOWNS
+========================================================= */
+function loadChargeDropdowns(item) {
+
+    const selectedChargeType =
+        item?.charge_type_id ||
+        item?.charge_type ||
+        "";
+
+    const selectedCategory =
+        item?.category_id ||
+        item?.category ||
+        "";
+
+    const selectedTax =
+        item?.tax_id ||
+        item?.tax ||
+        "";
+
+
+    /* =====================================================
+       CHARGE TYPE
+    ===================================================== */
+
+    loadDropdown(
+        "chargeTypeSelect",
+        "charge_type",
+        "charge_type",
+        selectedChargeType
+    );
+
+
+    /* =====================================================
+       CATEGORY - ONLY CATEGORIES OF SELECTED CHARGE TYPE
+    ===================================================== */
+
+    loadCategoriesByChargeType(
+        selectedChargeType,
+        selectedCategory
+    );
+
+
+    /* =====================================================
+       UNIT
+    ===================================================== */
+
+    loadDropdown(
+        "chargeUnitSelect",
+        "unit",
+        "unit_name",
+        item?.unit_id ||
+        item?.unit
+    );
+
+
+    /* =====================================================
+       TAX
+    ===================================================== */
+
+    loadTaxDropdown(
+        selectedTax
+    );
+
+
+    /* =====================================================
+       WHEN CHARGE TYPE CHANGES
+    ===================================================== */
+
+    const chargeTypeSelect =
+        document.getElementById("chargeTypeSelect");
+
+    if (chargeTypeSelect) {
+
+        chargeTypeSelect.addEventListener(
+            "change",
+            function() {
+
+                loadCategoriesByChargeType(
+                    this.value,
+                    ""
+                );
+
+            }
+        );
+
+    }
+
+
+    loadTpaCharges(item);
+
+}
+/* =========================================================
+   LOAD CATEGORIES BY CHARGE TYPE
+========================================================= */
+
+function loadCategoriesByChargeType(
+    chargeTypeId,
+    selectedCategory = ""
+) {
+
+    const select =
+        document.getElementById(
+            "chargeCategorySelect"
+        );
+
+    if (!select) {
+        return;
+    }
+
+
+    select.innerHTML = `
+        <option value="">
+            Select category
+        </option>
+    `;
+
+
+    if (!chargeTypeId) {
+        return;
+    }
+
+
+    fetch(
+        "/hospital-charges/data/charge_category/"
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        const rows =
+            data.rows ||
+            data.data ||
+            [];
+
+
+        rows.forEach(function(row) {
+
+            /*
+             * Category's charge type ID
+             */
+
+            const rowChargeTypeId =
+                row.charge_type_id ||
+                row.charge_type;
+
+
+            if (
+                String(rowChargeTypeId) !==
+                String(chargeTypeId)
+            ) {
+                return;
+            }
+
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                row.id;
+
+
+            option.textContent =
+                row.category_name ||
+                row.name ||
+                "";
+
+
+            if (
+                String(row.id) ===
+                String(selectedCategory)
+            ) {
+
+                option.selected = true;
+
+            }
+
+
+            select.appendChild(option);
+
+        });
+
+    })
+    .catch(function(error) {
+
+        console.error(
+            "Category loading error:",
+            error
+        );
+
+    });
+
+}
+/* =========================================================
+   LOAD TAX DROPDOWN + PERCENTAGE
+========================================================= */
+
+function loadTaxDropdown(selectedTax = "") {
+
+    const select =
+        document.getElementById(
+            "chargeTaxSelect"
+        );
+
+    const percentageInput =
+        document.getElementById(
+            "chargeTaxPercentage"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    select.innerHTML = `
+        <option value="">
+            No Tax
+        </option>
+    `;
+
+
+    fetch(
+        "/hospital-charges/data/tax/"
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        const rows =
+            data.rows ||
+            data.data ||
+            [];
+
+
+        rows.forEach(function(row) {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                row.id;
+
+
+            option.textContent =
+                row.tax_name ||
+                row.name ||
+                "";
+
+
+            option.dataset.percentage =
+                row.percentage || "";
+
+
+            if (
+                String(row.id) ===
+                String(selectedTax)
+            ) {
+
+                option.selected = true;
+
+            }
+
+
+            select.appendChild(option);
+
+        });
+
+
+        /*
+         * Show percentage when editing
+         */
+
+        updateTaxPercentage();
+
+
+    })
+    .catch(function(error) {
+
+        console.error(
+            "Tax loading error:",
+            error
+        );
+
+    });
+
+
+    /*
+     * Change percentage when tax changes
+     */
+
+    select.addEventListener(
+        "change",
+        updateTaxPercentage
+    );
+
+
+    function updateTaxPercentage() {
+
+        if (!percentageInput) {
+            return;
+        }
+
+
+        const selectedOption =
+            select.options[
+                select.selectedIndex
+            ];
+
+
+        if (
+            !select.value ||
+            !selectedOption
+        ) {
+
+            percentageInput.value = "";
+
+            return;
+
+        }
+
+
+        percentageInput.value =
+            selectedOption.dataset.percentage
+                ? selectedOption.dataset.percentage + "%"
+                : "";
+
+    }
+
+}
+/* =========================================================
+   GENERIC DROPDOWN
+========================================================= */
+
+function loadDropdown(
+    selectId,
+    type,
+    labelKey,
+    selectedValue
+) {
+
+    const select =
+        document.getElementById(
+            selectId
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    fetch(
+        `/hospital-charges/data/${type}/`
+    )
+
+    .then(
+        response =>
+            response.json()
+    )
+
+    .then(
+        data => {
+
+            const rows =
+                data.rows ||
+                data.data ||
+                [];
+
+
+            rows.forEach(
+                function(row) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        row.id;
+
+
+                    option.textContent =
+                        row[labelKey] ||
+                        row.name ||
+                        row.tax_name ||
+                        row.unit_name ||
+                        row.charge_type ||
+                        "";
+
+
+                    if (
+                        String(
+                            row.id
+                        ) ===
+                        String(
+                            selectedValue
+                        )
+                    ) {
+
+                        option.selected =
+                            true;
+
+                    }
+
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+    )
+
+    .catch(
+        console.error
+    );
+
+}
+
+
+/* =========================================================
+   LOAD TPA CHARGES
+========================================================= */
+
+function loadTpaCharges(
+    item = null
+) {
+
+    const container =
+        document.getElementById(
+            "tpaChargesContainer"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    fetch(
+        "/tpa/data/"
+    )
+
+    .then(
+        response =>
+            response.json()
+    )
+
+    .then(
+        data => {
+
+            const tpas =
+                data.rows ||
+                data.data ||
+                data.tpas ||
+                [];
+
+
+            let existing =
+                {};
+
+
+            if (
+                item &&
+                item.tpa_charges
+            ) {
+
+                existing =
+                    item.tpa_charges;
+
+            }
+
+
+            container.innerHTML =
+                "";
+
+
+            tpas.forEach(
+                function(tpa) {
+
+                    let existingValue =
+                        "";
+
+
+                    if (
+                        existing &&
+                        existing[tpa.id] !==
+                        undefined
+                    ) {
+
+                        existingValue =
+                            existing[tpa.id];
+
+                    }
+
+
+                    container.innerHTML += `
+
+                        <div
+                            class="patient-detail-item">
+
+                            <span>
+                                ${escapeHtml(
+                                    tpa.tpa_name ||
+                                    tpa.name ||
+                                    ""
+                                )}
+                            </span>
+
+                            <input
+                                type="number"
+                                class="form-control tpa-charge-input"
+                                name="tpa_charge_${tpa.id}"
+                                data-tpa-id="${tpa.id}"
+                                min="0"
+                                step="0.01"
+                                value="${escapeHtml(
+                                    existingValue
+                                )}"
+                                placeholder="Enter amount">
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+        }
+    )
+
+    .catch(
+        function(error) {
+
+            console.error(
+                "TPA loading error:",
+                error
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   APPLY STANDARD CHARGE TO ALL TPA
+========================================================= */
+
+function applyStandardCharge() {
+
+    const standard =
+        document.getElementById(
+            "standardCharge"
+        );
+
+
+    if (!standard) {
+
+        return;
+
+    }
+
+
+    const value =
+        standard.value;
+
+
+    document
+        .querySelectorAll(
+            ".tpa-charge-input"
+        )
+        .forEach(
+            function(input) {
+
+                input.value =
+                    value;
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+function editChargeItem(id) {
+
+    fetch(
+        `/hospital-charges/${currentChargeSection}/${id}/`,
+        {
+
+            method: "GET",
+
+            headers: {
+
+                "X-Requested-With":
+                    "XMLHttpRequest"
+
+            }
+
+        }
+    )
+
+    .then(
+        response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load item"
+                );
+
+            }
+
+            return response.json();
+
+        }
+    )
+
+    .then(
+        data => {
+
+            if (!data.success) {
+
+                alert(
+                    data.message ||
+                    "Unable to load details."
+                );
+
+                return;
+
+            }
+
+
+            const item =
+                data.item ||
+                data.data;
+
+
+            document.getElementById(
+                "chargeId"
+            ).value =
+                item.id;
+
+
+            document.getElementById(
+                "chargeModalTitle"
+            ).innerText =
+                "Edit " +
+                chargeSectionData[
+                    currentChargeSection
+                ].title;
+
+
+            document.getElementById(
+                "chargeModalDescription"
+            ).innerText =
+                "Edit " +
+                chargeSectionData[
+                    currentChargeSection
+                ].title.toLowerCase() +
+                " details";
+
+
+            renderChargeForm(
+                item
+            );
+
+
+            document
+                .getElementById(
+                    "chargeModal"
+                )
+                .classList.add(
+                    "active"
+                );
+
+        }
+    )
+
+    .catch(
+        function(error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to load details."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+function saveCharge() {
+
+    const form =
+        document.getElementById(
+            "chargeForm"
+        );
+
+
+    if (
+        !form.checkValidity()
+    ) {
+
+        form.reportValidity();
+
+        return;
+
+    }
+
+
+    const formData =
+        new FormData(
+            form
+        );
+
+
+    formData.append(
+        "section",
+        currentChargeSection
+    );
+
+
+    /* =====================================================
+       MODULES
+    ===================================================== */
+
+    if (
+        currentChargeSection ===
+        "charge_type"
+    ) {
+
+        const modules =
+            Array.from(
+                document.querySelectorAll(
+                    'input[name="modules"]:checked'
+                )
+            )
+            .map(
+                checkbox =>
+                    checkbox.value
+            );
+
+
+        formData.delete(
+            "modules"
+        );
+
+
+        formData.append(
+            "modules",
+            JSON.stringify(
+                modules
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       TPA CHARGES
+    ===================================================== */
+
+    if (
+        currentChargeSection ===
+        "charge"
+    ) {
+
+        const tpaCharges = {};
+
+
+        document
+            .querySelectorAll(
+                ".tpa-charge-input"
+            )
+            .forEach(
+                function(input) {
+
+                    tpaCharges[
+                        input.dataset.tpaId
+                    ] =
+                        input.value;
+
+                }
+            );
+
+
+        formData.append(
+            "tpa_charges",
+            JSON.stringify(
+                tpaCharges
+            )
+        );
+
+    }
+
+
+    const csrf =
+        document.querySelector(
+            '#chargeForm input[name="csrfmiddlewaretoken"]'
+        ).value;
+
+
+    fetch(
+        `/hospital-charges/save/${currentChargeSection}/`,
+        {
+
+            method: "POST",
+
+            headers: {
+
+                "X-CSRFToken":
+                    csrf,
+
+                "X-Requested-With":
+                    "XMLHttpRequest"
+
+            },
+
+            body: formData
+
+        }
+    )
+
+    .then(async response => {
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message || "Save failed"
+        );
+    }
+
+    return data;
+
+})
+.then(data => {
+
+    if (!data.success) {
+
+        alert(
+            data.message ||
+            "Unable to save."
+        );
+
+        return;
+    }
+
+    const isEdit =
+        document.getElementById("chargeId").value !== "";
+
+    closeChargeModal();
+
+    loadChargeSection(
+        currentChargeSection
+    );
+
+    const sectionTitle =
+        chargeSectionData[
+            currentChargeSection
+        ].title;
+
+    showDjangoMessage(
+        isEdit
+            ? `${sectionTitle} updated successfully.`
+            : `${sectionTitle} saved successfully.`,
+        "success"
+    );
+
+})
+.catch(error => {
+
+    console.error(
+        "Save Charge Error:",
+        error
+    );
+
+    alert(
+        error.message ||
+        "Something went wrong while saving."
+    );
+
+})}
+
+function deleteChargeItem(id) {
+
+    const title =
+        chargeSectionData[currentChargeSection].title;
+
+    if (!confirm(
+        "Are you sure you want to delete this " +
+        title +
+        "?"
+    )) {
+        return;
+    }
+
+    const csrfToken =
+        document.querySelector(
+            '[name="csrfmiddlewaretoken"]'
+        ).value;
+
+    fetch(
+        `/hospital-charges/delete/${currentChargeSection}/${id}/`,
+        {
+            method: "POST",
+
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        if (!data.success) {
+
+            alert(
+                data.message ||
+                "Unable to delete."
+            );
+
+            return;
+        }
+
+        loadChargeSection(
+            currentChargeSection
+        );
+        showDjangoMessage(
+    `${chargeSectionData[currentChargeSection].title} deleted successfully.`,
+    "success"
+);
+
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+        alert(
+            "Something went wrong while deleting."
+        );
+
+    });
+}
+
+function getChargeExportCellValue(cell) {
+
+    // CHECK icon
+    if (
+        cell.querySelector(
+            ".fa-check, .fa-circle-check, .fa-check-circle"
+        )
+    ) {
+        return "✓";
+    }
+
+    // CROSS icon
+    if (
+        cell.querySelector(
+            ".fa-xmark, .fa-times, .fa-circle-xmark, .fa-times-circle"
+        )
+    ) {
+        return "✗";
+    }
+
+    // Normal cell
+    return cell.innerText.trim();
+}
+
+/* =========================================================
+   EXCEL EXPORT
+========================================================= */
+
+function exportChargesExcel() {
+
+    const table =
+        document.getElementById(
+            "chargesTable"
+        );
+
+
+    if (!table) {
+
+        alert(
+            "Charges table not found."
+        );
+
+        return;
+
+    }
+
+
+    const rows = [];
+
+
+    const headers =
+        getChargeHeaders()
+        .filter(
+            header =>
+                header !==
+                "Action"
+        );
+
+
+    rows.push(
+        headers
+    );
+
+
+    const tableRows =
+        table.querySelectorAll(
+            "tbody tr[data-charge-id]"
+        );
+
+
+    tableRows.forEach(
+        function(row) {
+
+            if (
+                row.style.display ===
+                "none"
+            ) {
+
+                return;
+
+            }
+
+
+            const cells =
+                row.querySelectorAll(
+                    "td"
+                );
+
+
+            const data = [];
+
+
+            for (
+                let i = 0;
+                i < cells.length - 1;
+                i++
+            ) {
+
+                data.push(
+                    getChargeExportCellValue(cells[i])
+                );
+
+            }
+
+
+            rows.push(
+                data
+            );
+
+        }
+    );
+
+
+    if (
+        rows.length <= 1
+    ) {
+
+        alert(
+            "No data found."
+        );
+
+        return;
+
+    }
+
+
+    const worksheet =
+        XLSX.utils.aoa_to_sheet(
+            rows
+        );
+
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        chargeSectionData[
+            currentChargeSection
+        ].title
+    );
+
+
+    XLSX.writeFile(
+        workbook,
+        chargeSectionData[
+            currentChargeSection
+        ].title.replace(
+            /\s+/g,
+            "_"
+        ) +
+        "_List.xlsx"
+    );
+
+}
+
+
+/* =========================================================
+   PDF EXPORT
+========================================================= */
+function exportChargesPDF() {
+
+    const { jsPDF } = window.jspdf;
+
+    const table =
+        document.getElementById("chargesTable");
+
+    if (!table) {
+        alert("Charges table not found.");
+        return;
+    }
+
+    const body = [];
+    const moduleCells = [];
+
+    table
+        .querySelectorAll(
+            "tbody tr[data-charge-id]"
+        )
+        .forEach(function (row) {
+
+            // Only visible rows
+            if (row.style.display === "none") {
+                return;
+            }
+
+            const cells =
+                row.querySelectorAll("td");
+
+            if (cells.length <= 1) {
+                return;
+            }
+
+            const rowData = [];
+            const moduleIndexes = [];
+
+            // Exclude Action column
+            for (
+                let i = 0;
+                i < cells.length - 1;
+                i++
+            ) {
+
+                const cell = cells[i];
+
+                const hasCheck =
+                    cell.querySelector(
+                        ".fa-check"
+                    );
+
+                const hasCross =
+                    cell.querySelector(
+                        ".fa-xmark"
+                    );
+
+                if (hasCheck) {
+
+                    rowData.push("");
+
+                    moduleIndexes.push({
+                        column: i,
+                        type: "check"
+                    });
+
+                }
+                else if (hasCross) {
+
+                    rowData.push("");
+
+                    moduleIndexes.push({
+                        column: i,
+                        type: "cross"
+                    });
+
+                }
+                else {
+
+                    rowData.push(
+                        cell.innerText.trim()
+                    );
+
+                }
+            }
+
+            body.push(rowData);
+
+            moduleCells.push(moduleIndexes);
+        });
+
+
+    if (body.length === 0) {
+        alert("No data found.");
+        return;
+    }
+
+
+    const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4"
+    });
+
+
+    const pageWidth =
+        doc.internal.pageSize.getWidth();
+
+
+    const title =
+        chargeSectionData[
+            currentChargeSection
+        ].title + " List";
+
+
+    const headers =
+        getChargeHeaders().filter(
+            header =>
+                header !== "Action"
+        );
+
+
+    // ==========================================
+    // PAGE HEADING
+    // ==========================================
+
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.setFontSize(16);
+
+    doc.text(
+        title,
+        pageWidth / 2,
+        16,
+        {
+            align: "center"
+        }
+    );
+
+
+    // ==========================================
+    // TABLE
+    // ==========================================
+
+    doc.autoTable({
+
+        head: [headers],
+
+        body: body,
+
+        startY: 23,
+
+        margin: {
+            top: 23,
+            left: 8,
+            right: 8,
+            bottom: 15
+        },
+
+        styles: {
+
+            fontSize: 8,
+
+            cellPadding: 2.5,
+
+            valign: "middle",
+
+            halign: "center",
+
+            overflow: "linebreak",
+
+            lineWidth: 0.3
+
+        },
+
+        headStyles: {
+
+            fontSize: 8,
+
+            fontStyle: "bold",
+
+            halign: "center",
+
+            valign: "middle",
+
+            cellPadding: 2,
+
+            overflow: "visible",
+
+            lineWidth: 0.3
+
+        },
+
+        bodyStyles: {
+
+            fontSize: 8,
+
+            halign: "center",
+
+            valign: "middle",
+
+            lineWidth: 0.3
+
+        },
+
+        theme: "grid",
+
+
+        // ======================================
+        // DRAW CHECK / CROSS
+        // ======================================
+
+        didDrawCell: function (data) {
+
+            if (
+                data.section !== "body"
+            ) {
+                return;
+            }
+
+            const rowIndex =
+                data.row.index;
+
+            const columnIndex =
+                data.column.index;
+
+            const moduleInfo =
+                moduleCells[rowIndex];
+
+            if (!moduleInfo) {
+                return;
+            }
+
+            const module =
+                moduleInfo.find(
+                    item =>
+                        item.column ===
+                        columnIndex
+                );
+
+            if (!module) {
+                return;
+            }
+
+
+            // Cell center
+            const centerX =
+                data.cell.x +
+                (data.cell.width / 2);
+
+            const centerY =
+                data.cell.y +
+                (data.cell.height / 2);
+
+
+            // ==================================
+            // CHECK MARK
+            // ==================================
+
+           if (module.type === "check") {
+
+    doc.setDrawColor(0, 0, 0);
+
+    doc.setLineWidth(0.4);
+
+    // Small check mark
+    doc.line(
+        centerX - 1.2,
+        centerY,
+        centerX - 0.4,
+        centerY + 0.9
+    );
+
+    doc.line(
+        centerX - 0.4,
+        centerY + 0.9,
+        centerX + 1.3,
+        centerY - 1.2
+    );
+}
+
+
+            // ==================================
+            // CROSS MARK
+            // ==================================
+
+           else if (module.type === "cross") {
+
+    doc.setDrawColor(0, 0, 0);
+
+    doc.setLineWidth(0.4);
+
+    // Small cross mark
+    doc.line(
+        centerX - 1.2,
+        centerY - 1.2,
+        centerX + 1.2,
+        centerY + 1.2
+    );
+
+    doc.line(
+        centerX + 1.2,
+        centerY - 1.2,
+        centerX - 1.2,
+        centerY + 1.2
+    );
+}
+
+        }
+
+    });
+
+
+    // ==========================================
+    // SAVE PDF
+    // ==========================================
+
+    doc.save(
+
+        chargeSectionData[
+            currentChargeSection
+        ].title
+        .replace(/\s+/g, "_") +
+
+        "_List.pdf"
+
+    );
+
+}
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+function printChargesList() {
+
+    const table =
+        document.getElementById(
+            "chargesTable"
+        );
+
+
+    if (!table) {
+
+        alert(
+            "Charges table not found."
+        );
+
+        return;
+
+    }
+
+
+    const headers =
+        getChargeHeaders()
+        .filter(
+            h =>
+                h !==
+                "Action"
+        );
+
+
+    let printRows =
+        "";
+
+
+    table
+        .querySelectorAll(
+            "tbody tr[data-charge-id]"
+        )
+        .forEach(
+            function(row) {
+
+                if (
+                    row.style.display ===
+                    "none"
+                ) {
+
+                    return;
+
+                }
+
+
+                const cells =
+                    row.querySelectorAll(
+                        "td"
+                    );
+
+
+                printRows += `
+                    <tr>
+                `;
+
+for (
+    let i = 0;
+    i < cells.length - 1;
+    i++
+) {
+
+    const cellValue =
+        getChargeExportCellValue(
+            cells[i]
+        );
+
+    const isModule =
+        cells[i].querySelector(
+            ".fa-check, .fa-xmark, .fa-circle-check, .fa-circle-xmark"
+        );
+
+    printRows += `
+        <td class="${isModule ? "module-mark" : ""}">
+            ${escapeHtml(cellValue)}
+        </td>
+    `;
+
+}
+
+
+                printRows += `
+                    </tr>
+                `;
+
+            }
+        );
+
+
+    if (!printRows) {
+
+        alert(
+            "No data found."
+        );
+
+        return;
+
+    }
+
+
+    const printWindow =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    if (!printWindow) {
+
+        alert(
+            "Please allow pop-ups to print."
+        );
+
+        return;
+
+    }
+
+
+    printWindow.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <title>
+                ${escapeHtml(
+                    chargeSectionData[
+                        currentChargeSection
+                    ].title
+                )} List
+            </title>
+
+
+            <style>
+
+                body {
+
+                    font-family:
+                        Arial,
+                        sans-serif;
+
+                    padding:
+                        20px;
+
+                }
+
+
+                h2 {
+
+                    text-align:
+                        center;
+
+                    margin-bottom:
+                        20px;
+
+                }
+
+
+                table {
+
+                    width:
+                        100%;
+
+                    border-collapse:
+                        collapse;
+
+                }
+
+
+                th,
+                td {
+
+                    border:
+                        1px solid #333;
+
+                    padding:
+                        8px;
+
+                    font-size:
+                        12px;
+
+                    vertical-align:
+                        middle;
+
+                }
+
+
+                th {
+
+                    font-weight:
+                        bold;
+
+                    text-align:
+                        center;
+
+                }
+
+
+                td {
+
+                    text-align:
+                        left;
+
+                }
+
+
+                @media print {
+
+                    body {
+
+                        padding:
+                            10px;
+
+                    }
+
+
+                    table {
+
+                        width:
+                            100%;
+
+                    }
+
+
+                    th,
+                    td {
+
+                        border:
+                            1px solid #000;
+
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            <h2>
+                ${escapeHtml(
+                    chargeSectionData[
+                        currentChargeSection
+                    ].title
+                )} List
+            </h2>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        ${headers.map(
+                            function(header) {
+
+                                return `
+                                    <th>
+                                        ${escapeHtml(
+                                            header
+                                        )}
+                                    </th>
+                                `;
+
+                            }
+                        ).join("")}
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${printRows}
+
+                </tbody>
+
+            </table>
+
+        </body>
+
+        </html>
+
+    `);
+
+
+    printWindow.document.close();
+
+
+    printWindow.focus();
+
+
+    setTimeout(
+        function() {
+
+            printWindow.print();
+
+        },
+        500
+    );
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const first =
+            document.querySelector(
+                ".charge-menu-item.active"
+            );
+
+
+        changeChargeSection(
+            "unit",
+            first
+        );
+
+    }
+);
+
+function showDjangoMessage(message, type = "success") {
+
+    let container = document.querySelector(".django-messages");
+
+    if (!container) {
+        container = document.createElement("div");
+        container.className = "django-messages";
+
+        document.body.insertBefore(
+            container,
+            document.body.firstChild
+        );
+    }
+
+    const messageDiv = document.createElement("div");
+
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = message;
+
+    container.appendChild(messageDiv);
+
+    // Automatically remove after 3 seconds
+    setTimeout(() => {
+        messageDiv.remove();
+
+        if (container.children.length === 0) {
+            container.remove();
+        }
+    }, 3000);
+}
+</script>
+{% endblock %}

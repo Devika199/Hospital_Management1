@@ -1,0 +1,1 @@
+from hospital.wsgi import application

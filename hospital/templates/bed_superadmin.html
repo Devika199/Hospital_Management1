@@ -1,0 +1,2164 @@
+{% extends 'super_admin_home.html' %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    html,
+body {
+    width: 88% !important;
+}
+@media (max-width: 768px) {
+
+    html,
+    body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+    }
+
+}
+    .approval-page {
+        width: 100%;
+        margin-top: 100px;
+        margin-left: 280px;
+    }
+
+
+    /* ===============================
+       HEADER
+    =============================== */
+
+    .approval-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+
+    .approval-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+    .h3{
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+    
+
+    .approval-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+
+    /* ===============================
+       FILTER
+    =============================== */
+
+    .filter-section {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+
+    .filter-btn {
+        text-decoration: none;
+        padding: 9px 18px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        background: #ffffff;
+        color: #315347;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.25s;
+    }
+
+
+    .filter-btn:hover {
+        background: #e8f4ef;
+         text-decoration: none;
+        color: #0b3d2e;
+    }
+
+
+    .filter-btn.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+    }
+
+
+    /* ===============================
+       TABLE CONTAINER
+    =============================== */
+
+    .approval-table-card {
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+    }
+
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+
+   
+    /* ===============================
+       PROFILE IMAGE
+    =============================== */
+
+    .user-image {
+        width: 50px;
+        height: 55px;
+        border-radius: 25%;
+        object-fit: cover;
+        border: 2px solid #e1ece7;
+    }
+
+
+    .default-user-image {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #e8f4ef;
+        color: #0b3d2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+    }
+
+
+    /* ===============================
+       NAME
+    =============================== */
+
+    .user-name {
+        font-weight: 700;
+        color: #173e31;
+        font-size: 13px;
+    }
+
+
+    
+
+    .action-buttons {
+        display: flex;
+        gap: 7px;
+    }
+
+
+    .approve-btn,
+    .reject-btn {
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+
+    .approve-btn {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+
+    .approve-btn:hover {
+        background: #176b50;
+        transform: translateY(-1px);
+    }
+
+
+    .reject-btn {
+        background: #fde4e4;
+        color: #b42318;
+    }
+
+
+    .reject-btn:hover {
+        background: #f7cccc;
+        transform: translateY(-1px);
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 50px !important;
+        color: #71877e !important;
+        font-size: 14px !important;
+    }
+
+
+    @media (max-width: 768px) {
+
+         
+
+        .approval-header {
+            display: block;
+        }
+
+
+        .approval-header h2 {
+            font-size: 24px;
+        }
+        .approval-table-card{
+            width: 330px !important;
+        }
+
+
+        .filter-section {
+            margin-top: 18px;
+        }
+
+    }
+.approved-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #16713a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.approved-action i {
+    font-size: 17px;
+}
+.django-messages {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    z-index: 999999;
+    width: 350px;
+}
+
+.message {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.message.success {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+.message.error {
+    background: #ffffff;
+    color: #b42318;
+    border-left: 4px solid #b42318;
+}
+
+.bed-main-layout {
+    display: flex;
+    gap: 25px;
+    width: 100%;
+}
+
+.bed-left-card {
+    width: 210px;
+    min-width: 210px;
+
+    background: #0b3d2e;
+    border: 1px solid #0b3d2e;
+    border-radius: 15px;
+
+    padding: 10px;
+
+    box-shadow: 0 8px 25px rgba(11, 61, 46, 0.15);
+
+    height: fit-content;
+}
+
+.bed-left-option {
+    display: block;
+
+    padding: 13px 15px;
+
+    margin-bottom: 5px;
+
+    border-radius: 9px;
+
+    text-decoration: none !important;
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.25s;
+}
+
+
+.bed-left-option:hover {
+    background: #e8f4ef;
+    color: #0b3d2e;
+}
+
+
+.bed-left-option.active {
+    background: #0b3d2e;
+    color: white;
+}
+
+
+.bed-right-content {
+    flex: 1;
+    min-width: 0;
+}
+
+
+
+.bed-right-content {
+    flex: 1;
+    min-width: 0;
+}
+
+
+
+.bed-section {
+    display: none;
+}
+
+
+.bed-section:first-child {
+    display: block;
+}
+.section-card {
+    background: #ffffff;
+
+    border: 1px solid #e1ece7;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+
+    min-height: 200px;
+}
+
+
+.section-card h3 {
+    margin-top: 0;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    color: #173e31;
+}
+
+
+.section-card p {
+    color: #71877e;
+
+    font-size: 13px;
+}
+
+
+.add-btn {
+    background: #0b3d2e;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.add-btn:hover {
+    background: #176b50;
+}
+
+@media (max-width: 768px) {
+
+    .bed-main-layout {
+        display: block;
+    }
+
+    .bed-left-card {
+        width: 100%;
+        min-width: 0;
+
+        margin-bottom: 20px;
+    }
+
+    .bed-right-content {
+        width: 100%;
+    }
+
+}
+@media print {
+    .btn,
+    form {
+        display: none !important;
+    }
+    @page {
+        margin: 10mm;
+    }
+
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .no-print {
+        display: none !important;
+    }
+    .bed-left-card{
+        display: none !important;
+
+    }
+    .select{
+        display: none !important;
+    }
+    .top-navbar,
+    .sidebar,
+    .navbar-toggler,
+    .mobile-profile-btn,
+    .mobile-profile-details {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+}
+@media (max-width: 768px) {
+
+    .section-card {
+        padding: 15px !important;
+        width: 100% !important;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    .section-card > .d-flex.justify-content-between {
+        display: block !important;
+        margin: 0 !important;
+    }
+
+    .section-card h3 {
+        margin: 0 0 12px 0 !important;
+    }
+    .section-card > .d-flex.justify-content-between > .d-flex {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        width: 100%;
+        gap: 8px !important;
+        margin: 0 !important;
+    }
+
+    .section-card > .d-flex.justify-content-between > .d-flex .btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .section-card > .d-flex.justify-content-between > .d-flex select {
+        width: auto !important;
+        flex: 0 0 auto;
+    }
+    .section-card form {
+        margin: 12px 0 12px 0 !important;
+    }
+
+    .section-card form .row {
+        margin-bottom: 0 !important;
+    }
+    .section-card .table-responsive {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: auto;
+    }
+
+    .section-card table {
+        margin-bottom: 0 !important;
+    }
+}
+@media (max-width: 768px) {
+
+    .approval-page {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        box-sizing: border-box !important;
+    }
+
+    .bed-main-layout {
+        width: 100% !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .bed-right-content {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .section-card {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+}
+</style>
+
+
+<div class="approval-page">
+{% if messages %}
+
+<div class="django-messages">
+
+    {% for message in messages %}
+
+        <div class="message {{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+   
+
+
+    
+
+    <div class="approval-header">
+
+        <div>
+
+            <h2>Bed</h2>
+
+            <p class="no-print">
+                Review and manage Bed.
+            </p>
+
+        </div>
+
+    </div>
+    <div class="bed-main-layout">
+
+        <!-- LEFT CARD -->
+        <div class="bed-left-card">
+
+        <a href="javascript:void(0);" 
+           class="bed-left-option active"
+           onclick="showBedSection('bedstatusSection', this)">
+            Bed Status
+        </a>
+
+        <a href="javascript:void(0);" 
+           class="bed-left-option"
+           onclick="showBedSection('bedSection', this)">
+            Bed
+        </a>
+
+        <a href="javascript:void(0);" 
+           class="bed-left-option"
+           onclick="showBedSection('bedtypeSection', this)">
+            Bed Type
+        </a>
+
+        <a href="javascript:void(0);" 
+           class="bed-left-option"
+           onclick="showBedSection('bedgroupSection', this)">
+            Bed Group
+        </a>
+
+        <a href="javascript:void(0);" 
+           class="bed-left-option"
+           onclick="showBedSection('floorSection', this)">
+            Floor
+        </a>
+
+
+        </div>
+        <div class="bed-right-content">
+            <div id="bedstatusSection" class="bed-section">
+            <div class="section-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 mt-1 fw-bold" style="color: #173e31;">Bed Status</h3>
+            <div class="d-flex align-items-center gap-2">
+       
+        <a href="#" class="btn btn-sm btn-success" onclick="event.preventDefault(); exportToExcel('bedStatusTable', 'Bed Status', 'Bed_Status_Report.xlsx');">Export Excel</a>
+        <a href="#" class="btn btn-sm btn-danger" onclick="event.preventDefault(); exportToPDF('bedStatusTable', 'Bed Status Report', 'Bed_Status_Report.pdf');">PDF</a>
+        <a href="#" class="btn btn-sm btn-primary" onclick="printReport()">Print</a>
+        <select name="select" class="printRowCount no-print" 
+        style="
+                    background-color: #173e31;
+                    color: white;
+                    border: none;
+                    padding: 6px 10px;
+                    border-radius: 5px;
+                ">
+    <option value="">All</option>
+    <option value="10">10</option>
+    <option value="50">50</option>
+    <option value="75">75</option>
+    <option value="100">100</option>
+</select>    
+    </div>
+                </div>
+                
+            <form method="GET"  id="statusSearchForm">
+                <input type="hidden" name="section" value="status">
+           
+                    <div class="row mb-3 g-2 align-items-center">
+    
+    <div class="col-md-4">
+                
+                <input type="text" name="status_search"
+               value="{{ status_search }}" placeholder="Search here..." class="form-control">
+    </div>
+    <button type="submit"
+                class="btn" onclick="searchSection('statusSearchForm')"
+                style="
+                    background-color: #173e31;
+                    color: white;
+                    height: 38px;
+                    width: 45px;
+                    border-radius: 6px;
+                "
+                title="Search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </button>
+   
+                    </div>
+                    
+            </form>
+        <div class="table-responsive table-scroll">
+        <table id="bedStatusTable" class="table table-bordered text-dark">
+
+            <thead>
+                <tr>
+                     <th>sl no</th>
+                        <th>Bed Name</th>
+                        <th>Bed Type</th>
+                        <th>Bed Group</th>
+                        <th>Floor</th>
+                        <th>Status</th>
+                        
+                        
+                        
+
+                </tr>
+            </thead>
+            <tbody>
+                 {% for bed in beds %}
+
+                    <tr>
+
+                        <!-- SL NO -->
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+
+                        <!-- BED NAME -->
+                        <td>
+                            {{ bed.bed_name }}
+                        </td>
+
+
+                        <!-- BED TYPE -->
+                        <td>
+                            {% if bed.bedtype %}
+                                {{ bed.bedtype.type_name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+
+                        <!-- BED GROUP -->
+                        <td>
+                            {% if bed.bedgroup %}
+                                {{ bed.bedgroup.group_name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+
+                        <!-- FLOOR -->
+                        <td>
+                           
+                            {{ bed.bedgroup.floor.floor_name }}
+                        </td>
+
+
+                        <!-- STATUS -->
+                        <td>
+
+                            {% if bed.not_available %}
+
+                                <span class="badge"
+                                      style="
+                                        background-color: #fde4e4;
+                                        color: #b42318;
+                                        padding: 7px 10px;
+                                    ">
+                                    Not Available
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge"
+                                      style="
+                                        background-color: #e8f4ef;
+                                        color: #16713a;
+                                        padding: 7px 10px;
+                                    ">
+                                    Available
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+                    
+                    
+                     
+                 </tr>
+                 {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        No Bed found
+                    </td>
+                </tr>
+                  {% endfor %}
+            </tbody>
+        </table>
+        </div>
+            </div>
+
+        </div>
+
+        <div id="bedSection" class="bed-section">
+            <div class="section-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 mt-1 fw-bold" style="color: #173e31;">Bed</h3>
+            <div class="d-flex align-items-center gap-2">
+        <button type="button"
+        class="btn btn-sm"
+        style="background-color: #173e31; color: #ffffff;"
+        data-bs-toggle="modal"
+        data-bs-target="#addbedModal"
+        onclick="addBed()">
+    Add
+</button>
+        <a href="#" class="btn btn-sm btn-success" onclick="event.preventDefault(); exportToExcel('bedTable', 'Bed', 'Bed_Report.xlsx');">Export Excel</a>
+        <a href="#" class="btn btn-sm btn-danger" onclick="event.preventDefault(); exportToPDF('bedTable', 'Bed Report', 'Bed_Report.pdf');">PDF</a>
+        <a href="#" class="btn btn-sm btn-primary" onclick="printReport()">Print</a>
+        <select name="select" class="printRowCount no-print" 
+        style="
+                    background-color: #173e31;
+                    color: white;
+                    border: none;
+                    padding: 6px 10px;
+                    border-radius: 5px;
+                ">
+    <option value="">All</option>
+    <option value="10">10</option>
+    <option value="50">50</option>
+    <option value="75">75</option>
+    <option value="100">100</option>
+</select>    
+    </div>
+                </div>
+                
+            <form method="GET" id="bedSearchForm">
+                <input type="hidden"
+           name="section"
+           value="bed">
+           
+                    <div class="row mb-3 g-2 align-items-center">
+    
+    <div class="col-md-4">
+                
+                <input type="text"  name='bed_search' placeholder="Search here..." class="form-control"  value="{{ bed_search }}">
+    </div>
+    <button type="submit"
+                class="btn" onclick="searchSection('bedSearchForm')"
+                style="
+                    background-color: #173e31;
+                    color: white;
+                    height: 38px;
+                    width: 45px;
+                    border-radius: 6px;
+                "
+                title="Search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </button>
+   
+                    </div>
+                    
+            </form>
+        <div class="table-responsive table-scroll">
+        <table id="bedTable"  class="table table-bordered text-dark">
+
+            <thead>
+                <tr>
+                     <th>sl no</th>
+                        <th>Bed Name</th>
+                        <th>Type</th>
+                        <th>Group</th>
+                        <th>Use</th>
+                        <th class="no-print">Action</th>
+                        
+
+
+                </tr>
+            </thead>
+            <tbody>
+                 
+                
+                     {% for bed in beds %}
+
+            <tr>
+
+                <td>{{ forloop.counter }}</td>
+
+                <td>
+                    {{ bed.bed_name }}
+                </td>
+
+                <td>
+                    {% if bed.bedtype %}
+                        {{ bed.bedtype.type_name }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if bed.bedgroup %}
+                        {{ bed.bedgroup.group_name }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+
+                    {% if bed.not_available %}
+
+                        <span class="badge"
+                              style="background-color: #fde4e4;
+                                     color: #b42318;">
+                            Not Available
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge"
+                              style="background-color: #e8f4ef;
+                                     color: #16713a;">
+                            Available
+                        </span>
+
+                    {% endif %}
+
+                </td>
+                <td class="no-print">
+
+    <a href="#"
+       class="btn btn-sm btn-dark"
+       data-bs-toggle="modal"
+       data-bs-target="#addbedModal"
+       onclick="editBed(
+           '{{ bed.id }}',
+           '{{ bed.bed_name|escapejs }}',
+           '{{ bed.bedtype.id|default:"" }}',
+           '{{ bed.bedgroup.id|default:"" }}',
+           '{{ bed.not_available|yesno:"true,false" }}'
+       )">
+        Edit
+    </a>
+
+    <a href="{% url 'delete_bed1' bed.id %}"
+       class="btn btn-sm btn-dark">
+        Delete
+    </a>
+
+</td>
+                    
+                    
+                 </tr>
+                 {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        No Bed  found
+                    </td>
+                </tr>
+                  {% endfor %}
+            </tbody>
+        </table>
+        </div>
+            </div>
+
+        </div>
+        <div class="modal fade" id="addbedModal" tabindex="-1"
+     aria-labelledby="addbedLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header"
+                 style="background-color: #173e31; color: white;">
+
+                <h5 class="modal-title" id="addbedModalLabel">
+    Add Bed
+</h5>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <form method="POST"
+                      action="{% url 'add_bed1' %}" id="bedForm">
+
+                    {% csrf_token %}
+                    <input type="hidden"
+           name="bed_id"
+           id="bed_id">
+
+                    <!-- FLOOR NAME -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                             Bed name
+                        </label>
+
+                        <input type="text"
+                               name="bed_name"
+                               id="bed_name"
+                               class="form-control"
+                               placeholder="Enter Bed name"
+                               required>
+
+                    </div>
+                     <div class="mb-3">
+
+    <label class="form-label fw-bold">
+        Type
+    </label>
+
+    <select name="type" id="bed_type" class="form-select" required>
+    <option value="">Select Type</option>
+
+    {% for bedtype in bedtype %}
+        <option value="{{ bedtype.id }}">
+            {{ bedtype.type_name }}
+        </option>
+    {% endfor %}
+
+</select>
+
+</div>
+
+
+                     <div class="mb-3">
+
+    <label class="form-label fw-bold">
+        Group
+    </label>
+
+    <select name="group" id="bed_group" class="form-select" required>
+    <option value="">Select Bed Group</option>
+
+    {% for bedgroup in bedgroup %}
+        <option value="{{ bedgroup.id }}">
+            {{ bedgroup.group_name }}
+        </option>
+    {% endfor %}
+
+</select>
+</div>
+<div class="mb-3">
+
+    <div class="form-check">
+
+        <input type="checkbox"
+               class="form-check-input"
+               name="not_available"
+               id="notAvailable">
+
+        <label class="form-check-label fw-bold" for="notAvailable">
+            Not available for use
+        </label>
+
+    </div>
+
+</div>
+
+                    <!-- BUTTONS -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                id="bedSaveBtn"
+                                style="background-color: #173e31; color: white;">
+                            Save
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+        <div id="floorSection" class="bed-section">
+            <div class="section-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 mt-1 fw-bold" style="color: #173e31;">Floor</h3>
+            <div class="d-flex align-items-center gap-2">
+        <button type="button"
+        class="btn btn-sm"
+        style="background-color: #173e31; color: #ffffff;"
+        data-bs-toggle="modal"
+        data-bs-target="#addFloorModal"
+        onclick="addFloor()">
+    Add
+</button>
+        <a href="#" class="btn btn-sm btn-success" onclick="event.preventDefault(); exportToExcel('floorTable', 'Floor', 'Floor_Report.xlsx');">Export Excel</a>
+        <a href="#" class="btn btn-sm btn-danger"  onclick="event.preventDefault(); exportToPDF('floorTable', 'Floor Report', 'Floor_Report.pdf');">PDF</a>
+        <a href="#" class="btn btn-sm btn-primary" onclick="printReport()">Print</a>
+        <select name="select" class="printRowCount no-print"
+        style="
+                    background-color: #173e31;
+                    color: white;
+                    border: none;
+                    padding: 6px 10px;
+                    border-radius: 5px;
+                ">
+    <option value="">All</option>
+    <option value="10">10</option>
+    <option value="50">50</option>
+    <option value="75">75</option>
+    <option value="100">100</option>
+</select>    
+    </div>
+                </div>
+                
+            <form method="GET" id="floorSearchForm">
+
+           
+                    <div class="row mb-3 g-2 align-items-center">
+    
+    <div class="col-md-4">
+        <input type="hidden"
+           name="section"
+           value="floor">
+                
+                <input type="text"  name='floor_search' placeholder="Search here..." class="form-control"  value="{{ floor_search }}">
+    </div>
+    <button type="submit"
+                class="btn"  onclick="searchSection('floorSearchForm')"
+                style="
+                    background-color: #173e31;
+                    color: white;
+                    height: 38px;
+                    width: 45px;
+                    border-radius: 6px;
+                "
+                title="Search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </button>
+   
+                    </div>
+                    
+            </form>
+        <div class="table-responsive table-scroll">
+        <table id="floorTable" class="table table-bordered text-dark">
+
+            <thead>
+                <tr>
+                     <th>sl no</th>
+                        <th>Floor Name</th>
+                        <th>Description</th>
+                        <th class="no-print">Action</th>
+                        
+
+
+                </tr>
+            </thead>
+            <tbody>
+                 {% for floors in floors %}
+                
+                     <td>{{ forloop.counter }}</td>
+                    <td>{{ floors.floor_name }}</td>
+                    <td>{{ floors.description }}</td>
+                    <td class="no-print"><a href="#"
+           class="btn btn-sm btn-dark"
+           data-bs-toggle="modal"
+           data-bs-target="#addFloorModal"
+           onclick="editFloor(
+               '{{ floors.id }}',
+               '{{ floors.floor_name|escapejs }}',
+               '{{ floors.description|escapejs }}'
+           )">
+            Edit
+        </a>
+
+        <a href="{% url 'delete_floor1' floors.id %}"
+           class="btn btn-sm btn-dark">
+            Delete
+        </a>
+</td>
+                    
+                     
+                 </tr>
+                 {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        No Floor  found
+                    </td>
+                </tr>
+                  {% endfor %}
+            </tbody>
+        </table>
+        </div>
+            </div>
+
+        </div>
+        <!-- ===============================
+     ADD FLOOR MODAL
+================================ -->
+
+<div class="modal fade" id="addFloorModal" tabindex="-1"
+     aria-labelledby="addFloorModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header"
+                 style="background-color: #173e31; color: white;">
+
+                <h5 class="modal-title" id="addFloorModalLabel">
+                    Add Floor
+                </h5>
+
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <form method="POST"
+                      action="{% url 'add_floor1' %}" id="floorForm">
+
+                    {% csrf_token %}
+                    <input type="hidden"
+                           name="floor_id"
+                           id="floor_id">
+
+                    <!-- FLOOR NAME -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            Floor Name
+                        </label>
+
+                        <input type="text"
+                               name="floor_name"
+                               class="form-control"
+                                id="floor_name"
+                               placeholder="Enter floor name"
+                               required>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            Description
+                        </label>
+
+                        <textarea name="description"
+                                  class="form-control"
+                                  id="floor_description"
+                                  rows="3"
+                                  placeholder="Enter description"></textarea>
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                id="floorSaveBtn"
+                                style="background-color: #173e31; color: white;">
+                            Save Floor
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="bedgroupSection" class="bed-section">
+            <div class="section-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 mt-1 fw-bold" style="color: #173e31;">Bed Group</h3>
+            <div class="d-flex align-items-center gap-2">
+        <button type="button"
+        class="btn btn-sm"
+        style="background-color: #173e31; color: #ffffff;"
+        data-bs-toggle="modal"
+        data-bs-target="#addbedgroupModal"
+        onclick="addBedGroup()">
+    Add
+</button>
+        <a href="#" class="btn btn-sm btn-success" onclick="event.preventDefault(); exportToExcel('bedGroupTable', 'Bed Group', 'Bed_Group_Report.xlsx');">Export Excel</a>
+        <a href="#" class="btn btn-sm btn-danger" onclick="event.preventDefault(); exportToPDF('bedGroupTable', 'Bed Group Report', 'Bed_Group_Report.pdf');">PDF</a>
+        <a href="#" class="btn btn-sm btn-primary" onclick="printReport()">Print</a>
+        <select name="select" class="printRowCount no-print" 
+        style="
+                    background-color: #173e31;
+                    color: white;
+                    border: none;
+                    padding: 6px 10px;
+                    border-radius: 5px;
+                ">
+    <option value="">All</option>
+    <option value="10">10</option>
+    <option value="50">50</option>
+    <option value="75">75</option>
+    <option value="100">100</option>
+</select>    
+    </div>
+                </div>
+                
+            <form method="GET" id="groupsearchform">
+                <input type="hidden" name="section" value="group">
+           
+                    <div class="row mb-3 g-2 align-items-center">
+    
+    <div class="col-md-4">
+                
+                <input type="text"  name='group_search' placeholder="Search here..." class="form-control"  value="{{ group_search }}">
+    </div>
+    <button type="submit"
+                class="btn" onclick="searchSection('groupsearchform')"
+                style="
+                    background-color: #173e31;
+                    color: white;
+                    height: 38px;
+                    width: 45px;
+                    border-radius: 6px;
+                "
+                title="Search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </button>
+   
+                    </div>
+                    
+            </form>
+        <div class="table-responsive table-scroll">
+        <table id="bedGroupTable" class="table table-bordered text-dark">
+
+            <thead>
+                <tr>
+                     <th>sl no</th>
+                        <th>Group Name</th>
+                        <th>Floor</th>
+                        <th>Colour</th>
+                        <th>Description</th>
+                        <th class="no-print">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                 {% for bedgroup in bedgroup %}
+                
+                     <td>{{ forloop.counter }}</td>
+                    <td>{{ bedgroup.group_name }}</td>
+                    <td>{{ bedgroup.floor.floor_name }}</td>
+                    <td>{{ bedgroup.colour }}</td>
+                    <td>{{ bedgroup.description }}</td>
+                    <td class="no-print"> <a href="#"
+           class="btn btn-sm btn-dark"
+           data-bs-toggle="modal"
+           data-bs-target="#addbedgroupModal"
+           onclick="editBedGroup(
+               '{{ bedgroup.id }}',
+               '{{ bedgroup.group_name|escapejs }}',
+               '{{ bedgroup.floor.id }}',
+               '{{ bedgroup.colour|escapejs }}',
+               '{{ bedgroup.description|escapejs }}'
+           )">
+            Edit
+        </a>
+
+
+        <a href="{% url 'delete_bed_group1' bedgroup.id %}"
+           class="btn btn-sm btn-dark">
+            Delete
+        </a>
+</td>
+                    
+                     
+                 </tr>
+                 {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        No Bed Group  found
+                    </td>
+                </tr>
+                  {% endfor %}
+            </tbody>
+        </table>
+        </div>
+            </div>
+
+        </div>
+        <!-- ===============================
+     ADD FLOOR MODAL
+================================ -->
+
+<div class="modal fade" id="addbedgroupModal" tabindex="-1"
+     aria-labelledby="addbedgroupLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header"
+                 style="background-color: #173e31; color: white;">
+
+                <h5 class="modal-title" id="addbedgroupModalLabel">
+                    Add Bed Group
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <form method="POST"
+                      action="{% url 'add_bedgroup1' %}" id="bedgroupForm">
+
+                    {% csrf_token %}
+                    <input type="hidden"
+                           name="bedgroup_id"
+                           id="bedgroup_id">
+
+                    <!-- FLOOR NAME -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            Group Name
+                        </label>
+
+                        <input type="text"
+                               name="group_name"
+                               id="group_name"
+                               class="form-control"
+                               placeholder="Enter group name"
+                               required>
+
+                    </div>
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            colour
+                        </label>
+
+                        <input type="text"
+                               name="colour"
+                               id="colour"
+                               class="form-control"
+                               placeholder="Enter colour name"
+                               required>
+
+                    </div>
+                    <div class="mb-3">
+
+    <label class="form-label fw-bold">
+        Floor
+    </label>
+
+    <select name="floor" id="floor" class="form-select" required>
+
+        <option value="">Select Floor</option>
+
+        {% for floor in floors %}
+            <option value="{{ floor.id }}">
+                {{ floor.floor_name }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+</div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            Description
+                        </label>
+
+                        <textarea name="description"
+                        id="description"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Enter description"></textarea>
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                style="background-color: #173e31; color: white;" id="bedgroupSaveBtn">
+                            Save
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="bedtypeSection" class="bed-section">
+            <div class="section-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 mt-1 fw-bold" style="color: #173e31;">Bed Type</h3>
+            <div class="d-flex align-items-center gap-2">
+        <button type="button"
+        class="btn btn-sm"
+        style="background-color: #173e31; color: #ffffff;"
+        data-bs-toggle="modal"
+        data-bs-target="#addbedtypeModal"
+        onclick="addBedType()">
+    Add
+</button>
+        <a href="#" class="btn btn-sm btn-success" onclick="event.preventDefault(); exportToExcel('bedTypeTable', 'Bed Type', 'Bed_Type_Report.xlsx');">Export Excel</a>
+        <a href="#" class="btn btn-sm btn-danger" onclick="event.preventDefault(); exportToPDF('bedTypeTable', 'Bed Type Report', 'Bed_Type_Report.pdf');">PDF</a>
+        <a href="#" class="btn btn-sm btn-primary" onclick="printReport()">Print</a>
+        <select name="select" class="printRowCount no-print"
+        style="
+                    background-color: #173e31;
+                    color: white;
+                    border: none;
+                    padding: 6px 10px;
+                    border-radius: 5px;
+                ">
+    <option value="">All</option>
+    <option value="10">10</option>
+    <option value="50">50</option>
+    <option value="75">75</option>
+    <option value="100">100</option>
+</select>    
+    </div>
+                </div>
+                
+            <form method="GET" id="typesearchform">
+                <input type="hidden" name="section" value="type">
+
+           
+                    <div class="row mb-3 g-2 align-items-center">
+    
+    <div class="col-md-4">
+                
+                <input type="text"  name='type_search' placeholder="Search here..." class="form-control"  value="{{ type_search }}">
+    </div>
+    <button type="submit"
+                class="btn" onclick="searchSection('typesearchform')"
+                style="
+                    background-color: #173e31;
+                    color: white;
+                    height: 38px;
+                    width: 45px;
+                    border-radius: 6px;
+                "
+                title="Search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </button>
+   
+                    </div>
+                    
+            </form>
+            
+        <div class="table-responsive table-scroll">
+        <table id="bedTypeTable" class="table table-bordered text-dark">
+
+            <thead>
+                <tr>
+                     <th>sl no</th>
+                        <th>Type Name</th>
+                        
+                        <th class="no-print">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                 {% for bedtype in bedtype %}
+                
+                     <td>{{ forloop.counter }}</td>
+                    <td>{{ bedtype.type_name }}</td>
+                    
+                    <td class="no-print"> <a href="#"
+   class="btn btn-sm btn-dark"
+   data-bs-toggle="modal"
+   data-bs-target="#addbedtypeModal"
+   onclick="editBedType(
+       '{{ bedtype.id }}',
+       '{{ bedtype.type_name|escapejs }}'
+   )">
+    Edit
+</a>
+
+        <a href="{% url 'delete_bed_type1' bedtype.id %}"
+           class="btn btn-sm btn-dark">
+            Delete
+        </a>
+</td>
+                    
+                     
+                 </tr>
+                 {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        No Bed Type  found
+                    </td>
+                </tr>
+                  {% endfor %}
+            </tbody>
+        </table>
+        </div>
+            </div>
+
+        </div>
+        <!-- ===============================
+     ADD FLOOR MODAL
+================================ -->
+
+<div class="modal fade" id="addbedtypeModal" tabindex="-1"
+     aria-labelledby="addbedtypeLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header"
+                 style="background-color: #173e31; color: white;">
+
+               <h5 class="modal-title" id="addbedtypeModalLabel">
+    Add Bed Type
+</h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <form method="POST"
+                      action="{% url 'add_bedtype1' %}" id="bedtypeForm">
+
+                    {% csrf_token %}
+                     <input type="hidden"
+           name="bedtype_id"
+           id="bedtype_id">
+
+
+                    <!-- FLOOR NAME -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                             Type name
+                        </label>
+
+                        <input type="text"
+                               name="type_name"
+                               class="form-control"
+                               placeholder="Enter type name"
+                               required>
+
+                    </div>
+                    
+
+                    <!-- BUTTONS -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                id="bedtypeSaveBtn"
+                                style="background-color: #173e31; color: white;">
+                            Save
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+<script>
+
+function showBedSection(sectionId, clickedOption) {
+
+    var sections = document.querySelectorAll(".bed-section");
+
+    sections.forEach(function(section) {
+        section.style.display = "none";
+    });
+
+    document.getElementById(sectionId).style.display = "block";
+    var options = document.querySelectorAll(".bed-left-option");
+
+    options.forEach(function(option) {
+        option.classList.remove("active");
+    });
+
+    clickedOption.classList.add("active");
+}
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    var activeSection = "{{ active_section }}";
+
+    var sectionMap = {
+        "bed": "bedSection",
+        "floor": "floorSection",
+        "group": "bedgroupSection",
+        "type": "bedtypeSection",
+        "status": "bedstatusSection"
+    };
+
+    document.querySelectorAll(".bed-section").forEach(function(section) {
+        section.style.display = "none";
+    });
+
+    var sectionId = sectionMap[activeSection];
+
+    if (sectionId) {
+        var section = document.getElementById(sectionId);
+
+        if (section) {
+            section.style.display = "block";
+        }
+    }
+
+});
+</script>
+<script>
+function searchSection(formId) {
+
+    var form = document.getElementById(formId);
+
+    if (!form) {
+        return;
+    }
+
+    var input = form.querySelector("input[type='text']");
+
+    if (!input) {
+        return;
+    }
+
+    // Do nothing if search is empty
+    if (input.value.trim() === "") {
+        return;
+    }
+
+    form.submit();
+}
+</script>
+
+<script>
+function printReport() {
+    window.print();
+}
+</script>
+<script>
+function exportToPDF(tableId, reportTitle, fileName) {
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4"
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.setFontSize(16);
+
+    doc.text(
+        reportTitle,
+        pageWidth / 2,
+        15,
+        {
+            align: "center"
+        }
+    );
+
+    const table = document.getElementById(tableId);
+
+    if (!table) {
+        alert("Table not found");
+        return;
+    }
+
+    let headers = [];
+    let rows = [];
+
+    table.querySelectorAll("thead th").forEach(function(th) {
+
+        if (!th.classList.contains("no-print")) {
+
+            headers.push(
+                th.innerText.trim()
+            );
+
+        }
+
+    });
+    table.querySelectorAll("tbody tr").forEach(function(row) {
+
+        let rowData = [];
+
+        row.querySelectorAll("td").forEach(function(td) {
+
+            if (!td.classList.contains("no-print")) {
+
+                rowData.push(
+                    td.innerText.trim()
+                );
+
+            }
+
+        });
+
+        if (rowData.length > 0) {
+            rows.push(rowData);
+        }
+
+    });
+
+    doc.autoTable({
+
+        startY: 25,
+
+        head: [headers],
+
+        body: rows,
+
+        theme: "grid",
+
+        styles: {
+            fontSize: 9,
+            cellPadding: 3,
+            halign: "center",
+            valign: "middle"
+        },
+
+        headStyles: {
+            fillColor: [23, 62, 49],
+            textColor: [255, 255, 255],
+            fontStyle: "bold"
+        },
+
+        bodyStyles: {
+            textColor: [0, 0, 0]
+        },
+
+        margin: {
+            left: 10,
+            right: 10
+        }
+
+    });
+    doc.save(fileName);
+
+}
+</script>
+<script>
+function exportToExcel(tableId, sheetName, fileName) {
+
+    var table = document.getElementById(tableId);
+
+    if (!table) {
+        alert("Table not found: " + tableId);
+        return;
+    }
+    var clonedTable = table.cloneNode(true);
+    clonedTable.querySelectorAll(".no-print").forEach(function(element) {
+        element.remove();
+    });
+    var workbook = XLSX.utils.book_new();
+    var worksheet = XLSX.utils.table_to_sheet(clonedTable);
+    worksheet["!cols"] = [
+        { wch: 10 },  
+        { wch: 25 },  
+        { wch: 25 },  
+        { wch: 30 },  
+        { wch: 25 },  
+        { wch: 20 }   
+    ];
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        sheetName
+    );
+    XLSX.writeFile(
+        workbook,
+        fileName
+    );
+}
+
+function editBedType(id, typeName) {
+    document.getElementById("bedtype_id").value = id;
+    document.querySelector(
+        '#bedtypeForm input[name="type_name"]'
+    ).value = typeName;
+    document.getElementById(
+        "addbedtypeModalLabel"
+    ).innerText = "Update Bed Type";
+    document.getElementById(
+        "bedtypeSaveBtn"
+    ).innerText = "Update";
+}
+
+
+function addBedType() {
+    document.getElementById("bedtype_id").value = "";
+    document.querySelector(
+        '#bedtypeForm input[name="type_name"]'
+    ).value = "";
+    document.getElementById(
+        "addbedtypeModalLabel"
+    ).innerText = "Add Bed Type";
+    document.getElementById(
+        "bedtypeSaveBtn"
+    ).innerText = "Save";
+}
+
+</script>
+<script>
+
+function editBedGroup(
+    id,
+    groupName,
+    floorId,
+    colour,
+    description
+) {
+    document.getElementById(
+        "bedgroup_id"
+    ).value = id;
+    document.getElementById(
+        "group_name"
+    ).value = groupName;
+    document.getElementById(
+        "colour"
+    ).value = colour;
+    document.getElementById(
+        "floor"
+    ).value = floorId;
+    document.getElementById(
+        "description"
+    ).value = description;
+    document.getElementById(
+        "addbedgroupModalLabel"
+    ).innerText = "Update Bed Group";
+    document.getElementById(
+        "bedgroupSaveBtn"
+    ).innerText = "Update";
+
+}
+
+function addBedGroup() {
+    document.getElementById(
+        "bedgroup_id"
+    ).value = "";
+    document.getElementById(
+        "group_name"
+    ).value = "";
+
+    document.getElementById(
+        "colour"
+    ).value = "";
+
+    document.getElementById(
+        "floor"
+    ).value = "";
+
+    document.getElementById(
+        "description"
+    ).value = "";
+    document.getElementById(
+        "addbedgroupModalLabel"
+    ).innerText = "Add Bed Group";
+    document.getElementById(
+        "bedgroupSaveBtn"
+    ).innerText = "Save";
+
+}
+
+</script>
+<script>
+
+function editFloor(id, floorName, description) {
+    document.getElementById("floor_id").value = id;
+    document.getElementById("floor_name").value = floorName;
+    document.getElementById("floor_description").value = description;
+    document.getElementById(
+        "addFloorModalLabel"
+    ).innerText = "Update Floor";
+    document.getElementById(
+        "floorSaveBtn"
+    ).innerText = "Update Floor";
+}
+
+
+function addFloor() {
+
+    document.getElementById("floor_id").value = "";
+    document.getElementById("floor_name").value = "";
+
+    document.getElementById(
+        "floor_description"
+    ).value = "";
+    document.getElementById(
+        "addFloorModalLabel"
+    ).innerText = "Add Floor";
+
+    document.getElementById(
+        "floorSaveBtn"
+    ).innerText = "Save Floor";
+}
+
+</script>
+<script>
+
+function editBed(id, bedName, bedTypeId, bedGroupId, notAvailable) {
+    document.getElementById("bed_id").value = id;
+    document.getElementById("bed_name").value = bedName;
+    document.getElementById("bed_type").value = bedTypeId;
+    document.getElementById("bed_group").value = bedGroupId;
+    document.getElementById("notAvailable").checked =
+        notAvailable === "true";
+    document.getElementById("addbedModalLabel").innerText =
+        "Update Bed";
+    document.getElementById("bedSaveBtn").innerText =
+        "Update";
+}
+function addBed() {
+    document.getElementById("bed_id").value = "";
+    document.getElementById("bed_name").value = "";
+    document.getElementById("bed_type").value = "";
+    document.getElementById("bed_group").value = "";
+    document.getElementById("notAvailable").checked = false;
+    document.getElementById("addbedModalLabel").innerText =
+        "Add Bed";
+    document.getElementById("bedSaveBtn").innerText =
+        "Save";
+}
+
+</script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".printRowCount").forEach(function(select) {
+        select.addEventListener("change", function () {
+            var selectedCount = this.value;
+            var section = this.closest(".bed-section");
+
+            if (!section) {
+                return;
+            }
+            var table = section.querySelector("table");
+
+            if (!table) {
+                return;
+            }
+            var rows = table.querySelectorAll("tbody tr");
+            rows.forEach(function(row) {
+                row.style.display = "";
+            });
+
+            
+            if (selectedCount !== "") {
+
+                var limit = parseInt(selectedCount);
+
+                rows.forEach(function(row, index) {
+
+                    if (index >= limit) {
+                        row.style.display = "none";
+                    }
+
+                });
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+{% endblock %}

@@ -1,0 +1,1655 @@
+{% extends base_template %}
+
+{% block content %}
+
+<!-- CDN Libraries for Excel & PDF Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+    /* ===============================
+       PAGE LAYOUT & CONTAINER
+    =============================== */
+    .amb-page {
+        margin-top: 90px;
+        margin-left: 255px;
+        padding: 24px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    /* ===============================
+       HEADER
+    =============================== */
+    .amb-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .amb-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+
+    .amb-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+    /* ===============================
+       MAIN CONTENT CARD
+    =============================== */
+    .amb-card {
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+    }
+
+    /* ===============================
+       TOP TOOLBAR (SEARCH + ADD)
+    =============================== */
+    .amb-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .amb-search-box {
+        display: flex;
+        gap: 8px;
+        width: 360px;
+    }
+
+    .amb-search-input {
+        flex-grow: 1;
+        padding: 10px 14px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+        outline: none;
+    }
+
+    .amb-search-input:focus {
+        border-color: #0b3d2e;
+    }
+
+    .btn-search {
+        background: #ffffff;
+        border: 1px solid #d8e7e0;
+        color: #315347;
+        padding: 10px 16px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-search:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+    }
+
+    .btn-add-main {
+        background: #0b3d2e;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-add-main:hover {
+        background: #176b50;
+        transform: translateY(-1px);
+        color: #ffffff;
+    }
+
+    /* ===============================
+       TABLE STYLING
+    =============================== */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #edf3f0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .amb-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .amb-table thead {
+        background: #0b3d2e;
+    }
+
+    .amb-table th {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px 16px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .amb-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #315347;
+        vertical-align: middle;
+    }
+
+    .amb-table td.actions-cell {
+        white-space: nowrap;
+    }
+
+    .amb-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .amb-table tbody tr:hover {
+        background: #f7fbf9;
+    }
+
+    .amb-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Badges */
+    .badge-vtype {
+        display: inline-block;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 6px;
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1px solid #c3e2d5;
+    }
+
+    .badge-vtype.badge-contract {
+        background: #fff5f5;
+        color: #c53030;
+        border: 1.5px solid #e53e3e;
+    }
+
+    .badge-vtype.badge-owned {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1.5px solid #276749;
+    }
+
+    /* Action Buttons */
+    .btn-action-view {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #90cdf4;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 4px;
+    }
+
+    .btn-action-view:hover {
+        background: #2b6cb0;
+        color: #ffffff;
+    }
+
+    .btn-edit {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1px solid #c3e2d5;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 4px;
+    }
+
+    .btn-edit:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .btn-delete {
+        background: #fde4e4;
+        color: #b42318;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-delete:hover {
+        background: #f7cccc;
+        transform: translateY(-1px);
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 50px !important;
+        color: #71877e !important;
+        font-size: 14px !important;
+    }
+
+    /* ===============================
+       MESSAGES
+    =============================== */
+    .django-messages {
+        position: fixed;
+        top: 100px;
+        right: 25px;
+        z-index: 999999;
+        max-width: 380px;
+        width: calc(100% - 50px);
+    }
+
+    .message {
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        animation: slideInMsg 0.3s ease forwards;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    @keyframes slideInMsg {
+        from {
+            opacity: 0;
+            transform: translateX(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .message.success {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-left: 4px solid #28a745;
+    }
+
+    .message.error {
+        background: #ffffff;
+        color: #b42318;
+        border-left: 4px solid #b42318;
+    }
+
+    .btn-close-msg {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-size: 16px;
+        cursor: pointer;
+        opacity: 0.85;
+        padding: 0 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-close-msg:hover {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    /* ===============================
+       MODAL STYLING
+    =============================== */
+    .modal-content {
+        border-radius: 18px;
+        border: 1px solid #e1ece7;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(11, 61, 46, 0.15);
+    }
+
+    .modal-header {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header .modal-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        opacity: 0.85;
+        cursor: pointer;
+        transition: 0.2s;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-close-custom:hover {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-body label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #173e31;
+        margin-bottom: 6px;
+        display: inline-block;
+    }
+
+    .modal-body .form-control, .modal-body .form-select {
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+        padding: 9px 12px;
+    }
+
+    .modal-body .form-control:focus, .modal-body .form-select:focus {
+        border-color: #0b3d2e;
+        box-shadow: none;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf3f0;
+        padding: 14px 20px;
+        background: #f7fbf9;
+    }
+
+    /* Detail View List */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .detail-item {
+        background: #f8faf9;
+        border: 1px solid #e1ece7;
+        padding: 12px 16px;
+        border-radius: 10px;
+    }
+
+    .detail-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #71877e;
+        margin-bottom: 4px;
+    }
+
+    .detail-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #173e31;
+    }
+
+    /* ===============================
+       PAGINATION STYLING
+    =============================== */
+    .amb-pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-top: 16px;
+        margin-top: 16px;
+        border-top: 1px solid #eef5f2;
+        gap: 12px;
+    }
+
+    .amb-pagination-info {
+        font-size: 13px;
+        color: #55756a;
+        font-weight: 500;
+    }
+
+    .amb-pagination-info strong {
+        color: #0b3d2e;
+        font-weight: 700;
+    }
+
+    .amb-pagination-nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .amb-page-item {
+        margin: 0;
+    }
+
+    .amb-page-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #315347;
+        background: #ffffff;
+        border: 1px solid #d8e7e0;
+        text-decoration: none;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(11, 61, 46, 0.03);
+    }
+
+    .amb-page-link:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border-color: #aed9c8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(11, 61, 46, 0.08);
+    }
+
+    .amb-page-item.active .amb-page-link {
+        background: linear-gradient(135deg, #0b3d2e 0%, #165b45 100%);
+        color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
+        transform: scale(1.03);
+    }
+
+    .amb-page-item.disabled .amb-page-link {
+        color: #b5c7bd;
+        background: #f7faf8;
+        border-color: #e5ede8;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+        opacity: 0.7;
+    }
+
+    .amb-per-page-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f7fbf9;
+        border: 1px solid #d8e7e0;
+        padding: 6px 12px;
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+
+    .amb-per-page-box:focus-within, .amb-per-page-box:hover {
+        border-color: #0b3d2e;
+        background: #ffffff;
+        box-shadow: 0 2px 6px rgba(11, 61, 46, 0.06);
+    }
+
+    .amb-per-page-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #55756a;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .amb-per-page-select {
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        font-weight: 700;
+        color: #0b3d2e;
+        outline: none;
+        cursor: pointer;
+        padding-right: 4px;
+    }
+
+    /* ===============================
+       VEHICLE TYPE DROPDOWN STYLING
+    =============================== */
+    .vehicle-type-select {
+        width: 100% !important;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1.5px solid #0b3d2e;
+        background-color: #f4f9f6;
+        font-size: 14px;
+        font-weight: 600;
+        color: #0b3d2e;
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+        box-shadow: 0 2px 8px rgba(11, 61, 46, 0.06);
+    }
+
+    .vehicle-type-select:hover {
+        background-color: #ffffff;
+        border-color: #165b45;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.12);
+    }
+
+    .vehicle-type-select:focus {
+        background-color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 0 0 4px rgba(11, 61, 46, 0.18);
+        outline: none;
+    }
+
+    .vehicle-type-select option {
+        font-size: 13.5px;
+        font-weight: 600;
+        padding: 10px;
+        color: #0b3d2e;
+    }
+
+    /* ===============================
+       EXPORT BUTTONS STYLING
+    =============================== */
+    .amb-toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-export {
+        padding: 9px 14px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid transparent;
+        white-space: nowrap;
+    }
+
+    .btn-export-excel {
+        background: #e6f4ea;
+        color: #137333;
+        border-color: #ceedd5;
+    }
+    .btn-export-excel:hover {
+        background: #137333;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(19, 115, 51, 0.2);
+    }
+
+    .btn-export-pdf {
+        background: #fce8e6;
+        color: #c5221f;
+        border-color: #fad2cf;
+    }
+    .btn-export-pdf:hover {
+        background: #c5221f;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(197, 34, 31, 0.2);
+    }
+
+    .btn-export-print {
+        background: #f1f3f4;
+        color: #3c4043;
+        border-color: #dadce0;
+    }
+    .btn-export-print:hover {
+        background: #3c4043;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(60, 64, 67, 0.2);
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .amb-card, .amb-card * {
+            visibility: visible;
+        }
+        .amb-card {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+        .amb-toolbar, .amb-pagination-container, .actions-cell, .amb-table th:last-child {
+            display: none !important;
+        }
+        .print-header {
+            display: block !important;
+            visibility: visible !important;
+        }
+        .amb-table th {
+            background-color: #0b3d2e !important;
+            color: #ffffff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+
+    /* ===============================
+       MEDIA QUERIES (MOBILE RESPONSIVE)
+    =============================== */
+    @media (max-width: 768px) {
+        .amb-page {
+            margin-left: 0 !important;
+            margin-top: 80px !important;
+            padding: 12px !important;
+        }
+
+        .amb-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px !important;
+        }
+
+        .amb-search-box {
+            width: 100% !important;
+        }
+
+        .amb-toolbar-actions {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            flex-wrap: wrap !important;
+            margin-left: 0 !important;
+        }
+
+        .btn-export, .amb-toolbar-actions .btn-add-main {
+            flex: 1 1 auto !important;
+            width: auto !important;
+            justify-content: center !important;
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+            margin: 0 !important;
+        }
+
+        /* MODAL RESPONSIVE COMPACT SIZE */
+        .modal-dialog {
+            margin: 10px auto !important;
+            max-width: 95% !important;
+            width: 95% !important;
+        }
+
+        .modal-content {
+            border-radius: 12px !important;
+        }
+
+        .modal-header {
+            padding: 10px 14px !important;
+        }
+
+        .modal-header .modal-title {
+            font-size: 15px !important;
+        }
+
+        .modal-body {
+            padding: 12px 14px !important;
+        }
+
+        .modal-body .row {
+            --bs-gutter-x: 10px;
+            --bs-gutter-y: 8px;
+        }
+
+        .modal-body label {
+            font-size: 11px !important;
+            margin-bottom: 3px !important;
+        }
+
+        .modal-body .form-control, .modal-body .form-select {
+            padding: 6px 10px !important;
+            font-size: 12px !important;
+            border-radius: 7px !important;
+        }
+
+        .detail-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+            margin-bottom: 8px !important;
+        }
+
+        .detail-item {
+            padding: 6px 10px !important;
+            border-radius: 8px !important;
+        }
+
+        .detail-label {
+            font-size: 9px !important;
+            margin-bottom: 2px !important;
+        }
+
+        .detail-value {
+            font-size: 12px !important;
+        }
+
+        .modal-footer {
+            padding: 8px 14px !important;
+        }
+
+        .amb-pagination-container {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+    }
+</style>
+
+<div class="amb-page">
+
+    <!-- PAGE HEADER -->
+    <div class="amb-header">
+        <div>
+            <h2><i class="fa-solid fa-truck-medical text-success me-2"></i>Ambulance Management</h2>
+            <p>View, add, and manage hospital ambulance fleet details, vehicle specs, and driver contacts.</p>
+        </div>
+    </div>
+
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div class="django-messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            <span>
+                {% if message.tags == 'success' %}
+                <i class="fa-solid fa-circle-check me-2"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                {% endif %}
+                {{ message }}
+            </span>
+            <button type="button" class="btn-close-msg" onclick="dismissMessage(this)" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- MAIN CONTAINER CARD -->
+    <div class="amb-card">
+
+        <!-- PRINT ONLY HEADER -->
+        <div class="print-header d-none d-print-block">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0b3d2e; padding-bottom: 12px; margin-bottom: 20px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 22px; color: #0b3d2e; font-weight: 800;"><i class="fa-solid fa-truck-medical me-2"></i>Ambulance Fleet Management Report</h2>
+                    <p style="margin: 4px 0 0; font-size: 13px; color: #555;">Hospital Management System &bull; Active Fleet Details</p>
+                </div>
+                <div style="text-align: right; font-size: 12px; color: #555;">
+                    <strong>Printed On:</strong> <span id="printTimestamp"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH BAR & ADD BUTTON -->
+        <div class="amb-toolbar">
+            <form method="GET" class="amb-search-box d-flex align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center flex-grow-1 position-relative">
+                    <input type="text" name="q" value="{{ search_query }}" class="amb-search-input" placeholder="vehicle number, driver, model, year...">
+                    <button type="submit" class="btn-search"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                </div>
+                <div class="amb-per-page-box">
+                    <label class="amb-per-page-label"><i class="fa-solid fa-list-ol me-1"></i>Show:</label>
+                    <select name="per_page" class="amb-per-page-select" onchange="this.form.submit()">
+                        <option value="10" {% if per_page == "10" %}selected{% endif %}>10 / page</option>
+                        <option value="50" {% if per_page == "50" %}selected{% endif %}>50 / page</option>
+                        <option value="100" {% if per_page == "100" %}selected{% endif %}>100 / page</option>
+                        <option value="all" {% if per_page == "all" %}selected{% endif %}>All</option>
+                    </select>
+                </div>
+            </form>
+
+            <div class="amb-toolbar-actions d-flex align-items-center gap-3 flex-wrap ms-auto">
+                <button class="btn-export btn-export-excel" onclick="exportToExcel()" title="Export Table to Excel">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </button>
+                <button class="btn-export btn-export-pdf" onclick="exportToPDF()" title="Export Table to PDF">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn-export btn-export-print" onclick="printTable()" title="Print Table">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+
+                {% if request.user.is_superuser or manager.role in "super_admin,admin,manager" or request.user.groups.first.name in "Admin,Manager" %}
+                <button class="btn-add-main" onclick="openAddModal()">
+                    <i class="fa-solid fa-plus"></i> Add Ambulance
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- FULL DETAILS TABLE FORMAT -->
+        <div class="table-responsive">
+            <table class="amb-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">S.No.</th>
+                        <th style="width: 13%;">Vehicle Number</th>
+                        <th style="width: 13%;">Vehicle Model</th>
+                        <th style="width: 13%;">Driver Name</th>
+                        <th style="width: 11%;">Contact Number</th>
+                        <th style="width: 10%;">Driver License</th>
+                        <th style="width: 10%;">Vehicle Type</th>
+                        <th style="width: 6%;">Year</th>
+                        <th style="width: 12%;">Notes</th>
+                        {% if request.user.is_superuser or manager.role in "super_admin,admin,manager" or request.user.groups.first.name in "Admin,Manager" %}
+                        <th style="width: 13%;">Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for amb in ambulances %}
+                    <tr id="row-{{ amb.id }}">
+                        <td><strong>{{ page_obj.start_index|add:forloop.counter0 }}</strong></td>
+                        <td>
+                            <strong class="text-dark">{{ amb.Vehicle_number }}</strong>
+                        </td>
+                        <td>{{ amb.Vehicle_model }}</td>
+                        <td>
+                            <i class="fa-solid fa-user-doctor text-secondary me-1"></i>
+                            <strong>{{ amb.Driver_name }}</strong>
+                        </td>
+                        <td>
+                            <a href="tel:{{ amb.Contact_number }}" class="text-decoration-none text-dark">
+                                <i class="fa-solid fa-phone text-success me-1"></i> {{ amb.Contact_number }}
+                            </a>
+                        </td>
+                        <td><code>{{ amb.Driver_License }}</code></td>
+                        <td>
+                            {% if amb.Vehicle_type == 'contract' or amb.Vehicle_type == 'contracted' %}
+                            <span class="badge-vtype badge-contract">Contract</span>
+                            {% elif amb.Vehicle_type == 'owned' %}
+                            <span class="badge-vtype badge-owned">Owned</span>
+                            {% else %}
+                            <span class="badge-vtype">{{ amb.get_Vehicle_type_display|default:amb.Vehicle_type }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ amb.Year_Manufactor }}</td>
+                        <td>
+                            {% if amb.Notes %}
+                            <span class="text-secondary" title="{{ amb.Notes }}">{{ amb.Notes|truncatechars:30 }}</span>
+                            {% else %}
+                            <span class="text-muted font-12">-</span>
+                            {% endif %}
+                        </td>
+
+                        {% if request.user.is_superuser or manager.role in "super_admin,admin,manager" or request.user.groups.first.name in "Admin,Manager" %}
+                        <td class="actions-cell">
+                            <button class="btn-action-view" onclick="openViewModal('{{ amb.id }}', '{{ amb.Vehicle_number|escapejs }}', '{{ amb.Vehicle_model|escapejs }}', '{{ amb.Driver_name|escapejs }}', '{{ amb.Contact_number|escapejs }}', '{{ amb.Driver_License|escapejs }}', '{{ amb.Vehicle_type|escapejs }}', '{{ amb.Year_Manufactor|escapejs }}', '{{ amb.Notes|escapejs }}')">
+                                <i class="fa-solid fa-eye"></i> View
+                            </button>
+
+                            {% if manager.role == "manager" or manager.role == "super_admin" or manager.role == "admin" or request.user.is_superuser %}
+                            <button class="btn-edit" onclick="openEditModal('{{ amb.id }}', '{{ amb.Vehicle_number|escapejs }}', '{{ amb.Vehicle_model|escapejs }}', '{{ amb.Driver_name|escapejs }}', '{{ amb.Contact_number|escapejs }}', '{{ amb.Driver_License|escapejs }}', '{{ amb.Vehicle_type|escapejs }}', '{{ amb.Year_Manufactor|escapejs }}', '{{ amb.Notes|escapejs }}')">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            {% endif %}
+
+                            {% if manager.role == "manager" or manager.role == "super_admin" or manager.role == "admin" or request.user.is_superuser %}
+                            <button class="btn-delete" onclick="deleteAmbulance('{{ amb.id }}')">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="no-data">
+                            <i class="fa-solid fa-truck-medical text-muted" style="font-size:36px; margin-bottom:12px;"></i>
+                            <br>
+                            <strong>No ambulance records found.</strong>
+                            <p class="text-muted mb-0 font-12">Click "+ Add Ambulance" button above to register a new ambulance.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION FOOTER -->
+        {% if page_obj.paginator.count > 0 %}
+        <div class="amb-pagination-container">
+            <div class="amb-pagination-info">
+                Showing <strong>{{ page_obj.start_index }}</strong> to <strong>{{ page_obj.end_index }}</strong> of <strong>{{ page_obj.paginator.count }}</strong> ambulance records
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+            <nav aria-label="Ambulance pagination">
+                <ul class="amb-pagination-nav">
+                    {% if page_obj.has_previous %}
+                    <li class="amb-page-item">
+                        <a class="amb-page-link" href="?q={{ search_query }}&per_page={{ per_page }}&page=1" title="First Page">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+                    <li class="amb-page-item">
+                        <a class="amb-page-link" href="?q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.previous_page_number }}" title="Previous Page">
+                            <i class="fa-solid fa-chevron-left me-1"></i> Prev
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="amb-page-item disabled"><span class="amb-page-link"><i class="fa-solid fa-angles-left"></i></span></li>
+                    <li class="amb-page-item disabled"><span class="amb-page-link"><i class="fa-solid fa-chevron-left me-1"></i> Prev</span></li>
+                    {% endif %}
+
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_num == page_obj.number %}
+                        <li class="amb-page-item active"><span class="amb-page-link">{{ page_num }}</span></li>
+                        {% elif page_num > page_obj.number|add:"-3" and page_num < page_obj.number|add:"3" %}
+                        <li class="amb-page-item"><a class="amb-page-link" href="?q={{ search_query }}&per_page={{ per_page }}&page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="amb-page-item">
+                        <a class="amb-page-link" href="?q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.next_page_number }}" title="Next Page">
+                            Next <i class="fa-solid fa-chevron-right ms-1"></i>
+                        </a>
+                    </li>
+                    <li class="amb-page-item">
+                        <a class="amb-page-link" href="?q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.paginator.num_pages }}" title="Last Page">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="amb-page-item disabled"><span class="amb-page-link">Next <i class="fa-solid fa-chevron-right ms-1"></i></span></li>
+                    <li class="amb-page-item disabled"><span class="amb-page-link"><i class="fa-solid fa-angles-right"></i></span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- ADD / EDIT AMBULANCE MODAL -->
+<div class="modal fade" id="ambulanceModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="ambulanceForm">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="modalItemId" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="fa-solid fa-truck-medical me-2"></i>Add Ambulance
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Vehicle Number -->
+                        <div class="col-md-6 mb-3">
+                            <label for="inputVehicleNumber">Vehicle Number <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   id="inputVehicleNumber" 
+                                   name="Vehicle_number" 
+                                   class="form-control text-uppercase" 
+                                   placeholder="e.g. KA-01-AB-1234" 
+                                   style="text-transform: uppercase;"
+                                   required>
+                            <small id="vehicleNumberFeedback" class="text-danger mt-1 d-none font-12" style="font-size:12px; font-weight:600;">
+                                An ambulance with this vehicle number already exists.
+                            </small>
+                        </div>
+
+                        <!-- Vehicle Model -->
+                        <div class="col-md-6 mb-3">
+                            <label for="inputVehicleModel">Vehicle Model <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   id="inputVehicleModel" 
+                                   name="Vehicle_model" 
+                                   class="form-control" 
+                                   placeholder="e.g. Force Traveller / Tata Winger" 
+                                   required>
+                        </div>
+
+                        <!-- Driver Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="inputDriverName">Driver Name <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   id="inputDriverName" 
+                                   name="Driver_name" 
+                                   class="form-control" 
+                                   placeholder="e.g. John Doe" 
+                                   required>
+                        </div>
+
+                        <!-- Contact Number -->
+                        <div class="col-md-6 mb-3">
+                            <label for="inputContactNumber">Contact Number <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   id="inputContactNumber" 
+                                   name="Contact_number" 
+                                   class="form-control" 
+                                   placeholder="e.g. 9876543210" 
+                                   maxlength="10"
+                                   pattern="\d{10}"
+                                   title="Contact number must be exactly 10 digits"
+                                   required>
+                            <small id="contactNumberFeedback" class="text-danger mt-1 d-none font-12" style="font-size:12px; font-weight:600;">
+                                Contact number must be exactly 10 digits.
+                            </small>
+                        </div>
+
+                        <!-- Driver License -->
+                        <div class="col-md-6 mb-3">
+                            <label for="inputDriverLicense">Driver License Number <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   id="inputDriverLicense" 
+                                   name="Driver_License" 
+                                   class="form-control text-uppercase" 
+                                   placeholder="e.g. DL-1420110012345" 
+                                   style="text-transform: uppercase;"
+                                   required>
+                        </div>
+
+                        <!-- Year Manufactured -->
+                        <div class="col-md-6 mb-3">
+                            <label for="inputYearManufactor">Year Manufactured <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   id="inputYearManufactor" 
+                                   name="Year_Manufactor" 
+                                   class="form-control" 
+                                   placeholder="e.g. 2024" 
+                                   maxlength="4"
+                                   pattern="\d{4}"
+                                   title="Year Manufactured must be a 4-digit year (e.g. 2024)"
+                                   required>
+                            <small id="yearManufactorFeedback" class="text-danger mt-1 d-none font-12" style="font-size:12px; font-weight:600;">
+                                Please enter a valid 4-digit year (1950 - 2026).
+                            </small>
+                        </div>
+
+                        <!-- Vehicle Type (Full Width Section with Enhanced Style) -->
+                        <div class="col-md-12 mb-3">
+                            <label for="inputVehicleType" style="font-weight: 700; color: #0b3d2e; font-size: 13px;">
+                                <i class="fa-solid fa-truck-field me-1 text-success"></i> Vehicle Type <span class="text-danger">*</span>
+                            </label>
+                            <select id="inputVehicleType" name="Vehicle_type" class="form-select vehicle-type-select" required>
+                                <option value="">Select Vehicle Type</option>
+                                <option value="contract">Contract</option>
+                                <option value="owned">Owned</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes / Description -->
+                        <div class="col-md-12 mb-2">
+                            <label for="inputNotes">Notes / Equipment Details <span class="text-danger">*</span></label>
+                            <textarea id="inputNotes" 
+                                      name="Notes" 
+                                      class="form-control" 
+                                      rows="3" 
+                                      placeholder="Enter additional notes, medical equipment installed, maintenance schedule..."
+                                      required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-add-main">Save Ambulance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW DETAILS MODAL -->
+<div class="modal fade" id="viewDetailModal" tabindex="-1" aria-labelledby="viewModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalTitle">
+                    <i class="fa-solid fa-circle-info me-2"></i>Ambulance Details
+                </h5>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid mb-3">
+                    <div class="detail-item">
+                        <div class="detail-label">Vehicle Number</div>
+                        <div class="detail-value text-success" id="viewVehicleNumber">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Vehicle Model</div>
+                        <div class="detail-value" id="viewVehicleModel">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Driver Name</div>
+                        <div class="detail-value" id="viewDriverName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Contact Number</div>
+                        <div class="detail-value" id="viewContactNumber">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Driver License</div>
+                        <div class="detail-value" id="viewDriverLicense">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Vehicle Type</div>
+                        <div class="detail-value" id="viewVehicleType">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Year Manufactured</div>
+                        <div class="detail-value" id="viewYearManufactor">-</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Notes / Details</div>
+                    <div class="detail-value" id="viewNotes" style="font-weight:400;">-</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let ambulanceModal;
+let viewDetailModal;
+
+document.addEventListener('DOMContentLoaded', function () {
+    const modalElement = document.getElementById('ambulanceModal');
+    if (modalElement && typeof bootstrap !== 'undefined') {
+        ambulanceModal = new bootstrap.Modal(modalElement);
+    }
+    const viewElement = document.getElementById('viewDetailModal');
+    if (viewElement && typeof bootstrap !== 'undefined') {
+        viewDetailModal = new bootstrap.Modal(viewElement);
+    }
+});
+
+function getAmbulanceModalInstance() {
+    const modalElement = document.getElementById('ambulanceModal');
+    if (!modalElement) return null;
+    if (typeof bootstrap !== 'undefined') {
+        if (!ambulanceModal) {
+            ambulanceModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        }
+        return ambulanceModal;
+    } else if (typeof $ !== 'undefined') {
+        return {
+            show: function() { $(modalElement).modal('show'); },
+            hide: function() { $(modalElement).modal('hide'); }
+        };
+    }
+    return null;
+}
+
+function getViewModalInstance() {
+    const modalElement = document.getElementById('viewDetailModal');
+    if (!modalElement) return null;
+    if (typeof bootstrap !== 'undefined') {
+        if (!viewDetailModal) {
+            viewDetailModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        }
+        return viewDetailModal;
+    } else if (typeof $ !== 'undefined') {
+        return {
+            show: function() { $(modalElement).modal('show'); },
+            hide: function() { $(modalElement).modal('hide'); }
+        };
+    }
+    return null;
+}
+
+function dismissMessage(btn) {
+    const msg = btn.closest('.message');
+    if (msg) {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateX(40px)';
+        setTimeout(() => msg.remove(), 300);
+    }
+}
+
+// Auto-dismiss Django flash messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        document.querySelectorAll('.django-messages .message').forEach(msg => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateX(40px)';
+            setTimeout(() => msg.remove(), 300);
+        });
+    }, 5000);
+});
+
+const vehicleInput = document.getElementById('inputVehicleNumber');
+const vehicleFeedback = document.getElementById('vehicleNumberFeedback');
+const licenseInput = document.getElementById('inputDriverLicense');
+const contactInput = document.getElementById('inputContactNumber');
+const contactFeedback = document.getElementById('contactNumberFeedback');
+const yearInput = document.getElementById('inputYearManufactor');
+const yearFeedback = document.getElementById('yearManufactorFeedback');
+
+let vehicleCheckTimeout = null;
+let isVehicleNumberValid = true;
+
+function handleVehicleInput() {
+    if (!vehicleInput) return;
+    vehicleInput.value = vehicleInput.value.toUpperCase();
+    validateVehicleNumber();
+}
+
+function handleLicenseInput() {
+    if (!licenseInput) return;
+    licenseInput.value = licenseInput.value.toUpperCase();
+}
+
+function validateVehicleNumber(callback) {
+    if (!vehicleInput) return;
+    const val = vehicleInput.value.trim();
+    const itemId = document.getElementById('modalItemId') ? document.getElementById('modalItemId').value : '';
+
+    if (!val) {
+        vehicleInput.classList.remove('is-invalid', 'is-valid');
+        if (vehicleFeedback) vehicleFeedback.classList.add('d-none');
+        isVehicleNumberValid = true;
+        if (callback) callback(true);
+        return;
+    }
+
+    clearTimeout(vehicleCheckTimeout);
+    vehicleCheckTimeout = setTimeout(() => {
+        fetch(`/ambulance/check-vehicle-number/?vehicle_number=${encodeURIComponent(val)}&item_id=${encodeURIComponent(itemId)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists) {
+                    vehicleInput.classList.remove('is-valid');
+                    vehicleInput.classList.add('is-invalid');
+                    if (vehicleFeedback) {
+                        vehicleFeedback.innerText = `An ambulance with vehicle number "${val}" already exists.`;
+                        vehicleFeedback.classList.remove('d-none');
+                    }
+                    isVehicleNumberValid = false;
+                    if (callback) callback(false);
+                } else {
+                    vehicleInput.classList.remove('is-invalid');
+                    vehicleInput.classList.add('is-valid');
+                    if (vehicleFeedback) vehicleFeedback.classList.add('d-none');
+                    isVehicleNumberValid = true;
+                    if (callback) callback(true);
+                }
+            })
+            .catch(() => {
+                isVehicleNumberValid = true;
+                if (callback) callback(true);
+            });
+    }, 250);
+}
+
+if (vehicleInput) {
+    vehicleInput.addEventListener('input', handleVehicleInput);
+    vehicleInput.addEventListener('change', handleVehicleInput);
+}
+
+if (licenseInput) {
+    licenseInput.addEventListener('input', handleLicenseInput);
+    licenseInput.addEventListener('change', handleLicenseInput);
+}
+
+function validateContactNumber() {
+    if (!contactInput) return true;
+    contactInput.value = contactInput.value.replace(/\D/g, '').slice(0, 10);
+    const val = contactInput.value;
+    
+    if (val.length === 10) {
+        contactInput.classList.remove('is-invalid');
+        contactInput.classList.add('is-valid');
+        if (contactFeedback) contactFeedback.classList.add('d-none');
+        return true;
+    } else {
+        contactInput.classList.remove('is-valid');
+        if (val.length > 0) {
+            contactInput.classList.add('is-invalid');
+            if (contactFeedback) contactFeedback.classList.remove('d-none');
+        } else {
+            contactInput.classList.remove('is-invalid');
+            if (contactFeedback) contactFeedback.classList.add('d-none');
+        }
+        return false;
+    }
+}
+
+function validateYearManufactor() {
+    if (!yearInput) return true;
+    yearInput.value = yearInput.value.replace(/\D/g, '').slice(0, 4);
+    const val = yearInput.value;
+    const yearNum = parseInt(val, 10);
+    const currentYear = new Date().getFullYear();
+    
+    if (val.length === 4 && yearNum >= 1950 && yearNum <= (currentYear + 1)) {
+        yearInput.classList.remove('is-invalid');
+        yearInput.classList.add('is-valid');
+        if (yearFeedback) yearFeedback.classList.add('d-none');
+        return true;
+    } else {
+        yearInput.classList.remove('is-valid');
+        if (val.length > 0) {
+            yearInput.classList.add('is-invalid');
+            if (yearFeedback) yearFeedback.classList.remove('d-none');
+        } else {
+            yearInput.classList.remove('is-invalid');
+            if (yearFeedback) yearFeedback.classList.add('d-none');
+        }
+        return false;
+    }
+}
+
+if (contactInput) {
+    contactInput.addEventListener('input', validateContactNumber);
+    contactInput.addEventListener('keyup', validateContactNumber);
+}
+
+if (yearInput) {
+    yearInput.addEventListener('input', validateYearManufactor);
+    yearInput.addEventListener('keyup', validateYearManufactor);
+}
+
+function openAddModal() {
+    let modal = getAmbulanceModalInstance();
+    if (!modal) return;
+
+    document.getElementById('ambulanceForm').reset();
+    document.getElementById('modalItemId').value = '';
+    document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-truck-medical me-2"></i>Add Ambulance';
+    if (vehicleInput) {
+        vehicleInput.classList.remove('is-invalid', 'is-valid');
+        if (vehicleFeedback) vehicleFeedback.classList.add('d-none');
+    }
+    if (licenseInput) {
+        licenseInput.classList.remove('is-invalid', 'is-valid');
+    }
+    if (contactInput) {
+        contactInput.classList.remove('is-invalid', 'is-valid');
+        if (contactFeedback) contactFeedback.classList.add('d-none');
+    }
+    if (yearInput) {
+        yearInput.classList.remove('is-invalid', 'is-valid');
+        if (yearFeedback) yearFeedback.classList.add('d-none');
+    }
+
+    modal.show();
+}
+
+function openEditModal(id, vehicleNum, vehicleModel, driverName, contactNum, driverLic, vehicleType, yearMfg, notes) {
+    let modal = getAmbulanceModalInstance();
+    if (!modal) return;
+
+    document.getElementById('modalItemId').value = id;
+    document.getElementById('inputVehicleNumber').value = (vehicleNum || '').toUpperCase();
+    document.getElementById('inputVehicleModel').value = vehicleModel;
+    document.getElementById('inputDriverName').value = driverName;
+    document.getElementById('inputContactNumber').value = contactNum;
+    document.getElementById('inputDriverLicense').value = (driverLic || '').toUpperCase();
+    document.getElementById('inputVehicleType').value = vehicleType;
+    document.getElementById('inputYearManufactor').value = yearMfg;
+    document.getElementById('inputNotes').value = notes;
+
+    document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square me-2"></i>Edit Ambulance Details';
+
+    if (vehicleInput) {
+        vehicleInput.classList.remove('is-invalid', 'is-valid');
+        if (vehicleFeedback) vehicleFeedback.classList.add('d-none');
+    }
+    validateContactNumber();
+    validateYearManufactor();
+
+    modal.show();
+}
+
+function openViewModal(id, vehicleNum, vehicleModel, driverName, contactNum, driverLic, vehicleType, yearMfg, notes) {
+    let modal = getViewModalInstance();
+    if (!modal) return;
+
+    let displayVType = vehicleType;
+    if (vehicleType === 'contract' || vehicleType === 'contracted') displayVType = 'Contract';
+    else if (vehicleType === 'owned') displayVType = 'Owned';
+
+    document.getElementById('viewVehicleNumber').innerText = vehicleNum || '-';
+    document.getElementById('viewVehicleModel').innerText = vehicleModel || '-';
+    document.getElementById('viewDriverName').innerText = driverName || '-';
+    document.getElementById('viewContactNumber').innerText = contactNum || '-';
+    document.getElementById('viewDriverLicense').innerText = driverLic || '-';
+    
+    const viewVTypeElem = document.getElementById('viewVehicleType');
+    if (vehicleType === 'contract' || vehicleType === 'contracted') {
+        viewVTypeElem.innerHTML = '<span class="badge-vtype badge-contract">Contract</span>';
+    } else if (vehicleType === 'owned') {
+        viewVTypeElem.innerHTML = '<span class="badge-vtype badge-owned">Owned</span>';
+    } else {
+        viewVTypeElem.innerText = displayVType || '-';
+    }
+
+    document.getElementById('viewYearManufactor').innerText = yearMfg || '-';
+    document.getElementById('viewNotes').innerText = notes || 'No extra notes provided.';
+
+    modal.show();
+}
+
+document.getElementById('ambulanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (vehicleInput) vehicleInput.value = vehicleInput.value.toUpperCase();
+    if (licenseInput) licenseInput.value = licenseInput.value.toUpperCase();
+
+    if (!validateContactNumber()) {
+        alert('Contact number must be exactly 10 digits.');
+        if (contactInput) contactInput.focus();
+        return;
+    }
+    if (!validateYearManufactor()) {
+        alert('Please enter a valid 4-digit Year Manufactured (1950 - 2026).');
+        if (yearInput) yearInput.focus();
+        return;
+    }
+
+    const val = vehicleInput ? vehicleInput.value.trim() : '';
+    const itemId = document.getElementById('modalItemId') ? document.getElementById('modalItemId').value : '';
+
+    fetch(`/ambulance/check-vehicle-number/?vehicle_number=${encodeURIComponent(val)}&item_id=${encodeURIComponent(itemId)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.exists) {
+                if (vehicleInput) {
+                    vehicleInput.classList.remove('is-valid');
+                    vehicleInput.classList.add('is-invalid');
+                    vehicleInput.focus();
+                }
+                if (vehicleFeedback) {
+                    vehicleFeedback.innerText = `An ambulance with vehicle number "${val}" already exists.`;
+                    vehicleFeedback.classList.remove('d-none');
+                }
+                alert(`An ambulance with vehicle number "${val}" already exists.`);
+                return;
+            }
+
+            let formData = new FormData(document.getElementById('ambulanceForm'));
+
+            fetch("{% url 'save_ambulance' %}", {
+                method: "POST",
+                body: formData,
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    if (data.message && data.message.toLowerCase().includes('vehicle number')) {
+                        if (vehicleInput) {
+                            vehicleInput.classList.remove('is-valid');
+                            vehicleInput.classList.add('is-invalid');
+                            vehicleInput.focus();
+                        }
+                        if (vehicleFeedback) {
+                            vehicleFeedback.innerText = data.message;
+                            vehicleFeedback.classList.remove('d-none');
+                        }
+                    }
+                    alert(data.message || 'Error saving ambulance details.');
+                }
+            })
+            .catch(err => {
+                console.error('Submission Error:', err);
+                alert('An unexpected error occurred while saving.');
+            });
+        })
+        .catch(err => {
+            console.error('Validation Check Error:', err);
+            alert('Error checking vehicle number uniqueness.');
+        });
+});
+
+function deleteAmbulance(id) {
+    if (confirm('Are you sure you want to delete this ambulance record?')) {
+        fetch(`/ambulance/delete/${id}/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Failed to delete ambulance record.');
+            }
+        })
+        .catch(err => {
+            console.error('Delete Error:', err);
+            alert('An unexpected error occurred while deleting.');
+        });
+    }
+}
+// ===============================
+// EXPORT & PRINT FUNCTIONS
+// ===============================
+function exportToExcel() {
+    try {
+        if (typeof XLSX === 'undefined') {
+            alert('Excel export library is loading... please try again in a moment.');
+            return;
+        }
+        const table = document.querySelector('.amb-table');
+        if (!table) return;
+
+        const clone = table.cloneNode(true);
+        // Exclude action buttons column
+        clone.querySelectorAll('.actions-cell, th:last-child').forEach(el => el.remove());
+
+        const wb = XLSX.utils.table_to_book(clone, { sheet: "Ambulance_Fleet" });
+        XLSX.writeFile(wb, `Ambulance_Fleet_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    } catch (err) {
+        console.error('Excel Export Error:', err);
+        alert('Failed to export to Excel.');
+    }
+}
+
+function exportToPDF() {
+    try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            alert('PDF export library is loading... please try again in a moment.');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'landscape' });
+
+        doc.setFontSize(16);
+        doc.setTextColor(11, 61, 46);
+        doc.text("Ambulance Fleet Management Report", 14, 15);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+
+        doc.autoTable({
+            html: '.amb-table',
+            startY: 28,
+            theme: 'grid',
+            headStyles: { fillColor: [11, 61, 46], textColor: [255, 255, 255], fontStyle: 'bold' },
+            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+            styles: { fontSize: 9, cellPadding: 4 }
+        });
+
+        doc.save(`Ambulance_Fleet_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) {
+        console.error('PDF Export Error:', err);
+        alert('Failed to export to PDF.');
+    }
+}
+
+function printTable() {
+    const timestampElem = document.getElementById('printTimestamp');
+    if (timestampElem) {
+        timestampElem.innerText = new Date().toLocaleString();
+    }
+    window.print();
+}
+</script>
+{% endblock %}

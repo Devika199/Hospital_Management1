@@ -1,0 +1,766 @@
+{% extends base_template %}
+
+{% block content %}
+
+<style>
+    /* ===============================
+       PAGE LAYOUT & CONTAINER
+    =============================== */
+    .fo-setup-page {
+        margin-top: 90px;
+        margin-left: 255px;
+        padding: 24px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    /* ===============================
+       HEADER
+    =============================== */
+    .fo-setup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .fo-setup-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+
+    .fo-setup-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+    /* ===============================
+       LAYOUT GRID (OPTIONS + CONTENT)
+    =============================== */
+    .fo-setup-grid {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    /* Left Side Menu Options */
+    .fo-options-card {
+        width: 240px;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        flex-shrink: 0;
+    }
+
+    .fo-option-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 12px 16px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        background: #ffffff;
+        color: #315347;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: 0.25s;
+    }
+
+    .fo-option-btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .fo-option-btn:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        text-decoration: none;
+    }
+
+    .fo-option-btn.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+    }
+
+    /* Right Side Content Card */
+    .fo-content-card {
+        flex-grow: 1;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        min-width: 0;
+    }
+
+    /* ===============================
+       TOP TOOLBAR (SEARCH + ADD)
+    =============================== */
+    .fo-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .fo-search-box {
+        display: flex;
+        gap: 8px;
+        width: 320px;
+    }
+
+    .fo-search-input {
+        flex-grow: 1;
+        padding: 9px 14px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+        outline: none;
+    }
+
+    .fo-search-input:focus {
+        border-color: #0b3d2e;
+    }
+
+    .btn-search {
+        background: #ffffff;
+        border: 1px solid #d8e7e0;
+        color: #315347;
+        padding: 9px 15px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-search:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+    }
+
+    .btn-add-main {
+        background: #0b3d2e;
+        color: #ffffff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-add-main:hover {
+        background: #176b50;
+        transform: translateY(-1px);
+    }
+
+    /* ===============================
+       ROLE BADGES
+     =============================== */
+    .badge-role {
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 6px;
+        text-transform: uppercase;
+        margin-left: 8px;
+        letter-spacing: 0.5px;
+        vertical-align: middle;
+    }
+    .badge-manager {
+        background-color: #ffe8e8;
+        color: #c53030;
+        border: 1px solid #feb2b2;
+    }
+    .badge-super-admin {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #90cdf4;
+    }
+    .badge-admin {
+        background-color: #fefcbf;
+        color: #b7791f;
+        border: 1px solid #faf089;
+    }
+    .badge-system {
+        background-color: #edf2f7;
+        color: #4a5568;
+        border: 1px solid #cbd5e0;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #edf3f0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fo-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .fo-table thead {
+        background: #0b3d2e;
+    }
+
+    .fo-table th {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .fo-table td {
+        padding: 14px;
+        border-bottom: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #315347;
+        vertical-align: middle;
+    }
+
+    .fo-table td.actions-cell {
+        white-space: nowrap;
+    }
+
+    .fo-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .fo-table tbody tr:hover {
+        background: #f7fbf9;
+    }
+
+    .fo-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Action Buttons in Table */
+    .btn-edit {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1px solid #c3e2d5;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 5px;
+    }
+
+    .btn-edit:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .btn-delete {
+        background: #fde4e4;
+        color: #b42318;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-delete:hover {
+        background: #f7cccc;
+        transform: translateY(-1px);
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px !important;
+        color: #71877e !important;
+        font-size: 13px !important;
+    }
+
+    /* ===============================
+       MESSAGES
+    =============================== */
+    .django-messages {
+        position: fixed;
+        top: 100px;
+        right: 25px;
+        z-index: 999999;
+        width: 350px;
+    }
+
+    .message {
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        font-size: 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .message.success {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .message.error {
+        background: #ffffff;
+        color: #b42318;
+        border-left: 4px solid #b42318;
+    }
+
+    /* ===============================
+       MODAL STYLING
+    =============================== */
+    .modal-content {
+        border-radius: 18px;
+        border: 1px solid #e1ece7;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(11, 61, 46, 0.1);
+    }
+
+    .modal-header {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        opacity: 0.85;
+        cursor: pointer;
+        transition: 0.2s;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-close-custom:hover {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-body label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #173e31;
+        margin-bottom: 6px;
+        display: inline-block;
+    }
+
+    .modal-body .form-control {
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+    }
+
+    .modal-body .form-control:focus {
+        border-color: #0b3d2e;
+        box-shadow: none;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf3f0;
+        padding: 12px 20px;
+    }
+
+    /* ===============================
+       MEDIA QUERIES (MOBILE RESPONSIVE)
+    =============================== */
+    @media (max-width: 768px) {
+        .fo-setup-page {
+            margin-left: 0 !important;
+            margin-top: 80px !important;
+            padding: 15px !important;
+        }
+
+        .fo-setup-grid {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .fo-options-card {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            padding: 10px !important;
+        }
+
+        .fo-option-btn {
+            flex: 1 1 calc(33.333% - 8px);
+            min-width: 80px;
+            margin-bottom: 0 !important;
+            text-align: center !important;
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+        }
+
+        .fo-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px !important;
+        }
+
+        .fo-search-box {
+            width: 100% !important;
+        }
+
+        .btn-add-main {
+            width: 100% !important;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="fo-setup-page">
+
+    <!-- PAGE HEADER -->
+    <div class="fo-setup-header">
+        <div>
+            <h2>Setup Front Office</h2>
+            <p>Configure Purpose, Source and Complaints options for Front Desk operations.</p>
+        </div>
+    </div>
+
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div class="django-messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- MAIN GRID (LEFT MENU + RIGHT CONTENT) -->
+    <div class="fo-setup-grid">
+
+        <!-- LEFT SIDE MENU OPTIONS -->
+        <div class="fo-options-card">
+            <a href="?category=purpose" class="fo-option-btn {% if active_category == 'purpose' %}active{% endif %}">
+                Purpose
+            </a>
+            <a href="?category=source" class="fo-option-btn {% if active_category == 'source' %}active{% endif %}">
+                Source
+            </a>
+            <a href="?category=complaint" class="fo-option-btn {% if active_category == 'complaint' %}active{% endif %}">
+                Complaint
+            </a>
+        </div>
+
+        <!-- RIGHT SIDE CONTENT AREA -->
+        <div class="fo-content-card">
+
+            <!-- SEARCH BAR & ADD BUTTON -->
+            <div class="fo-toolbar">
+                <form method="GET" class="fo-search-box">
+                    <input type="hidden" name="category" value="{{ active_category }}">
+                    <input type="text" name="q" value="{{ search_query }}" class="fo-search-input" placeholder="Search {{ active_category|title }}...">
+                    <button type="submit" class="btn-search">Search</button>
+                </form>
+
+                {% if request.user.is_superuser or manager.role in "super_admin,admin,manager" or request.user.groups.first.name in "Admin,Manager" %}
+                <button class="btn-add-main" onclick="openAddModal()">
+                    <i class="fa-solid fa-plus"></i> Add {{ active_category|title }}
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- TABLE CONTENT -->
+            <div class="table-responsive">
+                <table class="fo-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">{{ active_category|title }}</th>
+                            <th style="width: 50%;">Description</th>
+                            {% if request.user.is_superuser or manager.role in "super_admin,admin,manager" or request.user.groups.first.name in "Admin,Manager" %}
+                            <th style="width: 20%;">Action</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr id="row-{{ item.id }}">
+                            <td>
+                                <strong>{{ item.title }}</strong>
+                            </td>
+                            <td>{{ item.description|default:"-" }}</td>
+
+                            {% if request.user.is_superuser or manager.role in "super_admin,admin,manager" or request.user.groups.first.name in "Admin,Manager" %}
+                            <td class="actions-cell">
+                                {% if manager.role == "manager" or request.user.is_superuser %}
+                                <button class="btn-edit" onclick="openEditModal('{{ item.id }}', '{{ item.title|escapejs }}', '{{ item.description|escapejs }}')">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                                {% elif manager.role == "super_admin" %}
+                                    {% if not item.created_by or item.created_by.role != "manager" %}
+                                    <button class="btn-edit" onclick="openEditModal('{{ item.id }}', '{{ item.title|escapejs }}', '{{ item.description|escapejs }}')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                    {% endif %}
+                                {% elif manager.role == "admin" %}
+                                    {% if item.created_by.id == manager.id %}
+                                    <button class="btn-edit" onclick="openEditModal('{{ item.id }}', '{{ item.title|escapejs }}', '{{ item.description|escapejs }}')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if manager.role == "manager" or request.user.is_superuser %}
+                                <button class="btn-delete" onclick="deleteItem('{{ item.id }}')">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                                {% elif manager.role == "super_admin" %}
+                                    {% if not item.created_by or item.created_by.role != "manager" %}
+                                    <button class="btn-delete" onclick="deleteItem('{{ item.id }}')">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+                                    {% endif %}
+                                {% elif manager.role == "admin" %}
+                                    {% if item.created_by.id == manager.id %}
+                                    <button class="btn-delete" onclick="deleteItem('{{ item.id }}')">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="no-data">
+                                <i class="fa-solid fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
+                                <br>
+                                No {{ active_category|title }} records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- DYNAMIC MODAL FOR ADD / EDIT -->
+<div class="modal fade" id="setupModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="modalItemId" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add {{ active_category|title }}
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inputTitle" id="labelTitle">
+                            {{ active_category|title }} Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               id="inputTitle" 
+                               name="title" 
+                               class="form-control" 
+                               placeholder="Enter {{ active_category|title }}" 
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputDescription">Description</label>
+                        <textarea id="inputDescription" 
+                                  name="description" 
+                                  class="form-control" 
+                                  rows="3" 
+                                  placeholder="Enter description details..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-add-main">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let setupModal;
+
+document.addEventListener('DOMContentLoaded', function () {
+    const modalElement = document.getElementById('setupModal');
+    if (modalElement && typeof bootstrap !== 'undefined') {
+        setupModal = new bootstrap.Modal(modalElement);
+    }
+});
+
+function getModalInstance() {
+    const modalElement = document.getElementById('setupModal');
+    if (!modalElement) return null;
+
+    if (typeof bootstrap !== 'undefined') {
+        if (!setupModal) {
+            setupModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        }
+        return setupModal;
+    } else if (typeof $ !== 'undefined') {
+        // Fallback for Bootstrap 4 (jQuery based)
+        return {
+            show: function() { $(modalElement).modal('show'); },
+            hide: function() { $(modalElement).modal('hide'); }
+        };
+    }
+    return null;
+}
+
+function openAddModal() {
+    let modal = getModalInstance();
+    if (!modal) return;
+
+    let activeCategory = "{{ active_category|escapejs }}";
+    let formattedCategory = activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1);
+
+    document.getElementById('setupForm').reset();
+    document.getElementById('modalItemId').value = '';
+    document.getElementById('modalCategory').value = activeCategory;
+
+    document.getElementById('modalTitle').innerText = "Add " + formattedCategory;
+    document.getElementById('labelTitle').innerHTML = formattedCategory + ' Name <span class="text-danger">*</span>';
+    document.getElementById('inputTitle').placeholder = "Enter " + formattedCategory;
+
+    modal.show();
+}
+
+function openEditModal(id, title, description) {
+    let modal = getModalInstance();
+    if (!modal) return;
+
+    let activeCategory = "{{ active_category|escapejs }}";
+    let formattedCategory = activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1);
+
+    document.getElementById('modalItemId').value = id;
+    document.getElementById('modalCategory').value = activeCategory;
+    document.getElementById('inputTitle').value = title;
+    document.getElementById('inputDescription').value = description;
+
+    document.getElementById('modalTitle').innerText = "Edit " + formattedCategory;
+    document.getElementById('labelTitle').innerHTML = formattedCategory + ' Name <span class="text-danger">*</span>';
+
+    modal.show();
+}
+
+document.getElementById('setupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+
+    fetch("{% url 'save_front_office' %}", {
+        method: "POST",
+        body: formData,
+        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert(data.message || 'Error saving information.');
+        }
+    })
+    .catch(err => {
+        console.error('Submission Error:', err);
+        alert('An unexpected error occurred.');
+    });
+});
+
+function deleteItem(id) {
+    if (confirm('Are you sure you want to delete this record?')) {
+        fetch(`/front-office/delete/${id}/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const targetRow = document.getElementById(`row-${id}`);
+                if (targetRow) {
+                    const tbody = targetRow.parentNode;
+                    targetRow.remove();
+                    if (tbody.querySelectorAll('tr').length === 0) {
+                        let activeCategory = "{{ active_category|escapejs }}";
+                        let formattedCategory = activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1);
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="3" class="no-data">
+                                    <i class="fa-solid fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
+                                    <br>
+                                    No ${formattedCategory} records found.
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
+            } else {
+                alert('Failed to delete item.');
+            }
+        })
+        .catch(err => {
+            console.error('Delete Error:', err);
+            alert('An unexpected error occurred while deleting.');
+        });
+    }
+}
+</script>
+{% endblock %}

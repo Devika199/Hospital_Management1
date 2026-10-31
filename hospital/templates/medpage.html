@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<h1>Medical Category</h1>
+<div id="cat1"></div>
+</body>
+<script>
+fetch('medilist')
+    .then(response => response.json())
+    .then(data => {
+
+        let output = '';
+
+        data.forEach(cat => {
+            output += `<p>${cat.category_name}</p>`;
+        });
+
+        document.getElementById('cat1').innerHTML = output;
+
+    });
+
+</script>
+</html>

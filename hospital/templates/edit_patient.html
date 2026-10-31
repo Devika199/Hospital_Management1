@@ -1,0 +1,2964 @@
+{% extends home_template %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   ADD PATIENT PAGE
+========================================================= */
+
+.patient-form-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.patient-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 28px;
+}
+
+.patient-form-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.patient-form-heading-icon {
+    width: 56px;
+    height: 56px;
+
+    border-radius: 15px;
+
+    background: #e5f3ed;
+    color: #0b3d2e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+.patient-form-heading-text h2 {
+    margin: 0 0 5px;
+
+    color: #0b3d2e;
+
+    font-size: 34px;
+    font-weight: 800;
+
+    letter-spacing: -0.6px;
+}
+
+.patient-form-heading-text p {
+    margin: 0;
+
+    color: #71877e;
+
+    font-size: 15px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.patient-back-btn {
+    height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #c8d9d2;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #294f42;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-back-btn:hover {
+    background: #0b3d2e;
+    border-color: #0b3d2e;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(11,61,46,0.18);
+}
+
+
+/* =========================================================
+   MAIN FORM CARD
+========================================================= */
+
+.patient-form-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #d7e5df;
+
+    border-radius: 17px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(11,61,46,0.08);
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.patient-form-card-header {
+    padding: 20px 25px;
+
+    background: #f9fcfb;
+
+    border-bottom: 1px solid #e0ebe6;
+}
+
+.patient-form-card-header h3 {
+    margin: 0 0 5px;
+
+    color: #0b3d2e;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.patient-form-card-header p {
+    margin: 0;
+
+    color: #71877e;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.patient-form-body {
+    padding: 28px;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.patient-form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 22px 25px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.patient-form-group {
+    width: 100%;
+}
+
+.patient-form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.patient-form-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #294f42;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.required-star {
+    color: #dc2638;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.patient-form-input,
+.patient-form-select,
+.patient-form-textarea {
+
+    width: 100%;
+
+    border: 1px solid #c9dad3;
+
+    border-radius: 9px;
+
+    background: #f9fcfb;
+
+    color: #173e31;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: all 0.2s ease;
+
+    box-sizing: border-box;
+}
+
+.patient-form-input,
+.patient-form-select {
+
+    height: 46px;
+
+    padding: 0 14px;
+}
+
+.patient-form-textarea {
+
+    min-height: 105px;
+
+    padding: 13px 14px;
+
+    resize: vertical;
+}
+
+.patient-form-input::placeholder,
+.patient-form-textarea::placeholder {
+
+    color: #91a39b;
+}
+
+.patient-form-input:focus,
+.patient-form-select:focus,
+.patient-form-textarea:focus {
+
+    background: #ffffff;
+
+    border-color: #176b50;
+
+    box-shadow:
+        0 0 0 3px rgba(23,107,80,0.10);
+}
+
+
+/* =========================================================
+   READONLY
+========================================================= */
+
+.patient-form-input[readonly] {
+
+    background: #eef5f2;
+
+    color: #527266;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FIELD WRAPPER
+========================================================= */
+
+.patient-input-wrapper {
+    position: relative;
+}
+
+
+/* =========================================================
+   VALIDATION ICON
+========================================================= */
+
+.validation-icon {
+
+    position: absolute;
+
+    right: 14px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 15px;
+
+    display: none;
+
+    pointer-events: none;
+}
+
+.validation-icon.valid {
+
+    display: block;
+
+    color: #078a55;
+}
+
+.validation-icon.invalid {
+
+    display: block;
+
+    color: #dc2638;
+}
+
+
+/* =========================================================
+   VALID INPUT
+========================================================= */
+
+.patient-form-input.valid,
+.patient-form-select.valid {
+
+    border-color: #078a55;
+
+    background: #f7fffb;
+}
+
+
+/* =========================================================
+   INVALID INPUT
+========================================================= */
+
+.patient-form-input.invalid,
+.patient-form-textarea.invalid,
+.patient-form-select.invalid {
+
+    border-color: #dc2638;
+
+    background: #fff8f8;
+
+    box-shadow:
+        0 0 0 2px rgba(220,38,56,0.05);
+}
+
+
+/* =========================================================
+   VALIDATION MESSAGE
+========================================================= */
+
+.validation-message {
+
+    min-height: 18px;
+
+    margin-top: 5px;
+
+    color: #dc2638;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.validation-message.success {
+
+    color: #078a55;
+}
+
+
+/* =========================================================
+   PHONE INFO
+========================================================= */
+
+.field-info {
+
+    margin-top: 5px;
+
+    color: #82948d;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   DOB / AGE
+========================================================= */
+
+.dob-age-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        130px;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   PROFILE IMAGE
+========================================================= */
+
+.profile-image-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+.profile-preview {
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 14px;
+
+    border: 1px solid #c9dad3;
+
+    background: #eef6f2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+}
+
+.profile-preview i {
+
+    color: #72a18d;
+
+    font-size: 34px;
+}
+
+.profile-preview img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.profile-upload {
+
+    flex: 1;
+}
+
+
+/* =========================================================
+   FILE INPUT
+========================================================= */
+
+.profile-upload input[type="file"] {
+
+    width: 100%;
+
+    height: 46px;
+
+    padding: 10px;
+
+    border: 1px solid #c9dad3;
+
+    border-radius: 9px;
+
+    background: #f9fcfb;
+
+    color: #31594d;
+
+    font-size: 13px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FORM FOOTER
+========================================================= */
+
+.patient-form-footer {
+
+    padding: 20px 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    background: #f9fcfb;
+
+    border-top: 1px solid #e0ebe6;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.patient-cancel-btn,
+.patient-save-btn {
+
+    height: 44px;
+
+    padding: 0 20px;
+
+    border-radius: 9px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-cancel-btn {
+
+    border: 1px solid #c8d9d2;
+
+    background: #ffffff;
+
+    color: #31594d;
+}
+
+.patient-cancel-btn:hover {
+
+    background: #edf5f1;
+
+    border-color: #9fbab0;
+}
+
+.patient-save-btn {
+
+    border: 1px solid #176b50;
+
+    background: #176b50;
+
+    color: #ffffff;
+}
+
+.patient-save-btn:hover {
+
+    background: #0b3d2e;
+
+    border-color: #0b3d2e;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px rgba(23,107,80,0.20);
+}
+
+.patient-save-btn:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .patient-form-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .patient-form-group.full-width {
+
+        grid-column: auto;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .patient-form-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .patient-form-heading-text h2 {
+
+        font-size: 27px;
+    }
+
+    .patient-form-heading-icon {
+
+        width: 48px;
+        height: 48px;
+    }
+
+    .patient-form-body {
+
+        padding: 20px 16px;
+    }
+
+    .patient-form-footer {
+
+        padding: 18px 16px;
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .patient-cancel-btn,
+    .patient-save-btn {
+
+        width: 100%;
+    }
+
+    .dob-age-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .profile-image-section {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =========================================================
+   ERROR SHAKE
+========================================================= */
+
+@keyframes fieldShake {
+
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    50% {
+        transform: translateX(3px);
+    }
+
+    75% {
+        transform: translateX(-3px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.field-shake {
+
+    animation: fieldShake 0.25s ease;
+}
+
+</style>
+
+
+<main class="main-content">
+
+<div class="patient-form-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="patient-form-header">
+
+        <div class="patient-form-heading">
+
+            <div class="patient-form-heading-icon">
+
+                <i class="fa-solid fa-user-pen"></i>
+
+            </div>
+
+            <div class="patient-form-heading-text">
+
+               <h2>
+    Edit Patient
+</h2>
+
+<p>
+    Update the patient's information
+</p>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="patient-back-btn"
+            onclick="goBackToPatients()">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Patients
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM CARD
+    ====================================================== -->
+
+    <div class="patient-form-card">
+
+
+        <div class="patient-form-card-header">
+
+            <h3>
+    Edit Patient Information
+</h3>
+
+<p>
+    Update the patient's details carefully.
+    Fields marked with * are required.
+</p>
+        </div>
+
+
+        <form
+            id="patientForm"
+            method="POST"
+            enctype="multipart/form-data"
+            novalidate>
+
+            {% csrf_token %}
+
+
+            <div class="patient-form-body">
+
+
+                <div class="patient-form-grid">
+
+
+                    <!-- =================================================
+                         PATIENT NAME
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+                            Patient Name
+                            <span class="required-star">*</span>
+                        </label>
+
+                        <div class="patient-input-wrapper">
+
+                            <input
+                                type="text"
+                                name="patient_name"
+                                id="patientName"
+                                class="patient-form-input"
+                                placeholder="Enter patient name"
+                                maxlength="100"
+                                autocomplete="off"
+                                value="{{ patient.first_name|default:'' }}"
+                                required>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                            id="patientNameMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         GUARDIAN NAME
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+                            Guardian Name
+                            <span class="required-star">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="guardian_name"
+                            id="guardianName"
+                            class="patient-form-input"
+                            placeholder="Enter guardian name"
+                            maxlength="100"
+                            autocomplete="off"
+                            value="{{ patient.guardian_name|default:'' }}"
+                            required>
+
+                        <div
+                            class="validation-message"
+                            id="guardianNameMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PHONE
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+                            Phone Number
+                            <span class="required-star">*</span>
+                        </label>
+
+                        <div class="patient-input-wrapper">
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                id="patientPhone"
+                                class="patient-form-input"
+                                placeholder="10 digit mobile number"
+                                maxlength="10"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                value="{{ patient.phone|default:'' }}"
+                                required>
+
+                            <i
+                                class="validation-icon"
+                                id="phoneIcon">
+                            </i>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                            id="patientPhoneMessage">
+                        </div>
+                        
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ALTERNATIVE PHONE
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+                            Alternative Number
+                        </label>
+
+                        <div class="patient-input-wrapper">
+
+                            <input
+                                type="tel"
+                                name="alternative_number"
+                                id="alternativeNumber"
+                                class="patient-form-input"
+                                placeholder="10 digit alternative number"
+                                maxlength="10"
+                                inputmode="numeric"
+                                value="{{ patient.alternative_number|default:'' }}"
+                                autocomplete="off">
+
+                            <i
+                                class="validation-icon"
+                                id="alternativeIcon">
+                            </i>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                            id="alternativeMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         GENDER
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Gender
+
+                            <span class="required-star">*</span>
+
+                        </label>
+
+                        <select
+                            name="gender"
+                            id="gender"
+                            class="patient-form-select"
+                            required>
+
+                            <option value="">
+                                Select Gender
+                            </option>
+
+                            <option value="Male" {% if patient.gender == "Male" %}selected{% endif %}>
+                                Male
+                            </option>
+
+                            <option value="Female" {% if patient.gender == "Female" %}selected{% endif %}>
+                                Female
+                            </option>
+
+                            <option value="Other" {% if patient.gender == "Other" %}selected{% endif %}>
+                                Other
+                            </option>
+
+                        </select>
+
+                        <div
+                            class="validation-message"
+                            id="genderMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         DOB + AGE
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Date of Birth
+
+                            <span class="required-star">*</span>
+
+                        </label>
+
+                        <div class="dob-age-grid">
+
+                            <input
+                                type="date"
+                                name="date_of_birth"
+                                id="dateOfBirth"
+                                class="patient-form-input"
+                                value="{{ patient.date_of_birth|date:'Y-m-d' }}"
+                                required>
+
+                            <input
+                                type="number"
+                                name="age"
+                                id="patientAge"
+                                class="patient-form-input"
+                                placeholder="Age"
+                                value="{{ patient.age|default:'' }}"
+                                readonly>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                            id="dobMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         BLOOD GROUP
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Blood Group
+
+                            <span class="required-star">*</span>
+
+                        </label>
+
+                        <select
+                            name="blood_group"
+                            id="bloodGroup"
+                            class="patient-form-select"
+                            required>
+
+                            <option value="">
+                                Select Blood Group
+                            </option>
+
+                            <option value="A+" {% if patient.blood_group == "A+" %}selected{% endif %}>A+</option>
+    <option value="A-" {% if patient.blood_group == "A-" %}selected{% endif %}>A-</option>
+    <option value="B+" {% if patient.blood_group == "B+" %}selected{% endif %}>B+</option>
+    <option value="B-" {% if patient.blood_group == "B-" %}selected{% endif %}>B-</option>
+    <option value="AB+" {% if patient.blood_group == "AB+" %}selected{% endif %}>AB+</option>
+    <option value="AB-" {% if patient.blood_group == "AB-" %}selected{% endif %}>AB-</option>
+    <option value="O+" {% if patient.blood_group == "O+" %}selected{% endif %}>O+</option>
+    <option value="O-" {% if patient.blood_group == "O-" %}selected{% endif %}>O-</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         EMAIL
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Email
+                              <span class="required-star">*</span>
+
+                        </label>
+
+                        <div class="patient-input-wrapper">
+
+                            <input
+                                type="email"
+                                name="email"
+                                id="patientEmail"
+                                class="patient-form-input"
+                                placeholder="example@gmail.com"
+                                maxlength="150"
+                                value="{{ patient.email|default:'' }}"
+                                autocomplete="off" required>
+
+                            <i
+                                class="validation-icon"
+                                id="emailIcon">
+                            </i>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                             id="patientEmailMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MARITAL STATUS
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Marital Status
+
+                        </label>
+
+                        <select
+                            name="marital_status"
+                            id="maritalStatus"
+                            class="patient-form-select">
+
+                            <option value="">
+                                Select Marital Status
+                            </option>
+
+                           <option value="Single"
+        {% if patient.marital_status == "Single" %}selected{% endif %}>
+        Single
+    </option>
+
+    <option value="Married"
+        {% if patient.marital_status == "Married" %}selected{% endif %}>
+        Married
+    </option>
+
+    <option value="Widow"
+        {% if patient.marital_status == "Widow" %}selected{% endif %}>
+        Widow
+    </option>
+
+    <option value="Widower"
+        {% if patient.marital_status == "Widower" %}selected{% endif %}>
+        Widower
+    </option>
+
+    <option value="Divorced"
+        {% if patient.marital_status == "Divorced" %}selected{% endif %}>
+        Divorced
+    </option>
+
+    <option value="Separated"
+        {% if patient.marital_status == "Separated" %}selected{% endif %}>
+        Separated
+    </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         AADHAAR
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Aadhaar Number
+
+                            <span class="required-star">*</span>
+
+                        </label>
+
+                        <div class="patient-input-wrapper">
+
+                            <input
+                                type="text"
+                                name="aadhar_number"
+                                id="aadharNumber"
+                                class="patient-form-input"
+                                placeholder="12 digit Aadhaar number"
+                                maxlength="12"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                 value="{{ patient.aadhar_number|default:'' }}"
+                                required>
+
+                            <i
+                                class="validation-icon"
+                                id="aadharIcon">
+                            </i>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                            id="aadharMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PROFILE IMAGE
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            Profile Image
+
+                        </label>
+
+                        <div class="profile-image-section">
+
+                            <div class="profile-upload">
+
+                                <input
+                                    type="file"
+                                    name="profile_image"
+                                    id="profileImage"
+                                    accept="image/jpeg,image/png,image/webp">
+
+                                <div class="field-info">
+                                    JPG, PNG or WEBP. Maximum 5 MB.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="validation-message"
+                            id="imageMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TPA
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            TPA 
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="tpa"
+                            id="tpa"
+                            class="patient-form-input"
+                            placeholder="Enter TPA name"
+                            maxlength="150"  value="{{ patient.tpa|default:'' }}">
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TPA ID
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            TPA ID
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="tpa_id"
+                            id="tpaId"
+                            class="patient-form-input"
+                            placeholder="Enter TPA ID"
+                            maxlength="100" value="{{ patient.tpa_id|default:'' }}">
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TPA VALIDITY
+                    ================================================== -->
+
+                    <div class="patient-form-group">
+
+                        <label class="patient-form-label">
+
+                            TPA Validity 
+
+                        </label>
+
+                        <input
+                            type="date"
+                            name="tpa_validity"
+                            id="tpaValidity"
+                            class="patient-form-input"  value="{{ patient.tpa_validity|date:'Y-m-d' }}">
+
+                        <div
+                            class="validation-message"
+                            id="tpaValidityMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ADDRESS
+                    ================================================== -->
+
+                    <div class="patient-form-group full-width">
+
+                        <label class="patient-form-label">
+
+                            Address
+
+                            <span class="required-star">*</span>
+
+                        </label>
+
+                        <textarea
+                            name="address"
+                            id="address"
+                            class="patient-form-textarea"
+                            placeholder="Enter complete address"
+                            maxlength="500"
+                            required>{{ patient.address|default:'' }}</textarea>
+
+                        <div
+                            class="validation-message"
+                            id="addressMessage">
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ALLERGIES
+                    ================================================== -->
+
+                    <div class="patient-form-group full-width">
+
+                        <label class="patient-form-label">
+
+                            Allergies
+
+                        </label>
+
+                        <textarea
+                            name="allergies"
+                            id="allergies"
+                            class="patient-form-textarea"
+                            placeholder="Enter known allergies, medicines, food allergies, etc."
+                            maxlength="1000">{{ patient.allergies|default:'' }}</textarea>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REMARKS
+                    ================================================== -->
+
+                    <div class="patient-form-group full-width">
+
+                        <label class="patient-form-label">
+
+                            Remarks
+
+                        </label>
+
+                        <textarea
+                            name="remarks"
+                            id="remarks"
+                            class="patient-form-textarea"
+                            placeholder="Enter any additional remarks"
+                            maxlength="1000">{{ patient.remarks|default:'' }}</textarea>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 FOOTER
+            ====================================================== -->
+
+            <div class="patient-form-footer">
+
+                <button
+                    type="button"
+                    class="patient-cancel-btn"
+                    onclick="goBackToPatients()">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Cancel
+
+                </button>
+
+
+                <button
+    type="submit"
+    class="patient-save-btn"
+    id="savePatientBtn">
+
+    <i class="fa-solid fa-user-pen"></i>
+
+    Update Patient
+
+</button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+</main>
+
+
+<script>
+const currentPatientId = "{{ patient.id }}";
+/* =========================================================
+   CSRF
+========================================================= */
+
+function getCSRFToken() {
+
+    const tokenInput =
+        document.querySelector(
+            '[name="csrfmiddlewaretoken"]'
+        );
+
+    return tokenInput
+        ? tokenInput.value
+        : "";
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+function goBackToPatients() {
+
+    window.history.back();
+
+}
+
+
+/* =========================================================
+   INPUT ONLY NUMBERS
+========================================================= */
+
+function allowOnlyNumbers(input) {
+
+    input.value =
+        input.value.replace(/\D/g, "");
+
+}
+
+
+/* =========================================================
+   PHONE PATTERN
+========================================================= */
+
+const phonePattern =
+    /^[6-9][0-9]{9}$/;
+
+
+/* =========================================================
+   AADHAAR PATTERN
+========================================================= */
+
+const aadharPattern =
+    /^[2-9][0-9]{11}$/;
+
+
+/* =========================================================
+   GMAIL PATTERN
+========================================================= */
+
+const gmailPattern =
+    /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+
+/* =========================================================
+   ALTERNATIVE PHONE
+========================================================= */
+
+const alternativeNumber =
+    document.getElementById(
+        "alternativeNumber"
+    );
+
+alternativeNumber.addEventListener(
+    "input",
+    function() {
+
+        allowOnlyNumbers(this);
+
+        validateAlternativeNumber(
+            false
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PHONE INPUT
+========================================================= */
+
+const phoneInput =
+    document.getElementById(
+        "patientPhone"
+    );
+
+phoneInput.addEventListener(
+    "input",
+    function() {
+
+        allowOnlyNumbers(this);
+
+        validatePhone(false);
+
+    }
+);
+
+phoneInput.addEventListener(
+    "blur",
+    function() {
+
+        validatePhone(true);
+
+    }
+);
+
+
+/* =========================================================
+   EMAIL INPUT
+========================================================= */
+
+const emailInput =
+    document.getElementById(
+        "patientEmail"
+    );
+
+emailInput.addEventListener(
+    "input",
+    function() {
+
+        validateEmail(false);
+
+    }
+);
+
+emailInput.addEventListener(
+    "blur",
+    function() {
+
+        validateEmail(true);
+
+    }
+);
+
+
+/* =========================================================
+   AADHAAR INPUT
+========================================================= */
+
+const aadharInput =
+    document.getElementById(
+        "aadharNumber"
+    );
+
+aadharInput.addEventListener(
+    "input",
+    function() {
+
+        allowOnlyNumbers(this);
+
+        validateAadhar(false);
+
+    }
+);
+
+aadharInput.addEventListener(
+    "blur",
+    function() {
+
+        validateAadhar(true);
+
+    }
+);
+
+
+/* =========================================================
+   VALIDATION UI
+========================================================= */
+
+function setValidation(
+    input,
+    messageElement,
+    iconElement,
+    valid,
+    message
+) {
+
+    if (valid) {
+
+        input.classList.remove(
+            "invalid"
+        );
+
+        input.classList.add(
+            "valid"
+        );
+
+        if (iconElement) {
+
+            iconElement.className =
+                "validation-icon valid fa-solid fa-circle-check";
+
+        }
+
+        messageElement.textContent =
+            message || "";
+
+        messageElement.classList.add(
+            "success"
+        );
+
+    } else {
+
+        input.classList.remove(
+            "valid"
+        );
+
+        input.classList.add(
+            "invalid"
+        );
+
+        if (iconElement) {
+
+            iconElement.className =
+                "validation-icon invalid fa-solid fa-circle-xmark";
+
+        }
+
+        messageElement.textContent =
+            message || "";
+
+        messageElement.classList.remove(
+            "success"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PHONE VALIDATION
+========================================================= */
+let phoneCheckTimer = null;
+let phoneExists = false;
+
+function validatePhone(checkExists) {
+
+    const value = phoneInput.value.trim();
+
+    const message =
+        document.getElementById("patientPhoneMessage");
+
+    const icon =
+        document.getElementById("phoneIcon");
+
+    if (value === "") {
+
+        phoneInput.classList.remove(
+            "valid",
+            "invalid"
+        );
+
+        icon.className = "validation-icon";
+
+        message.textContent = "";
+
+        phoneExists = false;
+
+        return false;
+    }
+
+    if (!phonePattern.test(value)) {
+
+        setValidation(
+            phoneInput,
+            message,
+            icon,
+            false,
+            "Enter a valid 10 digit mobile number."
+        );
+
+        phoneExists = false;
+
+        return false;
+    }
+
+    if (!checkExists) {
+
+        setValidation(
+            phoneInput,
+            message,
+            icon,
+            true,
+            "Valid phone number."
+        );
+
+        checkPhoneExists(value);
+
+        return true;
+    }
+
+    return true;
+}
+
+/* =========================================================
+   CHECK PHONE EXISTS
+========================================================= */
+
+function checkPhoneExists(phone) {
+
+    clearTimeout(phoneCheckTimer);
+
+    phoneCheckTimer =
+        setTimeout(function() {
+
+            fetch(
+    "{% url 'check_patient_phone' %}?phone=" +
+    encodeURIComponent(phone) +
+    "&patient_id=" +
+    encodeURIComponent(currentPatientId)
+)
+            .then(
+                response => response.json()
+            )
+            .then(
+                data => {
+
+                    const message =
+                        document.getElementById(
+                            "patientPhoneMessage"
+                        );
+
+                    const icon =
+                        document.getElementById(
+                            "phoneIcon"
+                        );
+
+                    if (data.exists) {
+
+                        phoneExists = true;
+
+                        setValidation(
+                            phoneInput,
+                            message,
+                            icon,
+                            false,
+                            "This phone number already exists."
+                        );
+
+                    } else {
+
+                        phoneExists = false;
+
+                        setValidation(
+                            phoneInput,
+                            message,
+                            icon,
+                            true,
+                            "Phone number is available."
+                        );
+
+                    }
+
+                }
+            )
+            .catch(
+                function(error) {
+
+                    console.error(
+                        "Phone check error:",
+                        error
+                    );
+
+                }
+            );
+
+        }, 400);
+
+}
+
+
+/* =========================================================
+   ALTERNATIVE NUMBER VALIDATION
+========================================================= */
+let alternativeCheckTimer = null;
+let alternativeExists = false;
+
+function validateAlternativeNumber(checkExists) {
+
+    const value = alternativeNumber.value.trim();
+
+    const message =
+        document.getElementById("alternativeMessage");
+
+    const icon =
+        document.getElementById("alternativeIcon");
+
+    if (value === "") {
+
+        alternativeNumber.classList.remove(
+            "valid",
+            "invalid"
+        );
+
+        icon.className = "validation-icon";
+
+        message.textContent = "";
+
+        alternativeExists = false;
+
+        return true;
+    }
+
+    if (!phonePattern.test(value)) {
+
+        setValidation(
+            alternativeNumber,
+            message,
+            icon,
+            false,
+            "Alternative number must contain exactly 10 digits."
+        );
+
+        alternativeExists = false;
+
+        return false;
+    }
+
+    if (!checkExists) {
+
+        setValidation(
+            alternativeNumber,
+            message,
+            icon,
+            true,
+            "Valid alternative number."
+        );
+
+        checkAlternativeExists(value);
+
+        return true;
+    }
+
+    return true;
+}
+
+
+/* =========================================================
+   CHECK ALTERNATIVE EXISTS
+========================================================= */
+
+function checkAlternativeExists(
+    number
+) {
+
+    clearTimeout(
+        alternativeCheckTimer
+    );
+
+    alternativeCheckTimer =
+        setTimeout(function() {
+
+            fetch(
+    "{% url 'check_patient_alternative' %}?alternative_number=" +
+    encodeURIComponent(number) +
+    "&patient_id=" +
+    encodeURIComponent(currentPatientId)
+)
+            .then(
+                response => response.json()
+            )
+            .then(
+                data => {
+
+                    const message =
+                        document.getElementById(
+                            "alternativeMessage"
+                        );
+
+                    const icon =
+                        document.getElementById(
+                            "alternativeIcon"
+                        );
+
+
+                    if (data.exists) {
+
+                        alternativeExists = true;
+
+                        setValidation(
+                            alternativeNumber,
+                            message,
+                            icon,
+                            false,
+                            "This alternative number already exists."
+                        );
+
+                    } else {
+
+                        alternativeExists = false;
+
+                        setValidation(
+                            alternativeNumber,
+                            message,
+                            icon,
+                            true,
+                            "Alternative number is available."
+                        );
+
+                    }
+
+                }
+            )
+            .catch(
+                error => {
+
+                    console.error(
+                        "Alternative number check error:",
+                        error
+                    );
+
+                }
+            );
+
+        }, 400);
+
+}
+
+
+/* =========================================================
+   EMAIL VALIDATION
+========================================================= */
+
+let emailCheckTimer = null;
+
+let emailExists = false;
+
+
+function validateEmail(
+    checkExists
+) {
+
+    const value =
+        emailInput.value.trim();
+
+    const message =
+        document.getElementById(
+            "patientEmailMessage"
+        );
+
+    const icon =
+        document.getElementById(
+            "emailIcon"
+        );
+
+
+    if (value === "") {
+
+        emailInput.classList.remove(
+            "valid",
+            "invalid"
+        );
+
+        icon.className =
+            "validation-icon";
+
+        message.textContent =
+            "";
+
+        emailExists = false;
+
+        return true;
+    }
+
+
+    if (!gmailPattern.test(value)) {
+
+        setValidation(
+            emailInput,
+            message,
+            icon,
+            false,
+            "Only a valid @gmail.com address is allowed."
+        );
+
+        emailExists = false;
+
+        return false;
+    }
+
+
+    if (!checkExists) {
+
+        setValidation(
+            emailInput,
+            message,
+            icon,
+            true,
+            "Valid Gmail address."
+        );
+
+        checkEmailExists(value);
+
+        return true;
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   CHECK EMAIL EXISTS
+========================================================= */
+
+function checkEmailExists(
+    email
+) {
+
+    clearTimeout(
+        emailCheckTimer
+    );
+
+    emailCheckTimer =
+        setTimeout(function() {
+
+            fetch(
+    "{% url 'check_patient_email' %}?email=" +
+    encodeURIComponent(email) +
+    "&patient_id=" +
+    encodeURIComponent(currentPatientId)
+)
+            .then(
+                response => response.json()
+            )
+            .then(
+                data => {
+
+                    const message =
+                        document.getElementById(
+                            "patientEmailMessage"
+                        );
+
+                    const icon =
+                        document.getElementById(
+                            "emailIcon"
+                        );
+
+
+                    if (data.exists) {
+
+                        emailExists = true;
+
+                        setValidation(
+                            emailInput,
+                            message,
+                            icon,
+                            false,
+                            "This Gmail address already exists."
+                        );
+
+                    } else {
+
+                        emailExists = false;
+
+                        setValidation(
+                            emailInput,
+                            message,
+                            icon,
+                            true,
+                            "Gmail address is available."
+                        );
+
+                    }
+
+                }
+            )
+            .catch(
+                error => {
+
+                    console.error(
+                        "Email check error:",
+                        error
+                    );
+
+                }
+            );
+
+        }, 400);
+
+}
+
+
+/* =========================================================
+   AADHAAR VALIDATION
+========================================================= */
+
+let aadharCheckTimer = null;
+
+let aadharExists = false;
+
+
+function validateAadhar(
+    checkExists
+) {
+
+    const value =
+        aadharInput.value.trim();
+
+    const message =
+        document.getElementById(
+            "aadharMessage"
+        );
+
+    const icon =
+        document.getElementById(
+            "aadharIcon"
+        );
+
+
+    if (value === "") {
+
+        setValidation(
+            aadharInput,
+            message,
+            icon,
+            false,
+            "Aadhaar number is required."
+        );
+
+        aadharExists = false;
+
+        return false;
+    }
+
+
+    if (!aadharPattern.test(value)) {
+
+        setValidation(
+            aadharInput,
+            message,
+            icon,
+            false,
+            "Aadhaar number must contain exactly 12 digits."
+        );
+
+        aadharExists = false;
+
+        return false;
+    }
+
+
+    if (!checkExists) {
+
+        setValidation(
+            aadharInput,
+            message,
+            icon,
+            true,
+            "Valid Aadhaar format."
+        );
+
+        checkAadharExists(value);
+
+        return true;
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   CHECK AADHAAR EXISTS
+========================================================= */
+
+function checkAadharExists(
+    aadhar
+) {
+
+    clearTimeout(
+        aadharCheckTimer
+    );
+
+    aadharCheckTimer =
+        setTimeout(function() {
+
+           fetch(
+    "{% url 'check_patient_aadhar' %}?aadhar_number=" +
+    encodeURIComponent(aadhar) +
+    "&patient_id=" +
+    encodeURIComponent(currentPatientId)
+)
+            .then(
+                response => response.json()
+            )
+            .then(
+                data => {
+
+                    const message =
+                        document.getElementById(
+                            "aadharMessage"
+                        );
+
+                    const icon =
+                        document.getElementById(
+                            "aadharIcon"
+                        );
+
+
+                    if (data.exists) {
+
+                        aadharExists = true;
+
+                        setValidation(
+                            aadharInput,
+                            message,
+                            icon,
+                            false,
+                            "This Aadhaar number already exists."
+                        );
+
+                    } else {
+
+                        aadharExists = false;
+
+                        setValidation(
+                            aadharInput,
+                            message,
+                            icon,
+                            true,
+                            "Aadhaar number is available."
+                        );
+
+                    }
+
+                }
+            )
+            .catch(
+                error => {
+
+                    console.error(
+                        "Aadhaar check error:",
+                        error
+                    );
+
+                }
+            );
+
+        }, 400);
+
+}
+
+
+/* =========================================================
+   DOB / AGE
+========================================================= */
+
+const dobInput =
+    document.getElementById(
+        "dateOfBirth"
+    );
+
+const ageInput =
+    document.getElementById(
+        "patientAge"
+    );
+
+
+/* Maximum DOB = today */
+
+const today =
+    new Date();
+
+const todayString =
+    today.toISOString()
+    .split("T")[0];
+
+dobInput.max =
+    todayString;
+
+
+dobInput.addEventListener(
+    "change",
+    calculateAge
+);
+
+
+function calculateAge() {
+
+    const dobValue =
+        dobInput.value;
+
+    const message =
+        document.getElementById(
+            "dobMessage"
+        );
+
+
+    if (!dobValue) {
+
+        ageInput.value = "";
+
+        message.textContent =
+            "";
+
+        return;
+    }
+
+
+    const dob =
+        new Date(
+            dobValue + "T00:00:00"
+        );
+
+    const current =
+        new Date();
+
+
+    if (dob > current) {
+
+        ageInput.value = "";
+
+        message.textContent =
+            "Date of birth cannot be in the future.";
+
+        message.classList.remove(
+            "success"
+        );
+
+        dobInput.classList.add(
+            "invalid"
+        );
+
+        return;
+    }
+
+
+    let age =
+        current.getFullYear() -
+        dob.getFullYear();
+
+
+    const monthDifference =
+        current.getMonth() -
+        dob.getMonth();
+
+
+    if (
+        monthDifference < 0 ||
+        (
+            monthDifference === 0 &&
+            current.getDate() < dob.getDate()
+        )
+    ) {
+
+        age--;
+
+    }
+
+
+    ageInput.value =
+        age + " years";
+
+}
+
+const profileImage =
+    document.getElementById(
+        "profileImage"
+    );
+
+const profilePreview =
+    document.getElementById(
+        "profilePreview"
+    );
+
+
+profileImage.addEventListener(
+    "change",
+    function() {
+
+        const file =
+            this.files[0];
+
+        const message =
+            document.getElementById(
+                "imageMessage"
+            );
+
+
+        if (!file) {
+
+            return;
+
+        }
+
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+
+        if (
+            !allowedTypes.includes(
+                file.type
+            )
+        ) {
+
+            message.textContent =
+                "Only JPG, PNG and WEBP images are allowed.";
+
+            this.value = "";
+
+            return;
+
+        }
+
+
+        if (
+            file.size >
+            5 * 1024 * 1024
+        ) {
+
+            message.textContent =
+                "Profile image must be less than 5 MB.";
+
+            this.value = "";
+
+            return;
+
+        }
+
+
+        message.textContent =
+            "Image selected.";
+
+        message.classList.add(
+            "success"
+        );
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                profilePreview.innerHTML =
+                    "<img src='" +
+                    event.target.result +
+                    "' alt='Profile'>";
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+/* =========================================================
+   REQUIRED TEXT VALIDATION
+========================================================= */
+
+function validateRequiredText(
+    input,
+    messageElement,
+    fieldName
+) {
+
+    const value =
+        input.value.trim();
+
+
+    if (value === "") {
+
+        input.classList.add(
+            "invalid"
+        );
+
+        messageElement.textContent =
+            fieldName +
+            " is required.";
+
+        return false;
+
+    }
+
+
+    input.classList.remove(
+        "invalid"
+    );
+
+    return true;
+
+}
+
+
+/* =========================================================
+   FORM SUBMIT
+========================================================= */
+
+document.getElementById(
+    "patientForm"
+).addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const patientName =
+            document.getElementById(
+                "patientName"
+            );
+
+        const guardianName =
+            document.getElementById(
+                "guardianName"
+            );
+
+        const address =
+            document.getElementById(
+                "address"
+            );
+
+        const gender =
+            document.getElementById(
+                "gender"
+            );
+
+        const bloodGroup =
+            document.getElementById(
+                "bloodGroup"
+            );
+
+        const dob =
+            document.getElementById(
+                "dateOfBirth"
+            );
+
+        const email =
+            document.getElementById(
+                "patientEmail"
+            );
+        const phone =
+            document.getElementById(
+                "patientPhone"
+            );
+
+        let valid = true;
+
+
+        /* Patient name */
+
+        if (
+            !validateRequiredText(
+                patientName,
+                document.getElementById(
+                    "patientNameMessage"
+                ),
+                "Patient name"
+            )
+        ) {
+
+            valid = false;
+
+        }
+
+
+        /* Guardian */
+
+        if (
+            !validateRequiredText(
+                guardianName,
+                document.getElementById(
+                    "guardianNameMessage"
+                ),
+                "Guardian name"
+            )
+        ) {
+
+            valid = false;
+
+        }
+
+/* Phone */
+
+if (!phone.value.trim()) {
+
+    phone.classList.add("invalid");
+
+    document.getElementById("patientPhoneMessage").textContent =
+        "Phone number is required.";
+
+    valid = false;
+
+} else {
+
+    if (!validatePhone(true) || phoneExists) {
+        valid = false;
+    }
+
+}
+
+
+        /* Alternative */
+
+        if (
+            !validateAlternativeNumber(
+                true
+            ) ||
+            alternativeExists
+        ) {
+
+            valid = false;
+
+        }
+
+
+      /* Email */
+
+if (!email.value.trim()) {
+
+    email.classList.add("invalid");
+
+    document.getElementById("patientEmailMessage").textContent =
+        "Email is required.";
+
+    valid = false;
+
+} else {
+
+    if (!validateEmail(true) || emailExists) {
+        valid = false;
+    }
+
+}
+
+        /* Aadhaar */
+
+        if (
+            !validateAadhar(true) ||
+            aadharExists
+        ) {
+
+            valid = false;
+
+        }
+
+
+        /* Gender */
+
+        if (!gender.value) {
+
+            gender.classList.add(
+                "invalid"
+            );
+
+            document.getElementById(
+                "genderMessage"
+            ).textContent =
+                "Please select gender.";
+
+            valid = false;
+
+        }
+
+
+        /* Blood group */
+
+        if (!bloodGroup.value) {
+
+            bloodGroup.classList.add(
+                "invalid"
+            );
+
+            valid = false;
+
+        }
+
+
+        /* DOB */
+
+        if (!dob.value) {
+
+            dob.classList.add(
+                "invalid"
+            );
+
+            document.getElementById(
+                "dobMessage"
+            ).textContent =
+                "Date of birth is required.";
+
+            valid = false;
+
+        }
+
+
+
+       /* Address */
+
+if (!address.value.trim()) {
+
+    address.classList.add("invalid");
+
+    document.getElementById("addressMessage").textContent =
+        "Address is required.";
+
+    valid = false;
+
+} else if (
+    !validateRequiredText(
+        address,
+        document.getElementById("addressMessage"),
+        "Address"
+    )
+) {
+
+    valid = false;
+
+}
+
+        /* Prevent same phone */
+
+        if (
+            phoneInput.value &&
+            alternativeNumber.value &&
+            phoneInput.value ===
+            alternativeNumber.value
+        ) {
+
+            document.getElementById(
+                "alternativeMessage"
+            ).textContent =
+                "Alternative number cannot be the same as phone number.";
+
+            alternativeNumber.classList.add(
+                "invalid"
+            );
+
+            valid = false;
+
+        }
+
+
+        if (!valid) {
+
+            const firstInvalid =
+                document.querySelector(
+                    ".patient-form-input.invalid, .patient-form-select.invalid, .patient-form-textarea.invalid"
+                );
+
+
+            if (firstInvalid) {
+
+                firstInvalid.focus();
+
+                firstInvalid.classList.add(
+                    "field-shake"
+                );
+
+                setTimeout(
+                    function() {
+
+                        firstInvalid.classList.remove(
+                            "field-shake"
+                        );
+
+                    },
+                    300
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        const saveButton =
+            document.getElementById(
+                "savePatientBtn"
+            );
+
+
+        saveButton.disabled =
+            true;
+
+        saveButton.innerHTML =
+           '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+
+        try {
+
+            const formData =
+                new FormData(this);
+
+
+            const response =
+                await fetch(
+                    window.location.href,
+                    {
+                        method: "POST",
+
+                        body: formData,
+
+                        headers: {
+                            "X-CSRFToken":
+                                getCSRFToken()
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+                
+
+                window.location.href =
+                    data.redirect_url;
+
+            } else {
+
+                alert(
+                    data.message ||
+                    "Unable to save patient."
+                );
+
+
+                saveButton.disabled =
+                    false;
+
+                saveButton.innerHTML =
+                  '<i class="fa-solid fa-user-pen"></i> Update Patient';
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                error
+            );
+
+            alert(
+                "Something went wrong. Please try again."
+            );
+
+
+            saveButton.disabled =
+                false;
+
+            saveButton.innerHTML =
+                '<i class="fa-solid fa-user-pen"></i> Update Patient';
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   REMOVE INVALID STATE ON SELECT
+========================================================= */
+
+document.querySelectorAll(
+    ".patient-form-select"
+).forEach(
+    function(select) {
+
+        select.addEventListener(
+            "change",
+            function() {
+
+                if (this.value) {
+
+                    this.classList.remove(
+                        "invalid"
+                    );
+
+                    this.classList.add(
+                        "valid"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        calculateAge();
+
+    }
+);
+
+</script>
+
+{% endblock %}

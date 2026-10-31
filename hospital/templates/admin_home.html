@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manager Dashboard | LHospital</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4faf7;
+            color: #1f3d32;
+        }
+
+
+        /* =====================================
+           TOP NAVBAR
+        ===================================== */
+
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 78px;
+            background: #0b3d2e;
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.12);
+        }
+
+
+        .navbar-brand {
+            color: #ffffff !important;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            background: #ffffff;
+            color: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+
+        .brand-name {
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+
+        .brand-subtitle {
+            font-size: 10px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+
+        .manager-details {
+            margin-left: auto;
+            text-align: right;
+            color: #ffffff;
+        }
+
+
+        .manager-details .welcome {
+            font-size: 14px;
+            opacity: 0.75;
+        }
+
+
+        .manager-details .manager-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+
+        .manager-details small {
+            display: block;
+            margin-top: 4px;
+            font-size: 13px;
+            opacity: 0.75;
+        }
+
+
+        /* =====================================
+           MOBILE MENU BUTTON
+        ===================================== */
+
+        .navbar-toggler {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            margin-left: 20px;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+
+        .navbar-toggler i {
+            color: #ffffff;
+            font-size: 18px;
+        }
+
+
+        /* =====================================
+           SIDEBAR
+        ===================================== */
+
+       /* =====================================
+   DARK GREEN SIDEBAR
+===================================== */
+
+.sidebar {
+    position: fixed;
+    top: 78px;
+    left: 0;
+    width: 255px;
+    height: calc(100vh - 78px);
+    background: #0b3d2e;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 25px 15px;
+    z-index: 999;
+    transition: 0.3s;
+}
+
+
+/* SIDEBAR LINKS */
+
+.sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+.sidebar ul a {
+    text-decoration: none;
+    display: block;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+
+/* SIDEBAR MENU ITEM */
+
+.sidebar ul li {
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.25s;
+    color: #ffffff;
+}
+
+
+/* ICON */
+
+.sidebar ul li i {
+    width: 25px;
+    color: #a8d5c3;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+
+/* ACTIVE MENU */
+
+.sidebar ul a.active li {
+    background:  #176b50;;
+    color: #ffffff;
+}
+
+
+.sidebar ul a.active li i {
+    color: #ffffff;
+}
+
+
+/* HOVER */
+
+.sidebar ul a:hover li {
+    background: #176b50;
+    color: #ffffff;
+}
+
+
+.sidebar ul a:hover li i {
+    color: #ffffff;
+}
+
+
+        /* =====================================
+           MAIN CONTENT
+        ===================================== */
+
+        .main-content {
+            margin-left: 255px;
+            padding: 115px 35px 40px;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================
+           PAGE TITLE
+        ===================================== */
+
+        .title {
+            margin-bottom: 28px;
+        }
+
+
+        .title h2 {
+            font-size: 30px;
+            font-weight: 800;
+            color: #173e31;
+            margin-bottom: 6px;
+        }
+
+
+        .title p {
+            margin: 0;
+            font-size: 14px;
+            color: #71877e;
+        }
+
+
+        /* =====================================
+           WELCOME CARD
+        ===================================== */
+
+        .welcome-card {
+            background: #ffffff;
+            border: 1px solid #e1ece7;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(11, 61, 46, 0.06);
+        }
+
+
+        .welcome-icon {
+            width: 64px;
+            height: 64px;
+            min-width: 64px;
+            border-radius: 17px;
+            background: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 25px;
+        }
+
+
+        .welcome-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #173e31;
+            margin-bottom: 7px;
+        }
+
+
+        .welcome-card p {
+            margin: 0;
+            color: #71877e;
+            font-size: 13px;
+        }
+
+
+        /* =====================================
+           ACTION CARDS
+        ===================================== */
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+
+        .action-link {
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+
+        .action-card {
+            min-height: 225px;
+            background: #ffffff;
+            border: 1px solid #e1ece7;
+            border-radius: 20px;
+            padding: 28px;
+            transition: 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(11, 61, 46, 0.05);
+        }
+
+
+        .action-card:hover {
+            transform: translateY(-6px);
+            border-color: #9bc7b5;
+            box-shadow: 0 18px 35px rgba(11, 61, 46, 0.12);
+        }
+
+
+        .action-card .icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            background: #e8f4ef;
+            color: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 24px;
+        }
+
+
+        .action-card h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #173e31;
+            margin-bottom: 10px;
+        }
+
+
+        .action-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #71877e;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 1000px) {
+
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .top-navbar {
+                padding: 0 18px;
+            }
+
+
+            .navbar-toggler {
+                display: block;
+                margin-left: 80px;
+            }
+
+
+            .sidebar {
+                left: -255px;
+                box-shadow: 8px 0 30px rgba(0,0,0,0.1);
+            }
+
+
+            .sidebar.active {
+                left: 0;
+            }
+
+
+            .main-content {
+                margin-left: 0;
+                padding: 105px 20px 30px;
+            }
+
+
+            .brand-name {
+                font-size: 22px;
+            }
+
+
+            .brand-subtitle {
+                display: none;
+            }
+
+
+            .manager-details {
+                display: none;
+            }
+
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+.mobile-profile-btn,
+.mobile-profile-details {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    .mobile-profile-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+
+        background: transparent;
+        color: #ffffff;
+
+        border: none;
+        border-radius: 8px;
+
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .mobile-profile-btn i {
+        font-size: 15px;
+    }
+
+    .mobile-profile-details {
+        position: fixed;
+
+        top: 62px;
+        right: 12px;
+
+        width: 210px;
+
+        background: #ffffff;
+        color: #0b3d2e;
+
+        padding: 15px;
+
+        border-radius: 12px;
+
+        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+
+        z-index: 99999;
+
+        display: none;
+    }
+
+    .mobile-profile-details.show {
+        display: block;
+    }
+
+    .profile-name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .profile-role {
+        font-size: 12px;
+        color: #176b50;
+    }
+
+    .profile-role i {
+        margin-right: 5px;
+    }
+
+    /* Hide desktop details on mobile */
+    .manager-details {
+        display: none !important;
+    }
+}
+        @media (max-width: 500px) {
+
+            .brand-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+
+            .welcome-card {
+                padding: 20px;
+                align-items: flex-start;
+            }
+
+
+            .welcome-icon {
+                width: 55px;
+                height: 55px;
+                min-width: 55px;
+                font-size: 20px;
+            }
+
+
+            .title h2 {
+                font-size: 25px;
+            }
+
+
+            .welcome-card h3 {
+                font-size: 17px;
+            }
+
+        }
+
+.logo-l {
+font-size: 32px;
+font-weight: 700;
+line-height: 1;
+}
+
+/* SMALL MEDICAL PLUS */
+
+.logo-plus {
+position: absolute;
+width: 17px;
+height: 17px;
+right: -5px;
+bottom: -4px;
+background: #0b3d2e;
+color: #ffffff;
+border: 2px solid #ffffff;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.logo-plus i {
+font-size: 8px;
+}
+
+.setup-menu {
+    display: block !important;
+    width: 100%;
+    padding: 0 !important;
+    margin: 0 0 8px 0 !important;
+    color: #fff;
+}
+
+/* Setup button */
+.setup-title {
+    width: 100%;
+    height: 48px;
+    padding: 14px 16px;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* Setup icon + text */
+.setup-title span {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Gear icon */
+.setup-title span i {
+    width: 25px;
+    color: #a8d5c3;
+}
+
+/* Hover Setup */
+.setup-title:hover {
+    background: #176b50;
+}
+
+/* Arrow */
+#setupArrow {
+    width: auto !important;
+    color: #a8d5c3;
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+/* Dropdown hidden */
+#setupDropdown {
+    display: none !important;
+    width: 100%;
+    margin: 0 !important;
+    padding: 5px 0 0 0 !important;
+}
+
+/* Dropdown opened */
+#setupDropdown.show {
+    display: block !important;
+}
+
+/* Patients link */
+#setupDropdown a {
+    display: block !important;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-decoration: none !important;
+}
+
+/* Patients */
+.setup-item {
+    width: 100%;
+    min-height: 42px;
+
+    display: flex !important;
+    align-items: center;
+
+    padding: 11px 16px 11px 45px;
+
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 500;
+
+    border-radius: 8px;
+}
+
+/* Patients icon */
+.setup-item i {
+    width: 25px;
+    color: #a8d5c3;
+}
+
+/* Patients hover */
+.setup-item:hover {
+    background: #176b50;
+    color: #ffffff !important;
+}
+
+/* Arrow rotation */
+#setupArrow.rotate {
+    transform: rotate(180deg);
+}
+#setupDropdown {
+    display: none !important;
+}
+
+#setupDropdown.show {
+    display: block !important;
+}
+
+.setup-item.active {
+    background: #176b50 !important;
+    color: #ffffff !important;
+}
+
+.setup-item.active i {
+    color: #ffffff !important;
+}
+
+#setupArrow.rotate {
+    transform: rotate(180deg);
+}
+/* =========================
+   ACTIVE SIDEBAR ITEM
+========================= */
+
+.sidebar ul a li.active {
+    background: #176b50;
+    color: #ffffff;
+}
+
+.sidebar ul a li.active i {
+    color: #ffffff;
+}
+
+
+/* =========================
+   SETUP DROPDOWN
+========================= */
+
+#setupDropdown {
+    display: none !important;
+}
+
+#setupDropdown.show {
+    display: block !important;
+}
+
+
+/* Active Patients */
+
+.setup-item.active {
+    background: #176b50 !important;
+    color: #ffffff !important;
+}
+
+.setup-item.active i {
+    color: #ffffff !important;
+}
+
+
+/* Arrow */
+
+#setupArrow {
+    transition: transform 0.3s ease;
+}
+
+#setupArrow.rotate {
+    transform: rotate(180deg);
+}
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     TOP NAVBAR
+===================================== -->
+
+<nav class="top-navbar">
+
+
+    <a class="navbar-brand"
+       href="{% url 'manager_home' %}">
+
+
+        <div class="brand-icon">
+ <span class="logo-l">L</span>
+        </div>
+
+
+        <div class="brand-text">
+
+            <span class="brand-name">
+                LHospital
+            </span>
+
+            <span class="brand-subtitle">
+                SMART HEALTHCARE MANAGEMENT
+            </span>
+
+        </div>
+
+
+    </a>
+
+
+    <!-- MOBILE MENU -->
+
+    <button class="navbar-toggler"
+            type="button"
+            onclick="toggleSidebar()">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </button>
+<button class="mobile-profile-btn" onclick="toggleProfileDetails()">
+    <i class="fa-solid fa-eye"></i>
+</button>
+
+<div class="mobile-profile-details" id="mobileProfileDetails">
+
+    <div class="profile-name">
+        {{ manager.first_name }} {{ manager.last_name }}
+    </div>
+
+    <div class="profile-role">
+        <i class="fa-solid fa-user-tag"></i>
+        {{ manager.get_role_display }}
+    </div>
+
+</div>
+
+    <!-- MANAGER DETAILS -->
+
+    <div class="manager-details">
+
+        <div class="welcome">
+            Welcome,
+        </div>
+
+        <div class="manager-name">
+
+            {{ manager.first_name }}
+            {{ manager.last_name }}
+
+        </div>
+
+        <small>
+
+            Role:
+            <strong>
+                {{ manager.get_role_display }}
+            </strong>
+
+        </small>
+
+    </div>
+
+
+</nav>
+
+
+<aside class="sidebar" id="sidebar">
+
+    <ul>
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+        <a href="{% url 'admin_home' %}">
+            <li class="{% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}">
+
+                <i class="fa-solid fa-house"></i>
+
+                Dashboard
+
+            </li>
+        </a>
+
+
+        <!-- =========================
+             SUPER ADMIN APPROVALS
+        ========================== -->
+        <a href="{% url 'user_approval' %}">
+            <li class="{% if request.resolver_match.url_name == 'user_approval' %}active{% endif %}">
+
+                <i class="fa-solid fa-user-check"></i>
+
+                User Approvals
+
+            </li>
+        </a>
+
+        <!-- =========================
+             AMBULANCE
+        ========================== -->
+        <a href="{% url 'ambulance' %}">
+            <li class="{% if request.resolver_match.url_name == 'ambulance' %}active{% endif %}">
+                <i class="fa-solid fa-truck-medical"></i>
+                Ambulance
+            </li>
+        </a>
+
+        <!-- =========================
+             TPA Management
+        ========================== -->
+        <a href="{% url 'tpa_management' %}">
+            <li class="{% if request.resolver_match.url_name == 'tpa_management' %}active{% endif %}">
+                <i class="fa-solid fa-file-medical"></i>
+                TPA Management
+            </li>
+        </a>
+
+        <!-- =========================
+             SETUP
+        ========================== -->
+        <li class="setup-menu">
+            <div class="setup-title" onclick="toggleSetup(event)">
+                <span>
+                    <i class="fa-solid fa-gear"></i>
+                    Setup
+                </span>
+                <i class="fa-solid fa-chevron-down" id="setupArrow"></i>
+            </div>
+
+            <!-- SETUP DROPDOWN -->
+            <div class="setup-dropdown" id="setupDropdown">
+                <!-- Front Office -->
+                <a href="{% url 'front_office' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'front_office' %}active{% endif %}">
+                        <i class="fa-solid fa-circle-chevron-right"></i>
+                        Front Office
+                    </div>
+                </a>
+                <a href="{% url 'finance' %}">
+
+                    <div class="setup-item {% if request.resolver_match.url_name == 'finance' %}active{% endif %}">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                        Finance
+                    </div>
+                </a>
+                <a href="{% url 'blood_bank' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'blood_bank' %}active{% endif %}">
+                        <i class="fa-solid fa-droplet"></i>
+                         Blood Bank
+                    </div>
+                </a>
+                <a href="{% url 'pharmacy_view' %}">
+ 
+    <div class="setup-item
+        {% if request.resolver_match.url_name == 'pharmacy_view' %}
+            active
+        {% endif %}">
+ 
+        <i class="fa-solid fa-pills"></i>
+ 
+        Pharmacy
+ 
+    </div>
+ 
+</a>
+ 
+
+
+                <!-- Operations -->
+                <a href="{% url 'operations' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'operations' %}active{% endif %}">
+                        <i class="fa-solid fa-scissors"></i>
+                        Operations
+                    </div>
+                </a>
+
+                <!-- ICD -->
+                <a href="{% url 'icd_view' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'icd_view' %}active{% endif %}">
+                        <i class="fa-solid fa-file-medical"></i>
+                        ICD
+                    </div>
+                </a>
+
+                <!-- PATIENTS -->
+                <a href="{% url 'list_patients' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'list_patients' %}active{% endif %}">
+                        <i class="fa-solid fa-hospital-user"></i>
+                        Patients
+                    </div>
+                </a>
+
+                 <!-- HUMAN RESOURCE -->
+        <a href="{% url 'human_resource' %}">
+
+            <div class="setup-item {% if request.resolver_match.url_name == 'human_resource' %} active {% endif %}">
+            <i class="fa-solid fa-users"></i>
+            Human Resource
+           </div>
+        </a>
+        
+        
+
+                <!-- Radiology -->
+                <a href="{% url 'manager_radiology' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'manager_radiology' %}active{% endif %}">
+                        <i class="fas fa-x-ray"></i>
+                        Radiology
+                    </div>
+                </a>
+
+                <!-- Pathology -->
+                <a href="{% url 'pathologist_radiology' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'pathologist_radiology' %}active{% endif %}">
+                        <i class="fa-solid fa-microscope"></i>
+                        Pathology
+                    </div>
+                </a>
+
+                <!-- Hospital Charges -->
+                <a href="{% url 'hospital_charges' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'hospital_charges' %}active{% endif %}">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        Hospital Charges
+                    </div>
+                </a>
+
+                <!-- Bed -->
+                <a href="{% url 'bed_admin' %}">
+                    <div class="setup-item {% if request.resolver_match.url_name == 'bed_admin' %}active{% endif %}">
+                        <i class="fa-solid fa-bed"></i>
+                        Bed
+                    </div>
+                </a>
+
+
+                        <a href="{% url 'symptoms_admin' %}">
+            <div class="setup-item
+                {% if request.resolver_match.url_name == 'symptoms_admin' %}
+                    active
+                {% endif %}">
+
+                <i class="fa-solid fa-notes-medical"></i>
+
+                Symptoms
+
+            </div>
+        </a>
+
+
+     
+        <a href="{% url 'findings_admin' %}">
+            <div class="setup-item
+                {% if request.resolver_match.url_name == 'findings_admin' %}
+                    active
+                {% endif %}">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                Findings
+
+            </div>
+        </a>
+
+
+    
+        <a href="{% url 'vitals_admin' %}">
+            <div class="setup-item
+                {% if request.resolver_match.url_name == 'vitals_admin' %}
+                    active
+                {% endif %}">
+
+                <i class="fa-solid fa-heart-pulse"></i>
+
+                Vitals
+
+            </div>
+        </a>
+
+            </div>
+
+        </li>
+
+
+        <!-- =========================
+             LOGOUT
+        ========================== -->
+        <a href="{% url 'logout' %}">
+
+            <li>
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </li>
+
+        </a>
+
+    </ul>
+
+</aside>
+
+{% block content %}
+<!-- =====================================
+     MAIN CONTENT
+===================================== -->
+<main class="main-content">
+
+    <div class="dashboard-page">
+
+        <!-- PAGE TITLE -->
+
+        <div class="title">
+
+             <h2>Admin Dashboard</h2>
+
+            <p>
+                Manage hospital operations, staff, patients, and daily activities.
+            </p>
+
+        </div>
+
+
+        <!-- WELCOME CARD -->
+
+        <div class="welcome-card">
+
+            <div class="welcome-icon">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+            </div>
+
+            <div>
+
+                <h3>
+                    Welcome back, {{ manager.first_name }}!
+                </h3>
+
+                <p>
+                    Manage your hospital operations and monitor daily activities
+                    from your LHospital administrator dashboard.
+                </p>
+
+            </div>
+
+        </div>
+{% endblock %}
+
+
+<script>
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("active");
+
+    }
+
+function toggleProfileDetails() {
+    const profile = document.getElementById("mobileProfileDetails");
+
+    profile.classList.toggle("show");
+}
+</script>
+<script>
+
+function toggleSetup(event) {
+
+    event.stopPropagation();
+
+    const dropdown = document.getElementById("setupDropdown");
+    const arrow = document.getElementById("setupArrow");
+
+    dropdown.classList.toggle("show");
+    arrow.classList.toggle("rotate");
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const activeSetupItem =
+        document.querySelector("#setupDropdown .setup-item.active");
+
+    const dropdown =
+        document.getElementById("setupDropdown");
+
+    const arrow =
+        document.getElementById("setupArrow");
+
+
+    /* 
+       If a Setup page is active,
+       automatically keep Setup open.
+    */
+
+    if (activeSetupItem) {
+
+        dropdown.classList.add("show");
+
+        arrow.classList.add("rotate");
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,769 @@
+{% extends base_template %}
+{% load static %}
+
+{% block content %}
+<style>
+    .pharmacy-page{padding:24px;overflow-x:hidden;}
+    .page-title{font-size:28px;font-weight:800;color:#14382f;margin:0 0 4px;}
+    .page-subtitle{color:#6b7a76;margin:0 0 20px;}
+
+    .pharmacy-layout{display:flex;gap:20px;align-items:flex-start;}
+
+    .pharmacy-tabs{
+        width:230px;flex-shrink:0;background:#fff;border-radius:12px;
+        padding:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:6px;
+    }
+    .pharmacy-tabs a.tab-item{
+        display:block;padding:12px 14px;border-radius:8px;color:#14382f;
+        font-weight:600;text-decoration:none;background:#fff;border:1px solid transparent;
+    }
+    .pharmacy-tabs a.tab-item:hover{background:#f1f6f3;}
+    .pharmacy-tabs a.tab-item.active{background:#14382f;color:#fff;}
+
+    .pharmacy-content{flex:1;min-width:0;background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+    .content-toolbar{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:16px;}
+    .search-form{display:flex;gap:8px;}
+    .search-input{padding:9px 12px;border:1px solid #d8e0dd;border-radius:8px;min-width:220px;}
+    .btn-search{padding:9px 16px;border:none;border-radius:8px;background:#14382f;color:#fff;font-weight:600;cursor:pointer;}
+
+    .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+    .icon-btn{
+        padding:9px 14px;border-radius:8px;border:1px solid #d8e0dd;background:#fff;color:#14382f;
+        font-weight:600;text-decoration:none;cursor:pointer;font-size:14px;
+    }
+    .icon-btn:hover{background:#f1f6f3;}
+    .btn-add{
+        padding:9px 16px;border-radius:8px;border:none;background:#ff6b00;color:#fff;
+        font-weight:700;cursor:pointer;
+    }
+
+    .table-scroll{width:100%;}
+    table.pharmacy-table{width:100%;border-collapse:collapse;}
+    table.pharmacy-table thead tr{background:#14382f;color:#fff;}
+    table.pharmacy-table th, table.pharmacy-table td{padding:12px 14px;text-align:left;font-size:14px;}
+    table.pharmacy-table tbody tr{border-bottom:1px solid #eef2f0;}
+    table.pharmacy-table tbody tr:hover{background:#f8faf9;}
+
+    .empty-state{padding:50px 0;text-align:center;color:#8a9793;}
+
+    .action-btn{border:none;background:none;cursor:pointer;font-size:16px;margin-right:8px;}
+    .action-edit{color:#1a73e8;}
+    .action-delete{color:#d32f2f;}
+
+    .pharmacy-footer{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;}
+    .page-size-form select{padding:7px 10px;border-radius:8px;border:1px solid #d8e0dd;}
+    .pagination-links a, .pagination-links span{
+        display:inline-block;padding:6px 11px;margin:0 2px;border-radius:6px;text-decoration:none;color:#14382f;
+    }
+    .pagination-links a{border:1px solid #d8e0dd;}
+    .pagination-links span.active-page{background:#14382f;color:#fff;}
+
+    .pharmacy-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1050;align-items:center;justify-content:center;}
+    .pharmacy-modal-backdrop.open{display:flex;}
+    .pharmacy-modal{background:#fff;border-radius:12px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
+    .pharmacy-modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #eef2f0;}
+    .pharmacy-modal-header h3{margin:0;color:#14382f;}
+    .modal-close{cursor:pointer;font-size:22px;color:#8a9793;}
+    .pharmacy-modal form{padding:20px;}
+    .form-group{margin-bottom:14px;}
+    .field-error{display:block;color:#d32f2f;font-size:12px;margin-top:4px;min-height:14px;}
+    .form-group input.field-invalid{border-color:#d32f2f;}
+    .form-group label{display:block;font-weight:600;color:#14382f;margin-bottom:6px;font-size:14px;}
+    .form-group input, .form-group select, .form-group textarea{
+        width:100%;padding:9px 12px;border:1px solid #d8e0dd;border-radius:8px;font-size:14px;
+    }
+    .pharmacy-modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
+    .btn-primary{padding:9px 20px;border:none;border-radius:8px;background:#14382f;color:#fff;font-weight:700;cursor:pointer;}
+    .btn-secondary{padding:9px 20px;border:none;border-radius:8px;background:#eef2f0;color:#14382f;font-weight:700;cursor:pointer;}
+
+    .dosage-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:10px;align-items:end;}
+    .dosage-row .form-group{margin-bottom:0;}
+    .btn-row-remove{border:none;background:#fdeaea;color:#d32f2f;border-radius:8px;padding:9px 12px;cursor:pointer;height:38px;}
+    .btn-row-add{border:1px dashed #14382f;background:#fff;color:#14382f;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;margin-bottom:10px;}
+
+    @media print{
+        .no-print{display:none !important;}
+        .pharmacy-tabs{display:none !important;}
+        .pharmacy-layout{display:block !important;}
+    }
+
+    /* ── Tablet: 769px–1024px — keep side-by-side, just narrower tabs ── */
+    @media (min-width:769px) and (max-width:1024px){
+        .pharmacy-tabs{width:200px;}
+        .pharmacy-page{padding:18px;}
+    }
+
+    /* ── Phone/small-tablet: up to 768px — matches base template's sidebar collapse ── */
+    @media (max-width:768px){
+        .pharmacy-page{padding:14px;}
+        .page-title{font-size:22px;}
+        .page-subtitle{font-size:13px;}
+
+        .pharmacy-layout{flex-direction:column;align-items:stretch;gap:14px;}
+
+        /* Tabs become a horizontally-scrollable strip instead of a cramped grid */
+        .pharmacy-tabs{
+            width:100%;flex-direction:row;flex-wrap:nowrap;
+            overflow-x:auto;-webkit-overflow-scrolling:touch;
+            padding:8px;gap:6px;
+        }
+        .pharmacy-tabs a.tab-item{
+            flex:0 0 auto;white-space:nowrap;
+            padding:10px 14px;font-size:13px;
+        }
+
+        .pharmacy-content{padding:14px;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+        .content-toolbar{flex-direction:column;align-items:stretch;gap:10px;min-width:0;}
+        .search-form{width:100%;min-width:0;}
+        .search-input{width:100%;min-width:0;flex:1;}
+        .toolbar-actions{width:100%;display:flex;flex-direction:column;gap:8px;min-width:0;}
+        .icon-btn{width:100%;box-sizing:border-box;text-align:center;}
+        .btn-add{width:100%;box-sizing:border-box;}
+
+        /* Wide tables (e.g. Supplier's 7 columns) scroll instead of squeezing */
+        .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+        table.pharmacy-table{min-width:640px;}
+
+        .pharmacy-footer{flex-direction:column;align-items:flex-start;gap:10px;}
+        .pagination-links{max-width:100%;overflow-x:auto;white-space:nowrap;}
+
+        /* Full-screen modal on phones instead of a cramped centered box */
+        .pharmacy-modal-backdrop{padding:0;align-items:stretch;justify-content:stretch;}
+        .pharmacy-modal{width:100%;max-width:100%;height:100%;max-height:100%;border-radius:0;}
+
+        .dosage-row{grid-template-columns:1fr;gap:8px;}
+        .btn-row-remove{width:100%;}
+    }
+
+    /* ── Small phones (Moto G4 360×640, etc.): up to 400px ── */
+    @media (max-width:400px){
+        .pharmacy-page{padding:10px;}
+        .page-title{font-size:18px;}
+        .page-subtitle{font-size:12px;overflow-wrap:break-word;}
+
+        .pharmacy-tabs{padding:6px;gap:4px;}
+        .pharmacy-tabs a.tab-item{font-size:11px;padding:7px 9px;}
+
+        .pharmacy-content{padding:10px;}
+
+        .search-input{font-size:12px;padding:7px 9px;}
+        .btn-search{font-size:12px;padding:7px 10px;}
+        .icon-btn{font-size:11px;padding:7px 8px;}
+        .btn-add{font-size:12px;padding:7px 10px;}
+
+        table.pharmacy-table{min-width:560px;}
+        table.pharmacy-table th, table.pharmacy-table td{padding:8px 8px;font-size:11px;}
+        .action-btn{font-size:14px;margin-right:5px;}
+
+        .pharmacy-modal-header{padding:12px 14px;}
+        .pharmacy-modal-header h3{font-size:15px;}
+        .pharmacy-modal form{padding:12px;}
+        .form-group{margin-bottom:10px;}
+        .form-group label{font-size:12px;}
+        .form-group input, .form-group select, .form-group textarea{padding:7px 9px;font-size:12px;}
+        .btn-primary, .btn-secondary{padding:7px 14px;font-size:12px;}
+
+        .pagination-links a, .pagination-links span{padding:5px 8px;font-size:12px;}
+        .page-size-form{font-size:12px;}
+    }
+</style>
+
+<main class="main-content">
+<div class="pharmacy-page">
+    <h1 class="page-title">Setup Pharmacy</h1>
+    <p class="page-subtitle">Configure Medicine Category, Supplier, Dosage and other Pharmacy master data.</p>
+
+    <div class="pharmacy-layout">
+
+        <!-- LEFT: category tabs -->
+        <div class="pharmacy-tabs no-print">
+            {% for tab_key, tab_name in tab_labels.items %}
+                <a href="?tab={{ tab_key }}" class="tab-item {% if active_tab == tab_key %}active{% endif %}">{{ tab_name }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- RIGHT: content -->
+        <div class="pharmacy-content">
+
+            <div class="content-toolbar no-print">
+                <form method="get" class="search-form">
+                    <input type="hidden" name="tab" value="{{ active_tab }}">
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Search {{ tab_label }}..." class="search-input">
+                    <button type="submit" class="btn-search">Search</button>
+                </form>
+
+                <div class="toolbar-actions">
+                    <a href="{% url 'export_pharmacy_excel' active_tab %}?q={{ search_query }}" class="icon-btn" title="Export to Excel">⬇ Excel</a>
+                    <a href="{% url 'export_pharmacy_pdf' active_tab %}?q={{ search_query }}" class="icon-btn" title="Export as PDF">📄 PDF</a>
+                    <button type="button" class="icon-btn" title="Print" onclick="window.print()">🖨 Print</button>
+                    <button type="button" class="btn-add" onclick="openAddModal()">+ Add {{ tab_label }}</button>
+                </div>
+            </div>
+
+            <div class="table-scroll">
+            <table class="pharmacy-table">
+                <thead>
+                    <tr>
+                        {% if active_tab == "medicine_category" %}
+                            <th>S.No</th><th>Category Name</th><th class="no-print">Action</th>
+                        {% elif active_tab == "supplier" %}
+                            <th>Supplier Name</th><th>Supplier Contact</th><th>Contact Person Name</th>
+                            <th>Contact Person Phone</th><th>Drug License Number</th><th>Address</th><th class="no-print">Action</th>
+                        {% elif active_tab == "medicine_dosage" %}
+                            <th>Category Name</th><th>Dosage</th><th>Unit</th><th class="no-print">Action</th>
+                        {% elif active_tab == "unit" %}
+                            <th>SL No</th><th>Unit Name</th><th class="no-print">Action</th>
+                        {% elif active_tab == "dose_interval" %}
+                            <th>Interval</th><th class="no-print">Action</th>
+                        {% elif active_tab == "dose_duration" %}
+                            <th>Duration</th><th class="no-print">Action</th>
+                        {% elif active_tab == "company" %}
+                            <th>SL No</th><th>Company Name</th><th class="no-print">Action</th>
+                        {% elif active_tab == "medicine_group" %}
+                            <th>SL No</th><th>Medicine Group</th><th class="no-print">Action</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in page_obj %}
+                    <tr>
+                        {% if active_tab == "medicine_category" %}
+                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td>{{ item.category_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editItem({{ item.id }}, "{{ item.category_name|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_medicine_category' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "supplier" %}
+                            <td>{{ item.supplier_name }}</td>
+                            <td>{{ item.supplier_contact|default:"-" }}</td>
+                            <td>{{ item.contact_person_name|default:"-" }}</td>
+                            <td>{{ item.contact_person_phone|default:"-" }}</td>
+                            <td>{{ item.drug_license_number|default:"-" }}</td>
+                            <td>{{ item.address|default:"-" }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editSupplier({{ item.id }}, "{{ item.supplier_name|escapejs }}", "{{ item.supplier_contact|default_if_none:""|escapejs }}", "{{ item.contact_person_name|default_if_none:""|escapejs }}", "{{ item.contact_person_phone|default_if_none:""|escapejs }}", "{{ item.drug_license_number|default_if_none:""|escapejs }}", "{{ item.address|default_if_none:""|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_supplier' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "medicine_dosage" %}
+                            <td>{{ item.category.category_name }}</td>
+                            <td>{{ item.dose }}</td>
+                            <td>{{ item.unit.unit_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editDosage({{ item.id }}, {{ item.category_id }}, "{{ item.dose|escapejs }}", {{ item.unit_id }})'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_medicine_dosage' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "unit" %}
+                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td>{{ item.unit_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editItem({{ item.id }}, "{{ item.unit_name|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_unit' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "dose_interval" %}
+                            <td>{{ item.interval_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editItem({{ item.id }}, "{{ item.interval_name|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_dose_interval' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "dose_duration" %}
+                            <td>{{ item.duration_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editItem({{ item.id }}, "{{ item.duration_name|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_dose_duration' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "company" %}
+                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td>{{ item.company_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editItem({{ item.id }}, "{{ item.company_name|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_company' item.id %}')">🗑</button>
+                            </td>
+                        {% elif active_tab == "medicine_group" %}
+                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td>{{ item.group_name }}</td>
+                            <td class="no-print">
+                                <button class="action-btn action-edit" onclick='editItem({{ item.id }}, "{{ item.group_name|escapejs }}")'>✏</button>
+                                <button class="action-btn action-delete" onclick="deleteItem({{ item.id }}, '{% url 'delete_medicine_group' item.id %}')">🗑</button>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">📂 No {{ tab_label }} records found.</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+
+            <div class="pharmacy-footer no-print">
+                <form method="get" class="page-size-form">
+                    <input type="hidden" name="tab" value="{{ active_tab }}">
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                    Show
+                    <select name="per_page" onchange="this.form.submit()">
+                        {% for size in page_size_options %}
+                            <option value="{{ size }}" {% if per_page == size %}selected{% endif %}>{% if size == "all" %}All{% else %}{{ size }}{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    entries — {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} record(s)
+                </form>
+
+                <div class="pagination-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.previous_page_number }}">&laquo; Prev</a>
+                    {% endif %}
+
+                    {% for page_number in paginator.page_range %}
+                        {% if page_number == page_obj.number %}
+                            <span class="active-page">{{ page_number }}</span>
+                        {% else %}
+                            <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_number }}">{{ page_number }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</main>
+
+<!-- ================================================================= -->
+<!-- MODAL: MEDICINE CATEGORY -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-medicine_category">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="mc-title">Add Medicine Category</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-medicine_category" onsubmit="return submitPharmacyForm(event, '{% url 'save_medicine_category' %}')">
+            <input type="hidden" name="item_id" id="mc-item_id">
+            <div class="form-group">
+                <label>Category Name *</label>
+                <input type="text" name="category_name" id="mc-category_name" required>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: SUPPLIER -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-supplier">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="sup-title">Add Supplier</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-supplier" onsubmit="return submitPharmacyForm(event, '{% url 'save_supplier' %}')">
+            <input type="hidden" name="item_id" id="sup-item_id">
+            <div class="form-group">
+                <label>Supplier Name *</label>
+                <input type="text" name="supplier_name" id="sup-supplier_name" required>
+            </div>
+            <div class="form-group">
+                <label>Supplier Contact</label>
+                <input type="text" name="supplier_contact" id="sup-supplier_contact"
+                       maxlength="10" inputmode="numeric"
+                       title="Enter a valid 10-digit phone number"
+                       oninput="validatePhoneField(this, 'sup-supplier_contact-error')">
+                <span class="field-error" id="sup-supplier_contact-error"></span>
+            </div>
+            <div class="form-group">
+                <label>Contact Person Name</label>
+                <input type="text" name="contact_person_name" id="sup-contact_person_name">
+            </div>
+            <div class="form-group">
+                <label>Contact Person Phone</label>
+                <input type="text" name="contact_person_phone" id="sup-contact_person_phone"
+                       maxlength="10" inputmode="numeric"
+                       title="Enter a valid 10-digit phone number"
+                       oninput="validatePhoneField(this, 'sup-contact_person_phone-error')">
+                <span class="field-error" id="sup-contact_person_phone-error"></span>
+            </div>
+            <div class="form-group">
+                <label>Drug License Number</label>
+                <input type="text" name="drug_license_number" id="sup-drug_license_number">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" id="sup-address" rows="3"></textarea>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: MEDICINE DOSAGE (add = multiple rows, edit = single row) -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-medicine_dosage">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="dos-title">Add Medicine Dosage</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-medicine_dosage" onsubmit="return submitPharmacyForm(event, '{% url 'save_medicine_dosage' %}')">
+            <input type="hidden" name="item_id" id="dos-item_id">
+
+            <div id="dosage-rows">
+                <div class="dosage-row">
+                    <div class="form-group">
+                        <label>Medicine Category *</label>
+                        <select name="category[]" class="dos-category" required>
+                            <option value="">Select</option>
+                            {% for cat in all_categories %}
+                                <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Dose *</label>
+                        <input type="text" name="dose[]" class="dos-dose" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit *</label>
+                        <select name="unit[]" class="dos-unit" required>
+                            <option value="">Select</option>
+                            {% for u in all_units %}
+                                <option value="{{ u.id }}">{{ u.unit_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="button" class="btn-row-remove" onclick="removeDosageRow(this)">✕</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn-row-add no-print" id="dos-add-row-btn" onclick="addDosageRow()">+ Add Row</button>
+
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: UNIT -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-unit">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="unit-title">Add Unit</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-unit" onsubmit="return submitPharmacyForm(event, '{% url 'save_unit' %}')">
+            <input type="hidden" name="item_id" id="unit-item_id">
+            <div class="form-group">
+                <label>Unit Name *</label>
+                <input type="text" name="unit_name" id="unit-unit_name" required>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: DOSE INTERVAL -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-dose_interval">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="int-title">Add Dosage Interval</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-dose_interval" onsubmit="return submitPharmacyForm(event, '{% url 'save_dose_interval' %}')">
+            <input type="hidden" name="item_id" id="int-item_id">
+            <div class="form-group">
+                <label>Interval *</label>
+                <input type="text" name="interval_name" id="int-interval_name" required>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: DOSE DURATION -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-dose_duration">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="dur-title">Add Dose Duration</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-dose_duration" onsubmit="return submitPharmacyForm(event, '{% url 'save_dose_duration' %}')">
+            <input type="hidden" name="item_id" id="dur-item_id">
+            <div class="form-group">
+                <label>Duration *</label>
+                <input type="text" name="duration_name" id="dur-duration_name" required>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: COMPANY -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-company">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="comp-title">Add Company</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-company" onsubmit="return submitPharmacyForm(event, '{% url 'save_company' %}')">
+            <input type="hidden" name="item_id" id="comp-item_id">
+            <div class="form-group">
+                <label>Company Name *</label>
+                <input type="text" name="company_name" id="comp-company_name" required>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- MODAL: MEDICINE GROUP -->
+<!-- ================================================================= -->
+<div class="pharmacy-modal-backdrop" id="modal-medicine_group">
+    <div class="pharmacy-modal">
+        <div class="pharmacy-modal-header">
+            <h3 id="grp-title">Add Medicine Group</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="form-medicine_group" onsubmit="return submitPharmacyForm(event, '{% url 'save_medicine_group' %}')">
+            <input type="hidden" name="item_id" id="grp-item_id">
+            <div class="form-group">
+                <label>Medicine Group *</label>
+                <input type="text" name="group_name" id="grp-group_name" required>
+            </div>
+            <div class="pharmacy-modal-footer">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const ACTIVE_TAB = "{{ active_tab }}";
+const CSRF_TOKEN = "{{ csrf_token }}";
+
+function openAddModal() {
+    document.querySelectorAll('.pharmacy-modal-backdrop').forEach(m => m.classList.remove('open'));
+
+    const modal = document.getElementById('modal-' + ACTIVE_TAB);
+    if (!modal) return;
+
+    // Reset the form and its title for "Add" mode
+    const form = modal.querySelector('form');
+    form.reset();
+    const itemIdField = form.querySelector('input[name="item_id"]');
+    if (itemIdField) itemIdField.value = '';
+
+    const titleEl = modal.querySelector('.pharmacy-modal-header h3');
+    if (titleEl) titleEl.textContent = titleEl.textContent.replace('Edit', 'Add');
+
+    if (ACTIVE_TAB === 'medicine_dosage') {
+        resetDosageRows();
+        document.getElementById('dos-add-row-btn').style.display = 'inline-block';
+    }
+
+    form.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+    form.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid'));
+
+    modal.classList.add('open');
+}
+
+function closeModal() {
+    document.querySelectorAll('.pharmacy-modal-backdrop').forEach(m => m.classList.remove('open'));
+}
+
+// Simple text-field tabs: medicine_category, unit, dose_interval, dose_duration, company, medicine_group
+function editItem(id, currentValue) {
+    const modal = document.getElementById('modal-' + ACTIVE_TAB);
+    if (!modal) return;
+
+    const form = modal.querySelector('form');
+    const itemIdField = form.querySelector('input[name="item_id"]');
+    if (itemIdField) itemIdField.value = id;
+
+    const titleEl = modal.querySelector('.pharmacy-modal-header h3');
+    if (titleEl) titleEl.textContent = titleEl.textContent.replace('Add', 'Edit');
+
+    // The one visible text input inside .form-group that isn't item_id
+    const textField = form.querySelector('.form-group input[type="text"]');
+    if (textField) textField.value = currentValue;
+
+    modal.classList.add('open');
+}
+
+function editSupplier(id, name, contact, personName, personPhone, license, address) {
+    document.getElementById('sup-item_id').value = id;
+    document.getElementById('sup-supplier_name').value = name;
+    document.getElementById('sup-supplier_contact').value = contact;
+    document.getElementById('sup-contact_person_name').value = personName;
+    document.getElementById('sup-contact_person_phone').value = personPhone;
+    document.getElementById('sup-drug_license_number').value = license;
+    document.getElementById('sup-address').value = address;
+    document.getElementById('sup-title').textContent = 'Edit Supplier';
+
+    ['sup-supplier_contact-error', 'sup-contact_person_phone-error'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+    });
+    document.getElementById('sup-supplier_contact').classList.remove('field-invalid');
+    document.getElementById('sup-contact_person_phone').classList.remove('field-invalid');
+
+    document.getElementById('modal-supplier').classList.add('open');
+}
+
+function editDosage(id, categoryId, dose, unitId) {
+    resetDosageRows();
+    document.getElementById('dos-item_id').value = id;
+    document.getElementById('dos-title').textContent = 'Edit Medicine Dosage';
+    document.getElementById('dos-add-row-btn').style.display = 'none';
+
+    const row = document.querySelector('#dosage-rows .dosage-row');
+    row.querySelector('.dos-category').value = categoryId;
+    row.querySelector('.dos-dose').value = dose;
+    row.querySelector('.dos-unit').value = unitId;
+
+    document.getElementById('modal-medicine_dosage').classList.add('open');
+}
+
+function resetDosageRows() {
+    const container = document.getElementById('dosage-rows');
+    const firstRow = container.querySelector('.dosage-row');
+    container.innerHTML = '';
+    const clone = firstRow.cloneNode(true);
+    clone.querySelectorAll('input, select').forEach(f => f.value = '');
+    container.appendChild(clone);
+}
+
+function addDosageRow() {
+    const container = document.getElementById('dosage-rows');
+    const firstRow = container.querySelector('.dosage-row');
+    const clone = firstRow.cloneNode(true);
+    clone.querySelectorAll('input, select').forEach(f => f.value = '');
+    container.appendChild(clone);
+}
+
+function removeDosageRow(btn) {
+    const container = document.getElementById('dosage-rows');
+    if (container.querySelectorAll('.dosage-row').length > 1) {
+        btn.closest('.dosage-row').remove();
+    }
+}
+
+function validatePhoneField(input, errorId) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+
+    const errorEl = document.getElementById(errorId);
+    if (!errorEl) return true;
+
+    const len = input.value.length;
+
+    if (len === 0) {
+        errorEl.textContent = '';
+        input.classList.remove('field-invalid');
+        return true;
+    }
+
+    if (len < 10) {
+        errorEl.textContent = 'Enter a valid 10-digit phone number';
+        input.classList.add('field-invalid');
+        return false;
+    }
+
+    errorEl.textContent = '';
+    input.classList.remove('field-invalid');
+    return true;
+}
+
+function submitPharmacyForm(event, url) {
+    event.preventDefault();
+
+    const form = event.target;
+
+    // Re-check any phone-style fields in this form before submitting
+    let hasError = false;
+    form.querySelectorAll('input[oninput*="validatePhoneField"]').forEach(input => {
+        const errorId = input.getAttribute('oninput').match(/'([^']+)'\)$/);
+        if (errorId && !validatePhoneField(input, errorId[1])) {
+            hasError = true;
+        }
+    });
+    if (hasError) return false;
+
+    const formData = new FormData(form);
+
+    fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF_TOKEN },
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Something went wrong.');
+        }
+    })
+    .catch(() => alert('Something went wrong. Please try again.'));
+
+    return false;
+}
+
+function deleteItem(id, url) {
+    if (!confirm('Are you sure you want to delete this record?')) return;
+
+    fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF_TOKEN }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Unable to delete this record.');
+        }
+    })
+    .catch(() => alert('Something went wrong. Please try again.'));
+}
+</script>
+{% endblock %}

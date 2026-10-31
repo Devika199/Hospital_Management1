@@ -1,0 +1,1374 @@
+{% extends base_template %}
+
+{% block content %}
+
+<!-- Load jsPDF, AutoTable, and SheetJS for real downloadable PDF & XLSX export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+    /* ===============================
+       PAGE LAYOUT & CONTAINER
+    =============================== */
+    .fo-setup-page {
+        margin-top: 90px;
+        margin-left: 255px;
+        padding: 24px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    /* HEADER */
+    .fo-setup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .fo-setup-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+
+    .fo-setup-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+    /* LAYOUT GRID */
+    .fo-setup-grid {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    /* Left Side Menu Options */
+    .fo-options-card {
+        width: 240px;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        flex-shrink: 0;
+    }
+
+    .fo-option-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        text-align: left;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid #d8e7e0;
+        background: #ffffff;
+        color: #315347;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: all 0.25s ease;
+    }
+
+    .fo-option-btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .fo-option-btn:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        text-decoration: none;
+    }
+
+    .fo-option-btn.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.15);
+    }
+
+    /* TOP NAVIGATION TABS (PROMINENT ON ALL DEVICES) */
+    .fo-top-nav-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #edf3f0;
+        padding-bottom: 14px;
+        flex-wrap: wrap;
+    }
+
+    .fo-top-nav-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #315347;
+        background: #f4faf7;
+        border: 1px solid #d8e7e0;
+        text-decoration: none !important;
+        transition: all 0.25s ease;
+    }
+
+    .fo-top-nav-tab:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+    }
+
+    .fo-top-nav-tab.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.2);
+    }
+
+    /* Right Side Content Card */
+    .fo-content-card {
+        flex-grow: 1;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        min-width: 0;
+    }
+
+    /* TOOLBAR & CONTROLS */
+    .fo-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .fo-toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+
+    .fo-search-box {
+        display: flex;
+        gap: 6px;
+    }
+
+    .fo-search-box input {
+        border-radius: 10px;
+        border: 1.5px solid #cce0d7;
+        padding: 8px 14px;
+        font-size: 13px;
+        width: 200px;
+        transition: 0.2s;
+    }
+
+    .fo-search-box input:focus {
+        border-color: #0b3d2e;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.12);
+    }
+
+    .btn-search {
+        background: #0b3d2e;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-search:hover {
+        background: #176b50;
+    }
+
+    /* Export buttons */
+    .export-btn-group {
+        display: flex;
+        gap: 6px;
+    }
+
+    .btn-export {
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1.5px solid #cce0d7;
+        background: #f4faf7;
+        color: #173e31;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-export:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 10px rgba(11, 61, 46, 0.12);
+    }
+
+    .btn-add-main {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.25s;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.15);
+    }
+
+    .btn-add-main:hover {
+        background: #176b50;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(11, 61, 46, 0.2);
+    }
+
+    .btn-add-main:disabled {
+        background: #a3c4b8 !important;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* CUSTOM INTERACTIVE DROPDOWN COMPONENT */
+    .custom-select-wrapper {
+        position: relative;
+        user-select: none;
+        width: 100%;
+    }
+
+    .custom-select-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1.5px solid #cce0d7;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #173e31;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 6px rgba(11, 61, 46, 0.04);
+    }
+
+    .custom-select-trigger:hover {
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.08);
+        background: #fbfdfe;
+    }
+
+    .custom-select-wrapper.open .custom-select-trigger {
+        border-color: #0b3d2e;
+        box-shadow: 0 0 0 3.5px rgba(11, 61, 46, 0.15);
+        background: #ffffff;
+    }
+
+    .custom-select-trigger .select-arrow {
+        font-size: 12px;
+        color: #0b3d2e;
+        transition: transform 0.25s ease;
+    }
+
+    .custom-select-wrapper.open .select-arrow {
+        transform: rotate(180deg);
+    }
+
+    .custom-select-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border: 1px solid #d4e5dd;
+        border-radius: 14px;
+        box-shadow: 0 12px 35px rgba(11, 61, 46, 0.22);
+        z-index: 1055;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+    }
+
+    .custom-select-wrapper.open .custom-select-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .custom-select-search {
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf4f1;
+        background: #f8fcfa;
+    }
+
+    .custom-select-search input {
+        width: 100%;
+        padding: 7px 12px;
+        border: 1px solid #cce0d7;
+        border-radius: 8px;
+        font-size: 12.5px;
+        outline: none;
+    }
+
+    .custom-select-search input:focus {
+        border-color: #0b3d2e;
+    }
+
+    .custom-select-options {
+        max-height: 180px;
+        overflow-y: auto;
+        padding: 6px;
+    }
+
+    .custom-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #27473b;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+
+    .custom-option:hover {
+        background: #eaf5f0;
+        color: #0b3d2e;
+        font-weight: 600;
+    }
+
+    .custom-option.selected {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .custom-option .check-icon {
+        font-size: 12px;
+        opacity: 0;
+    }
+
+    .custom-option.selected .check-icon {
+        opacity: 1;
+    }
+
+    /* TABLE STYLING */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 14px;
+        border: 1px solid #edf3f0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fo-table {
+        width: 100%;
+        min-width: 680px;
+        border-collapse: collapse;
+    }
+
+    .actions-cell {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    .action-btn-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+
+    .fo-table thead {
+        background: #0b3d2e;
+    }
+
+    .fo-table th {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px 16px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .fo-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #315347;
+        vertical-align: middle;
+    }
+
+    .fo-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .fo-table tbody tr:hover {
+        background: #f7fbf9;
+    }
+
+    .btn-edit {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1px solid #c3e2d5;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-edit:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+    }
+
+    .btn-delete {
+        background: #fde4e4;
+        color: #b42318;
+        border: 1px solid #f9b8b8;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-delete:hover {
+        background: #b42318;
+        color: #ffffff;
+        border-color: #b42318;
+    }
+
+    .btn-charge {
+        background: #eef4ff;
+        color: #1d4ed8;
+        border: 1px solid #c7d2fe;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-charge:hover {
+        background: #1d4ed8;
+        color: #ffffff;
+        border-color: #1d4ed8;
+        box-shadow: 0 4px 10px rgba(29, 78, 216, 0.2);
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px !important;
+        color: #8fa39b;
+        font-size: 14px;
+    }
+
+    /* MODAL STYLING & OVERFLOW UNCLIPPING */
+    .modal-dialog {
+        overflow: visible !important;
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 50px rgba(11, 61, 46, 0.18);
+        overflow: visible !important;
+    }
+
+    .modal-header {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 18px 24px;
+        border: none;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    .btn-close-custom:hover {
+        opacity: 1;
+    }
+
+    .modal-body {
+        padding: 24px;
+        overflow: visible !important;
+        position: relative;
+    }
+
+    .modal-body label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #173e31;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .modal-body .form-control {
+        border-radius: 10px;
+        border: 1.5px solid #cce0d7;
+        padding: 10px 14px;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+
+    .modal-body .form-control:focus {
+        border-color: #0b3d2e;
+        outline: none;
+        box-shadow: 0 0 0 3.5px rgba(11, 61, 46, 0.12);
+    }
+
+    .modal-body .form-control.is-invalid {
+        border-color: #d32f2f;
+        background-color: #fff8f8;
+    }
+
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #edf3f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        background: #fafdfc;
+    }
+
+    .field-feedback {
+        font-size: 11.5px;
+        font-weight: 600;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* PAGINATION FOOTER & ARROW CONTROLS */
+    .fo-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #617d72;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .pagination-arrows {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-arrow-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1.5px solid #cce0d7;
+        background: #ffffff;
+        color: #173e31;
+        font-size: 13px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(11, 61, 46, 0.04);
+        cursor: pointer;
+    }
+
+    .page-arrow-btn:hover:not(.disabled) {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(11, 61, 46, 0.15);
+    }
+
+    .page-arrow-btn.disabled {
+        background: #f4faf7;
+        color: #b0c4bc;
+        border-color: #e1ece7;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    /* RESPONSIVE DESIGN BREAKPOINTS (MATCHING FRONT OFFICE FORMAT 1:1) */
+    @media (max-width: 768px) {
+        .fo-setup-page {
+            margin-left: 0 !important;
+            margin-top: 80px !important;
+            padding: 15px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .fo-setup-grid {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .fo-options-card {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            padding: 10px !important;
+        }
+
+        .fo-option-btn {
+            flex: 1 1 calc(50% - 8px);
+            min-width: 80px;
+            margin-bottom: 0 !important;
+            text-align: center !important;
+            justify-content: center !important;
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+        }
+
+        .fo-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px !important;
+        }
+
+        .fo-toolbar-left {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .fo-search-box {
+            width: 100% !important;
+        }
+
+        .fo-search-box input {
+            width: 100% !important;
+        }
+
+        .export-btn-group {
+            width: 100%;
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-export {
+            flex: 1;
+            padding: 8px 4px;
+            font-size: 11px;
+            justify-content: center;
+        }
+
+        .btn-add-main {
+            width: 100% !important;
+            justify-content: center;
+        }
+
+        .modal-dialog {
+            margin: 10px auto !important;
+            max-width: calc(100vw - 24px) !important;
+            width: calc(100vw - 24px) !important;
+        }
+
+        .modal-content {
+            border-radius: 14px !important;
+            width: 100% !important;
+        }
+
+        .modal-body {
+            padding: 16px !important;
+        }
+
+        #chargeItemName {
+            font-size: 17px !important;
+            word-break: break-word !important;
+            overflow-wrap: anywhere !important;
+        }
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #printableTable, #printableTable * {
+            visibility: visible;
+        }
+        #printableTable {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        .fo-table {
+            border: 1px solid #b0c9be !important;
+            border-collapse: collapse !important;
+            width: 100% !important;
+        }
+        .fo-table th, .fo-table td {
+            border: 1px solid #b0c9be !important;
+            padding: 10px 14px !important;
+            color: #173e31 !important;
+        }
+        .actions-cell, .btn-edit, .btn-delete, .btn-charge {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="fo-setup-page">
+    <div class="fo-setup-header">
+        <div>
+            <h2>Operations Setup</h2>
+            <p>Manage clinical surgical procedures and operation categories.</p>
+        </div>
+    </div>
+
+    <div class="fo-setup-grid">
+        <!-- Left Side Menu Options -->
+        <div class="fo-options-card">
+            <a href="{% url 'operations' %}?tab=operation" class="fo-option-btn {% if active_tab == 'operation' %}active{% endif %}">
+                <i class="fa-solid fa-scissors"></i> Operation
+            </a>
+            <a href="{% url 'operations' %}?tab=category" class="fo-option-btn {% if active_tab == 'category' %}active{% endif %}">
+                <i class="fa-solid fa-layer-group"></i> Operation Category
+            </a>
+        </div>
+
+        <!-- Right Side Content Card -->
+        <div class="fo-content-card">
+            <div class="fo-toolbar">
+                <div class="fo-toolbar-left">
+                    <!-- Search Box -->
+                    <form method="GET" action="{% url 'operations' %}" class="fo-search-box">
+                        <input type="hidden" name="tab" value="{{ active_tab }}">
+                        <input type="hidden" name="per_page" value="{{ per_page }}">
+                        <input type="text" name="q" value="{{ search_query }}" placeholder="Search...">
+                        <button type="submit" class="btn-search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+
+                    <!-- Export Buttons -->
+                    <div class="export-btn-group">
+                        <button type="button" class="btn-export" onclick="exportToExcel()">
+                            <i class="fa-solid fa-file-excel text-success"></i> Excel
+                        </button>
+                        <button type="button" class="btn-export" onclick="exportToPDF()">
+                            <i class="fa-solid fa-file-pdf text-danger"></i> PDF
+                        </button>
+                        <button type="button" class="btn-export" onclick="printTable()">
+                            <i class="fa-solid fa-print text-primary"></i> Print
+                        </button>
+                    </div>
+
+                    <!-- Per Page Select Dropdown -->
+                    <div style="width: 130px;">
+                        <div class="custom-select-wrapper" id="perPageSelectWrapper">
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect('perPageSelectWrapper')">
+                                <span id="perPageSelectLabel">{{ per_page|title }} per page</span>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <div class="custom-select-options">
+                                    <div class="custom-option {% if per_page == '10' %}selected{% endif %}" onclick="changePerPage('10')">
+                                        <span>10 per page</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                    <div class="custom-option {% if per_page == '50' %}selected{% endif %}" onclick="changePerPage('50')">
+                                        <span>50 per page</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                    <div class="custom-option {% if per_page == '100' %}selected{% endif %}" onclick="changePerPage('100')">
+                                        <span>100 per page</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                    <div class="custom-option {% if per_page == 'all' %}selected{% endif %}" onclick="changePerPage('all')">
+                                        <span>All</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Button -->
+                <div>
+                    {% if active_tab == "category" %}
+                        <button class="btn-add-main" onclick="openCategoryModal()">
+                            <i class="fa-solid fa-plus"></i> Add Operation Category
+                        </button>
+                    {% else %}
+                        <button class="btn-add-main" onclick="openOperationModal()">
+                            <i class="fa-solid fa-plus"></i> Add Operation
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Table Content -->
+            <div class="table-responsive" id="printableTable">
+                <table class="fo-table">
+                    <thead>
+                        {% if active_tab == "category" %}
+                            <tr>
+                                <th>Category Name</th>
+                                <th class="actions-cell">Action</th>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th>Operation Name</th>
+                                <th>Category</th>
+                                <th class="actions-cell">Action</th>
+                            </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            {% if active_tab == "category" %}
+                                <tr id="row-cat-{{ item.id }}">
+                                    <td><strong>{{ item.name }}</strong></td>
+                                    <td class="actions-cell">
+                                        <div class="action-btn-group">
+                                            <button class="btn-edit" data-id="{{ item.id }}" data-name="{{ item.name }}" onclick="handleEditCategoryClick(this)">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </button>
+                                            <button class="btn-delete" onclick="deleteCategory('{{ item.id }}')">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr id="row-op-{{ item.id }}">
+                                    <td><strong>{{ item.name }}</strong></td>
+                                    <td><span class="badge bg-light text-dark border px-2 py-1">{{ item.category.name }}</span></td>
+                                    <td class="actions-cell">
+                                        <div class="action-btn-group">
+                                            <button class="btn-edit" data-id="{{ item.id }}" data-name="{{ item.name }}" data-category-id="{{ item.category.id }}" data-category-name="{{ item.category.name }}" onclick="handleEditOperationClick(this)">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </button>
+                                            <button class="btn-delete" onclick="deleteOperation('{{ item.id }}')">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="no-data">
+                                    <i class="fa-solid fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
+                                    <br>
+                                    No records found.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="fo-pagination d-flex justify-content-end align-items-center">
+                <div class="pagination-arrows">
+                    {% if page_obj and page_obj.has_previous %}
+                        <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.previous_page_number }}" class="page-arrow-btn" title="Previous Page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    {% else %}
+                        <span class="page-arrow-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    {% endif %}
+
+                    {% if page_obj and page_obj.has_next %}
+                        <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.next_page_number }}" class="page-arrow-btn" title="Next Page">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    {% else %}
+                        <span class="page-arrow-btn disabled">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODALS
+========================================== -->
+
+<!-- Operation Category Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="catModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.12);">
+            <form id="categoryForm" onsubmit="submitCategoryForm(event)">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="cat_item_id">
+                <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #edf3f0; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                    <h5 class="modal-title font-weight-bold" id="catModalTitle" style="color: #0b3d2e;">Add Operation Category</h5>
+                    <button type="button" class="btn-close-custom" onclick="hideModal('categoryModal')" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px 24px;">
+                    <div class="mb-3">
+                        <label for="cat_name" style="font-weight: 600; color: #27473b; font-size: 13px;">Category Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="cat_name" class="form-control" placeholder="Enter Category Name" required oninput="validateCategoryLive()">
+                        <small id="cat_name_feedback" class="field-feedback"></small>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background: #fafdfc; border-top: 1px solid #edf3f0;">
+                    <button type="button" class="btn btn-secondary px-4" onclick="hideModal('categoryModal')" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" id="cat_save_btn" class="btn-add-main"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Operation Modal -->
+<div class="modal fade" id="operationModal" tabindex="-1" aria-labelledby="opModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.12);">
+            <form id="operationForm" onsubmit="submitOperationForm(event)">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="op_item_id">
+                <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #edf3f0; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                    <h5 class="modal-title font-weight-bold" id="opModalTitle" style="color: #0b3d2e;">Add Operation</h5>
+                    <button type="button" class="btn-close-custom" onclick="hideModal('operationModal')" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px 24px;">
+                    <div class="mb-3">
+                        <label for="op_name" style="font-weight: 600; color: #27473b; font-size: 13px;">Operation Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="op_name" class="form-control" placeholder="Enter Operation Name" required oninput="validateOperationLive()">
+                        <small id="op_name_feedback" class="field-feedback"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label style="font-weight: 600; color: #27473b; font-size: 13px;">Category <span class="text-danger">*</span></label>
+                        
+                        <!-- Rich Custom Searchable Category Select Component -->
+                        <div class="custom-select-wrapper" id="opCategorySelectWrapper">
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect('opCategorySelectWrapper')">
+                                <span id="opCategorySelectLabel">Select Category</span>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <div class="custom-select-search">
+                                    <input type="text" placeholder="Search category..." oninput="filterCustomOptions(this, 'opCategorySelectWrapper')">
+                                </div>
+                                <div class="custom-select-options">
+                                    {% for cat in categories %}
+                                        <div class="custom-option" data-value="{{ cat.id }}" onclick="selectCustomOption('opCategorySelectWrapper', '{{ cat.id }}', '{{ cat.name|escapejs }}', 'op_category_id')">
+                                            <span>{{ cat.name }}</span>
+                                            <i class="fa-solid fa-check check-icon"></i>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <select name="category_id" id="op_category_id" style="display:none;" required></select>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background: #fafdfc; border-top: 1px solid #edf3f0;">
+                    <button type="button" class="btn btn-secondary px-4" onclick="hideModal('operationModal')" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" id="op_save_btn" class="btn-add-main"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function changePerPage(val) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('per_page', val);
+        urlParams.set('page', '1');
+        window.location.search = urlParams.toString();
+    }
+
+    // CUSTOM SELECT DROPDOWN LOGIC
+    function toggleCustomSelect(wrapperId) {
+        const wrapper = document.getElementById(wrapperId);
+        const isOpen = wrapper.classList.contains('open');
+        closeAllCustomSelects();
+        if (!isOpen) {
+            wrapper.classList.add('open');
+        }
+    }
+
+    function closeAllCustomSelects() {
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-wrapper')) {
+            closeAllCustomSelects();
+        }
+    });
+
+    function filterCustomOptions(searchInput, wrapperId) {
+        const query = searchInput.value.toLowerCase();
+        const wrapper = document.getElementById(wrapperId);
+        const options = wrapper.querySelectorAll('.custom-option');
+        options.forEach(opt => {
+            const text = opt.innerText.toLowerCase();
+            opt.style.display = text.includes(query) ? 'flex' : 'none';
+        });
+    }
+
+    function selectCustomOption(wrapperId, val, label, targetSelectId) {
+        const wrapper = document.getElementById(wrapperId);
+        const labelSpan = wrapper.querySelector('.custom-select-trigger span');
+        labelSpan.innerText = label;
+
+        wrapper.querySelectorAll('.custom-option').forEach(opt => {
+            if (opt.getAttribute('data-value') === String(val)) {
+                opt.classList.add('selected');
+            } else {
+                opt.classList.remove('selected');
+            }
+        });
+
+        const hiddenSelect = document.getElementById(targetSelectId);
+        hiddenSelect.innerHTML = `<option value="${val}" selected>${label}</option>`;
+        hiddenSelect.dispatchEvent(new Event('change'));
+
+        wrapper.classList.remove('open');
+        validateOperationLive();
+    }
+
+    function showModal(modalId) {
+        const modalEl = document.getElementById(modalId);
+        if (!modalEl) return;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            let instance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            instance.show();
+        } else if (typeof $ !== 'undefined') {
+            $(modalEl).modal('show');
+        }
+    }
+
+    function hideModal(modalId) {
+        const modalEl = document.getElementById(modalId);
+        if (!modalEl) return;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            let instance = bootstrap.Modal.getInstance(modalEl);
+            if (instance) instance.hide();
+        } else if (typeof $ !== 'undefined') {
+            $(modalEl).modal('hide');
+        }
+    }
+
+    // LIVE VALIDATION
+    function validateCategoryLive() {
+        const input = document.getElementById('cat_name');
+        const feedback = document.getElementById('cat_name_feedback');
+        const saveBtn = document.getElementById('cat_save_btn');
+        const val = input.value.trim();
+        const itemId = document.getElementById('cat_item_id').value;
+
+        if (!val) {
+            input.classList.remove('is-invalid');
+            feedback.innerText = '';
+            saveBtn.disabled = false;
+            return;
+        }
+
+        fetch(`{% url 'check_setup_field' %}?model_type=op_category&field=name&value=${encodeURIComponent(val)}&item_id=${itemId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.exists) {
+                input.classList.add('is-invalid');
+                feedback.className = 'field-feedback text-danger';
+                feedback.innerText = `This category "${val}" already exists!`;
+                saveBtn.disabled = true;
+            } else {
+                input.classList.remove('is-invalid');
+                feedback.className = 'field-feedback text-success';
+                feedback.innerText = 'Category name is available.';
+                saveBtn.disabled = false;
+            }
+        });
+    }
+
+    function validateOperationLive() {
+        const input = document.getElementById('op_name');
+        const categorySelect = document.getElementById('op_category_id');
+        const feedback = document.getElementById('op_name_feedback');
+        const saveBtn = document.getElementById('op_save_btn');
+        const val = input.value.trim();
+        const catId = categorySelect.value;
+        const itemId = document.getElementById('op_item_id').value;
+
+        if (!val) {
+            input.classList.remove('is-invalid');
+            feedback.innerText = '';
+            saveBtn.disabled = false;
+            return;
+        }
+
+        fetch(`{% url 'check_setup_field' %}?model_type=operation&field=name&value=${encodeURIComponent(val)}&extra_id=${catId}&item_id=${itemId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.exists) {
+                input.classList.add('is-invalid');
+                feedback.className = 'field-feedback text-danger';
+                feedback.innerText = `This operation "${val}" already exists in the selected category!`;
+                saveBtn.disabled = true;
+            } else {
+                input.classList.remove('is-invalid');
+                feedback.className = 'field-feedback text-success';
+                feedback.innerText = 'Operation name is available.';
+                saveBtn.disabled = false;
+            }
+        });
+    }
+
+    function openCategoryModal() {
+        document.getElementById('categoryForm').reset();
+        document.getElementById('cat_item_id').value = '';
+        document.getElementById('catModalTitle').innerText = 'Add Operation Category';
+        document.getElementById('cat_name').classList.remove('is-invalid');
+        document.getElementById('cat_name_feedback').innerText = '';
+        document.getElementById('cat_save_btn').disabled = false;
+        showModal('categoryModal');
+    }
+
+    function editCategory(id, name) {
+        document.getElementById('cat_item_id').value = id;
+        document.getElementById('cat_name').value = name;
+        document.getElementById('catModalTitle').innerText = 'Edit Operation Category';
+        document.getElementById('cat_name').classList.remove('is-invalid');
+        document.getElementById('cat_name_feedback').innerText = '';
+        document.getElementById('cat_save_btn').disabled = false;
+        showModal('categoryModal');
+    }
+
+    function openOperationModal() {
+        document.getElementById('operationForm').reset();
+        document.getElementById('op_item_id').value = '';
+        document.getElementById('opModalTitle').innerText = 'Add Operation';
+        document.getElementById('opCategorySelectLabel').innerText = 'Select Category';
+        document.getElementById('op_category_id').innerHTML = '';
+        document.getElementById('op_name').classList.remove('is-invalid');
+        document.getElementById('op_name_feedback').innerText = '';
+        document.getElementById('op_save_btn').disabled = false;
+        showModal('operationModal');
+    }
+
+    function editOperation(id, name, catId, catName) {
+        document.getElementById('op_item_id').value = id;
+        document.getElementById('op_name').value = name;
+        document.getElementById('opModalTitle').innerText = 'Edit Operation';
+        selectCustomOption('opCategorySelectWrapper', catId, catName, 'op_category_id');
+        document.getElementById('op_name').classList.remove('is-invalid');
+        document.getElementById('op_name_feedback').innerText = '';
+        document.getElementById('op_save_btn').disabled = false;
+        showModal('operationModal');
+    }
+
+    function handleEditCategoryClick(btn) {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        editCategory(id, name);
+    }
+
+    function handleEditOperationClick(btn) {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const catId = btn.getAttribute('data-category-id');
+        const catName = btn.getAttribute('data-category-name');
+        editOperation(id, name, catId, catName);
+    }
+
+    function submitCategoryForm(e) {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById('categoryForm'));
+        fetch("{% url 'save_operation_category' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            } else {
+                alert(data.message || 'Error saving category.');
+            }
+        });
+    }
+
+    function deleteCategory(id) {
+        if (confirm('Are you sure you want to delete this Category?')) {
+            fetch(`/operations/category/delete/${id}/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error deleting category.');
+                }
+            });
+        }
+    }
+
+    function submitOperationForm(e) {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById('operationForm'));
+        fetch("{% url 'save_operation' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            } else {
+                alert(data.message || 'Error saving operation.');
+            }
+        });
+    }
+
+    function deleteOperation(id) {
+        if (confirm('Are you sure you want to delete this Operation?')) {
+            fetch(`/operations/delete/${id}/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error deleting operation.');
+                }
+            });
+        }
+    }
+
+    // EXPORT & PRINT FUNCTIONS
+    function exportToExcel() {
+        if (typeof XLSX === 'undefined') {
+            alert('Excel library loading, please try again in a moment.');
+            return;
+        }
+        let origTable = document.querySelector("#printableTable table");
+        let cloneTable = origTable.cloneNode(true);
+        // Remove Action column from exported Excel
+        cloneTable.querySelectorAll('.actions-cell, th:last-child').forEach(el => el.remove());
+
+        let wb = XLSX.utils.table_to_book(cloneTable, { sheet: "Operations" });
+        XLSX.writeFile(wb, "operations_export.xlsx");
+    }
+
+    // REAL DIRECT DOWNLOADABLE PDF FUNCTION USING JSPDF & AUTOTABLE (EXCLUDING ACTION COLUMN)
+    function exportToPDF() {
+        if (!window.jspdf) {
+            alert('PDF library is loading, please try again in a moment.');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.setTextColor(11, 61, 46);
+        doc.text("Operations Setup Report", 14, 18);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
+
+        let origTable = document.querySelector('#printableTable table');
+        let cloneTable = origTable.cloneNode(true);
+        // Remove Action column from exported PDF
+        cloneTable.querySelectorAll('.actions-cell, th:last-child').forEach(el => el.remove());
+
+        doc.autoTable({
+            html: cloneTable,
+            startY: 32,
+            styles: { fontSize: 10, cellPadding: 5 },
+            headStyles: { fillColor: [11, 61, 46], textColor: [255, 255, 255], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [247, 251, 249] }
+        });
+
+        doc.save("operations_report.pdf");
+    }
+
+    function printTable() {
+        window.print();
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,949 @@
+{% extends home_template %}
+
+{% block content %}
+
+<style>
+/* =====================================================
+   REMOVE HORIZONTAL OVERFLOW
+===================================================== */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+.main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.import-page {
+    width: calc(100% - 150px) !important;
+    max-width: calc(100% - 150px) !important;
+    margin-left: 60px !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+.import-card {
+    width: 100% !important;
+    max-width: 900px !important;
+    box-sizing: border-box !important;
+}
+
+.import-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* File input was also able to exceed the container */
+.file-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.file-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Error table */
+.error-table-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.error-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+    box-sizing: border-box !important;
+}
+
+.error-table th,
+.error-table td {
+    max-width: 100%;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .main-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    .import-page {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 10px 15px 40px !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    .import-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 15px !important;
+    }
+
+    .import-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 15px !important;
+    }
+
+    .file-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    .file-input {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .error-table-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    .error-table {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        table-layout: fixed !important;
+    }
+
+    .error-table th,
+    .error-table td {
+        font-size: 12px !important;
+        padding: 8px !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .error-table th:first-child,
+    .error-table td:first-child {
+        width: 70px !important;
+    }
+
+    .result-grid {
+        width: 100% !important;
+        max-width: 100% !important;
+        grid-template-columns: 1fr !important;
+    }
+}
+    .import-page {
+        width: 100%;
+        padding: 10px 0 40px;
+        margin-left: 150px;
+        overflow: hidden !important;
+        font-family: "Inter", sans-serif;
+    }
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .import-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .import-title {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .import-subtitle {
+        margin-top: 6px;
+        color: #777;
+        font-size: 14px;
+    }
+
+    /* =====================================================
+       MAIN CARD
+    ===================================================== */
+
+    .import-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.07);
+        border: 1px solid #eee;
+        max-width: 900px;
+    }
+
+    /* =====================================================
+       SECTION
+    ===================================================== */
+
+    .import-section {
+        border: 1px solid #eee;
+        border-radius: 15px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 6px;
+    }
+
+    .section-description {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 20px;
+    }
+
+    /* =====================================================
+       SAMPLE BUTTON
+    ===================================================== */
+
+    .sample-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: none;
+        border-radius: 9px;
+        background: #ff6b00;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .sample-btn:hover {
+        background: #e85e00;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    /* =====================================================
+       FILE INPUT
+    ===================================================== */
+
+    .file-wrapper {
+        border: 2px dashed #ddd;
+        border-radius: 13px;
+        padding: 30px;
+        text-align: center;
+        background: #fafafa;
+        transition: .2s;
+    }
+
+    .file-wrapper:hover {
+        border-color: #ff6b00;
+        background: #fffaf5;
+    }
+
+    .file-icon {
+        font-size: 40px;
+        color: #ff6b00;
+        margin-bottom: 10px;
+    }
+
+    .file-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    .file-help {
+        color: #888;
+        font-size: 12px;
+        margin-bottom: 18px;
+    }
+
+    .file-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+    }
+
+    /* =====================================================
+       UPLOAD BUTTON
+    ===================================================== */
+
+    .upload-btn {
+        margin-top: 20px;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 9px;
+        background: #8b00ff;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .upload-btn:hover {
+        background: #7200d6;
+    }
+
+    /* =====================================================
+       ALERT
+    ===================================================== */
+
+    .alert-box {
+        padding: 14px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .alert-error {
+        background: #fff0f0;
+        border: 1px solid #ffcaca;
+        color: #c62828;
+    }
+
+    /* =====================================================
+       RESULT
+    ===================================================== */
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .result-box {
+        border-radius: 12px;
+        padding: 18px;
+        text-align: center;
+        border: 1px solid #eee;
+    }
+
+    .result-number {
+        font-size: 25px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .result-label {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #777;
+    }
+
+    /* =====================================================
+       ERROR TABLE
+    ===================================================== */
+
+    .error-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #c62828;
+    }
+
+    .error-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .error-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
+    .error-table th,
+    .error-table td {
+        padding: 11px 13px;
+        border: 1px solid #eee;
+        text-align: left;
+        font-size: 13px;
+    }
+
+    .error-table th {
+        background: #fafafa;
+        font-weight: 700;
+    }
+
+    .error-row {
+        color: #c62828;
+    }
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 768px) {
+
+        .import-card {
+            padding: 20px;
+        }
+
+        .import-section {
+            padding: 18px;
+        }
+
+        .result-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .import-title {
+            font-size: 21px;
+        }
+
+    }
+
+.patient-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   PAGE TITLE
+========================================================= */
+
+.patient-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.patient-heading-icon {
+    width: 56px;
+    height: 56px;
+
+    border-radius: 15px;
+
+    background: #e5f3ed;
+    color: #0b3d2e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+.patient-heading-text h2 {
+    margin: 0 0 5px;
+
+    color: #0b3d2e;
+
+    font-size: 34px;
+    font-weight: 800;
+
+    letter-spacing: -0.6px;
+}
+
+.patient-heading-text p {
+    margin: 0;
+
+    color: #71877e;
+
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.patient-back-btn {
+    height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #c8d9d2;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #294f42;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 280px !important;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-back-btn:hover {
+    background: #0b3d2e;
+    border-color: #0b3d2e;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(11,61,46,0.18);
+}
+
+.django-messages {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    z-index: 999999;
+    width: 350px;
+}
+
+.message {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.message.success {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+.message.error {
+    background: #ffffff;
+    color: #b42318;
+    border-left: 4px solid #b42318;
+}
+@media (max-width: 768px) {
+
+    .patient-page-header {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 20px !important;
+    }
+
+    .patient-heading {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 45px 1fr !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .patient-heading-icon {
+        width: 45px !important;
+        height: 45px !important;
+        min-width: 45px !important;
+    }
+
+    .patient-heading-text {
+        min-width: 0 !important;
+    }
+
+    .patient-heading-text h2 {
+        font-size: 21px !important;
+        line-height: 1.2 !important;
+        margin: 0 0 5px !important;
+    }
+
+    .patient-heading-text p {
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+    }
+
+    .patient-back-btn {
+        display: flex !important;
+        width: 200px !important;
+        margin: 15px 0 0 0 !important;
+        height: 40px !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .django-messages {
+        top: 310px !important;
+        right: 12px !important;
+        left: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .message {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px 14px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        border-radius: 8px !important;
+        word-break: break-word !important;
+    }
+}
+
+
+/* Small mobile */
+@media (max-width: 400px) {
+
+    .django-messages {
+        top: 310px !important;
+        right: 8px !important;
+        left: 8px !important;
+    }
+
+    .message {
+        padding: 11px 12px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<main class="main-content">
+<div class="import-page">
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================= -->
+ <div class="patient-page-header">
+
+        <div class="patient-heading">
+
+            <div class="patient-heading-icon">
+               <i class="fa-solid fa-file-import"></i>
+            </div>
+
+            <div class="patient-heading-text">
+
+                <h2>
+                    Import Patients
+                </h2>
+
+                <p>
+                   Import multiple patient records using an Excel file
+                </p>
+
+            </div>
+
+         <button
+            type="button"
+            class="patient-back-btn"
+            onclick="goBackToPatients()">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Patients
+
+        </button>
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         MESSAGES
+    ================================================= -->
+ {% if messages %}
+
+<div class="django-messages">
+
+    {% for message in messages %}
+
+        <div class="message {{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+    <div class="import-card">
+
+        <!-- =================================================
+             DOWNLOAD SAMPLE
+        ================================================= -->
+
+        <div class="import-section">
+
+            <div class="section-title">
+                1. Download Sample Excel
+            </div>
+
+            <div class="section-description">
+
+                Download the sample Excel file and enter
+                patient details using the same column format.
+
+            </div>
+
+            <a
+                href="{% url 'download_patient_sample' %}"
+                class="sample-btn"
+            >
+
+                <i class="bi bi-file-earmark-excel"></i>
+
+                Download Sample Excel
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             UPLOAD
+        ================================================= -->
+
+        <div class="import-section">
+
+            <div class="section-title">
+                2. Upload Patient Excel
+            </div>
+
+            <div class="section-description">
+
+                Select the completed Excel file and upload it.
+                Only valid patient records will be saved.
+
+            </div>
+
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="file-wrapper">
+
+                    <div class="file-icon">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                    </div>
+
+                    <label class="file-label">
+
+                        Choose Patient Excel File
+
+                    </label>
+
+                    <div class="file-help">
+
+                        Supported format: .xlsx / .xlsm
+
+                    </div>
+
+                    <input
+                        type="file"
+                        name="patient_excel"
+                        class="file-input"
+                        accept=".xlsx,.xlsm"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="upload-btn"
+                    >
+
+                        <i class="bi bi-cloud-upload"></i>
+
+                        Upload & Import
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             IMPORT RESULT
+        ================================================= -->
+
+        {% if import_completed %}
+
+        <div class="import-section">
+
+            <div class="section-title">
+                Import Result
+            </div>
+
+            <div class="section-description">
+                The Excel file has been processed.
+            </div>
+
+
+            <div class="result-grid">
+
+                <div class="result-box">
+
+                    <div class="result-number">
+                        {{ total_rows }}
+                    </div>
+
+                    <div class="result-label">
+                        Total Records
+                    </div>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <div class="result-number">
+                        {{ success_count }}
+                    </div>
+
+                    <div class="result-label">
+                        Successfully Imported
+                    </div>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <div class="result-number">
+                        {{ failed_count }}
+                    </div>
+
+                    <div class="result-label">
+                        Skipped
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if errors %}
+
+            <div class="error-title">
+
+                Invalid Records
+
+            </div>
+
+
+            <div class="error-table-wrapper">
+
+                <table class="error-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Excel Row
+                            </th>
+
+                            <th>
+                                Reason
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for error in errors %}
+
+                        <tr class="error-row">
+
+                            <td>
+                                Row {{ error.row }}
+                            </td>
+
+                            <td>
+
+                                {% for reason in error.errors %}
+
+                                    <div>
+                                        • {{ reason }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+</main>
+<script>
+    
+function goBackToPatients() {
+
+    window.history.back();
+
+}
+</script>
+{% endblock %}

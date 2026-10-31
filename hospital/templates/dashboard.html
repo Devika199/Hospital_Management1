@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manager Dashboard | LHospital</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4faf7;
+            color: #1f3d32;
+        }
+
+
+        /* =====================================
+           TOP NAVBAR
+        ===================================== */
+
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 78px;
+            background: #0b3d2e;
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.12);
+        }
+
+
+        .navbar-brand {
+            color: #ffffff !important;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            background: #ffffff;
+            color: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+
+        .brand-name {
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+
+        .brand-subtitle {
+            font-size: 10px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+
+        .manager-details {
+            margin-left: auto;
+            text-align: right;
+            color: #ffffff;
+        }
+
+
+        .manager-details .welcome {
+            font-size: 14px;
+            opacity: 0.75;
+        }
+
+
+        .manager-details .manager-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+
+        .manager-details small {
+            display: block;
+            margin-top: 4px;
+            font-size: 13px;
+            opacity: 0.75;
+        }
+
+
+        /* =====================================
+           MOBILE MENU BUTTON
+        ===================================== */
+
+        .navbar-toggler {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            margin-left: 20px;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+
+        .navbar-toggler i {
+            color: #ffffff;
+            font-size: 18px;
+        }
+
+
+        /* =====================================
+           SIDEBAR
+        ===================================== */
+
+       /* =====================================
+   DARK GREEN SIDEBAR
+===================================== */
+
+.sidebar {
+    position: fixed;
+    top: 78px;
+    left: 0;
+    width: 255px;
+    height: calc(100vh - 78px);
+    background: #0b3d2e;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 25px 15px;
+    z-index: 999;
+    transition: 0.3s;
+}
+
+
+/* SIDEBAR LINKS */
+
+.sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+.sidebar ul a {
+    text-decoration: none;
+    display: block;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+
+/* SIDEBAR MENU ITEM */
+
+.sidebar ul li {
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.25s;
+    color: #ffffff;
+}
+
+
+/* ICON */
+
+.sidebar ul li i {
+    width: 25px;
+    color: #a8d5c3;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+
+/* ACTIVE MENU */
+
+.sidebar ul a.active li {
+    background:  #176b50;;
+    color: #ffffff;
+}
+
+
+.sidebar ul a.active li i {
+    color: #ffffff;
+}
+
+
+/* HOVER */
+
+.sidebar ul a:hover li {
+    background: #176b50;
+    color: #ffffff;
+}
+
+
+.sidebar ul a:hover li i {
+    color: #ffffff;
+}
+
+
+        /* =====================================
+           MAIN CONTENT
+        ===================================== */
+
+        .main-content {
+            margin-left: 255px;
+            padding: 115px 35px 40px;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================
+           PAGE TITLE
+        ===================================== */
+
+        .title {
+            margin-bottom: 28px;
+        }
+
+
+        .title h2 {
+            font-size: 30px;
+            font-weight: 800;
+            color: #173e31;
+            margin-bottom: 6px;
+        }
+
+
+        .title p {
+            margin: 0;
+            font-size: 14px;
+            color: #71877e;
+        }
+
+
+        /* =====================================
+           WELCOME CARD
+        ===================================== */
+
+        .welcome-card {
+            background: #ffffff;
+            border: 1px solid #e1ece7;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(11, 61, 46, 0.06);
+        }
+
+
+        .welcome-icon {
+            width: 64px;
+            height: 64px;
+            min-width: 64px;
+            border-radius: 17px;
+            background: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 25px;
+        }
+
+
+        .welcome-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #173e31;
+            margin-bottom: 7px;
+        }
+
+
+        .welcome-card p {
+            margin: 0;
+            color: #71877e;
+            font-size: 13px;
+        }
+
+
+        /* =====================================
+           ACTION CARDS
+        ===================================== */
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+
+        .action-link {
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+
+        .action-card {
+            min-height: 225px;
+            background: #ffffff;
+            border: 1px solid #e1ece7;
+            border-radius: 20px;
+            padding: 28px;
+            transition: 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(11, 61, 46, 0.05);
+        }
+
+
+        .action-card:hover {
+            transform: translateY(-6px);
+            border-color: #9bc7b5;
+            box-shadow: 0 18px 35px rgba(11, 61, 46, 0.12);
+        }
+
+
+        .action-card .icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            background: #e8f4ef;
+            color: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 24px;
+        }
+
+
+        .action-card h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #173e31;
+            margin-bottom: 10px;
+        }
+
+
+        .action-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #71877e;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 1000px) {
+
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .top-navbar {
+                padding: 0 18px;
+            }
+
+
+            .navbar-toggler {
+                display: block;
+                margin-left: 80px;
+            }
+
+
+            .sidebar {
+                left: -255px;
+                box-shadow: 8px 0 30px rgba(0,0,0,0.1);
+            }
+
+
+            .sidebar.active {
+                left: 0;
+            }
+
+
+            .main-content {
+                margin-left: 0;
+                padding: 105px 20px 30px;
+            }
+
+
+            .brand-name {
+                font-size: 22px;
+            }
+
+
+            .brand-subtitle {
+                display: none;
+            }
+
+
+            .manager-details {
+                display: none;
+            }
+
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+.mobile-profile-btn,
+.mobile-profile-details {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    .mobile-profile-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+
+        background: transparent;
+        color: #ffffff;
+
+        border: none;
+        border-radius: 8px;
+
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .mobile-profile-btn i {
+        font-size: 15px;
+    }
+
+    .mobile-profile-details {
+        position: fixed;
+
+        top: 62px;
+        right: 12px;
+
+        width: 210px;
+
+        background: #ffffff;
+        color: #0b3d2e;
+
+        padding: 15px;
+
+        border-radius: 12px;
+
+        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+
+        z-index: 99999;
+
+        display: none;
+    }
+
+    .mobile-profile-details.show {
+        display: block;
+    }
+
+    .profile-name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .profile-role {
+        font-size: 12px;
+        color: #176b50;
+    }
+
+    .profile-role i {
+        margin-right: 5px;
+    }
+
+    /* Hide desktop details on mobile */
+    .manager-details {
+        display: none !important;
+    }
+}
+
+        @media (max-width: 500px) {
+
+            .brand-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+
+            .welcome-card {
+                padding: 20px;
+                align-items: flex-start;
+            }
+
+
+            .welcome-icon {
+                width: 55px;
+                height: 55px;
+                min-width: 55px;
+                font-size: 20px;
+            }
+
+
+            .title h2 {
+                font-size: 25px;
+            }
+
+
+            .welcome-card h3 {
+                font-size: 17px;
+            }
+
+        }
+
+.logo-l {
+font-size: 32px;
+font-weight: 700;
+line-height: 1;
+}
+
+/* SMALL MEDICAL PLUS */
+
+.logo-plus {
+position: absolute;
+width: 17px;
+height: 17px;
+right: -5px;
+bottom: -4px;
+background: #0b3d2e;
+color: #ffffff;
+border: 2px solid #ffffff;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.logo-plus i {
+font-size: 8px;
+}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     TOP NAVBAR
+===================================== -->
+
+<nav class="top-navbar">
+
+
+    <a class="navbar-brand"
+       href="{% url 'manager_home' %}">
+
+
+        <div class="brand-icon">
+ <span class="logo-l">L</span>
+        </div>
+
+
+        <div class="brand-text">
+
+            <span class="brand-name">
+                LHospital
+            </span>
+
+            <span class="brand-subtitle">
+                SMART HEALTHCARE MANAGEMENT
+            </span>
+
+        </div>
+
+
+    </a>
+
+
+    <!-- MOBILE MENU -->
+
+    <button class="navbar-toggler"
+            type="button"
+            onclick="toggleSidebar()">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </button>
+<button class="mobile-profile-btn" onclick="toggleProfileDetails()">
+    <i class="fa-solid fa-eye"></i>
+</button>
+
+<div class="mobile-profile-details" id="mobileProfileDetails">
+
+    <div class="profile-name">
+        {{ user.first_name }} {{ user.last_name }}
+    </div>
+
+    <div class="profile-role">
+        <i class="fa-solid fa-user-tag"></i>
+        {{ user.get_role_display }}
+    </div>
+
+</div>
+
+    <!-- MANAGER DETAILS -->
+
+    <div class="manager-details">
+
+        <div class="welcome">
+            Welcome,
+        </div>
+
+        <div class="manager-name">
+
+            {{ user.first_name }}
+{{ user.last_name }}
+
+        </div>
+
+        <small>
+
+            Role:
+            <strong>
+                {{ user.get_role_display }}
+            </strong>
+
+        </small>
+
+    </div>
+
+
+</nav>
+
+
+
+<!-- =====================================
+     SIDEBAR
+===================================== -->
+
+<aside class="sidebar"
+       id="sidebar">
+
+
+    <ul>
+
+
+        <!-- DASHBOARD -->
+
+        <a href="{% url 'dashboard' %}">
+
+            <li>
+
+                <i class="fa-solid fa-house"></i>
+
+                Dashboard
+
+            </li>
+
+        </a>
+        <a href="{% url 'manager_radiology' %}">
+
+                    <div class="setup-item
+                        {% if request.resolver_match.url_name == 'manager_radiology' %}
+                            active
+                        {% endif %}">
+
+                       <i class="fas fa-x-ray"></i></i>
+
+                       Radiology
+
+                    </div>
+                </a>
+                  <a href="{% url 'pathologist_radiology' %}">
+
+                    <div class="setup-item
+                        {% if request.resolver_match.url_name == 'pathologist_radiology' %}
+                            active
+                        {% endif %}">
+
+                         <i class="fa-solid fa-microscope"></i>
+    Pathology
+
+                    </div>
+                </a>
+
+
+        <!-- LOGOUT -->
+
+        <a href="{% url 'logout' %}">
+
+            <li>
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </li>
+
+        </a>
+
+
+    </ul>
+
+
+</aside>
+
+
+{% block content %}
+<!-- =====================================
+     MAIN CONTENT
+===================================== -->
+<main class="main-content">
+
+    <div class="dashboard-page">
+
+        <!-- PAGE TITLE -->
+
+      <div class="title">
+
+    <h2>{{ user.get_role_display }} Dashboard</h2>
+
+    <p>
+
+        {% if user.role == "doctor" %}
+            Manage patient consultations, medical records, and treatment activities.
+
+        {% elif user.role == "accountant" %}
+            Manage hospital accounts, billing, payments, and financial records.
+
+        {% elif user.role == "receptionist" %}
+            Manage patient registrations, appointments, and reception activities.
+
+        {% elif user.role == "pharmacist" %}
+            Manage medicines, prescriptions, stock, and pharmacy operations.
+
+        {% elif user.role == "pathologist" %}
+            Manage laboratory tests, reports, and pathology activities.
+
+        {% elif user.role == "radiologist" %}
+            Manage radiology examinations, scans, and medical reports.
+
+        {% elif user.role == "head_nurse" %}
+            Manage nursing staff, patient care, and nursing activities.
+
+        {% elif user.role == "nurse" %}
+            Manage patient care, nursing tasks, and assigned activities.
+
+        {% elif user.role == "billing_executive" %}
+            Manage patient billing, invoices, payments, and billing activities.
+
+        {% elif user.role == "patient" %}
+            View your appointments, medical information, prescriptions, and healthcare services.
+
+        {% else %}
+            Access your LHospital dashboard and manage your assigned activities.
+
+        {% endif %}
+
+    </p>
+
+</div>
+
+
+        <!-- WELCOME CARD -->
+
+        <div class="welcome-card">
+
+           <div class="welcome-icon">
+
+    {% if user.role == "doctor" %}
+        <i class="fa-solid fa-user-doctor"></i>
+
+    {% elif user.role == "accountant" %}
+        <i class="fa-solid fa-calculator"></i>
+
+    {% elif user.role == "receptionist" %}
+        <i class="fa-solid fa-headset"></i>
+
+    {% elif user.role == "pharmacist" %}
+        <i class="fa-solid fa-prescription-bottle-medical"></i>
+
+    {% elif user.role == "pathologist" %}
+        <i class="fa-solid fa-microscope"></i>
+
+    {% elif user.role == "radiologist" %}
+        <i class="fa-solid fa-x-ray"></i>
+
+    {% elif user.role == "head_nurse" %}
+        <i class="fa-solid fa-user-nurse"></i>
+
+    {% elif user.role == "nurse" %}
+        <i class="fa-solid fa-user-nurse"></i>
+
+    {% elif user.role == "billing_executive" %}
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+
+    {% elif user.role == "patient" %}
+        <i class="fa-solid fa-hospital-user"></i>
+
+    {% else %}
+        <i class="fa-solid fa-user"></i>
+    {% endif %}
+
+</div>
+
+            <div>
+
+                <h3>
+    Welcome back, {{ user.first_name }}!
+</h3>
+
+<p>
+    Welcome to LHospital. Access the features and services
+    available for your role.
+</p>
+
+            </div>
+
+        </div>
+{% endblock %}
+
+
+<script>
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("active");
+
+    }
+function toggleProfileDetails() {
+    const profile = document.getElementById("mobileProfileDetails");
+
+    profile.classList.toggle("show");
+}
+</script>
+
+
+</body>
+
+</html>

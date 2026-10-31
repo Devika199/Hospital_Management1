@@ -1,0 +1,631 @@
+{% extends 'manager_home.html' %}
+
+{% block content %}
+
+<style>
+    html,
+body {
+    width: 88% !important;
+}
+@media (max-width: 768px) {
+
+    html,
+    body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+    }
+
+}
+    .approval-page {
+        width: 100%;
+        margin-top: 100px;
+        margin-left: 280px;
+    }
+
+
+    /* ===============================
+       HEADER
+    =============================== */
+
+    .approval-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+
+    .approval-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+
+
+    .approval-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+
+    /* ===============================
+       FILTER
+    =============================== */
+
+    .filter-section {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+
+    .filter-btn {
+        text-decoration: none;
+        padding: 9px 18px;
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        background: #ffffff;
+        color: #315347;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.25s;
+    }
+
+
+    .filter-btn:hover {
+        background: #e8f4ef;
+         text-decoration: none;
+        color: #0b3d2e;
+    }
+
+
+    .filter-btn.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+    }
+
+
+    /* ===============================
+       TABLE CONTAINER
+    =============================== */
+
+    .approval-table-card {
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+    }
+
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+
+    /* ===============================
+       TABLE
+    =============================== */
+.table-wrapper {
+    width: calc(100% - 40px);   /* reduce table area width */
+    margin: 25px 20px 0;        /* 20px left and right space */
+    overflow-x: auto;
+    border-radius: 18px;
+    border: 1px solid #dce7e2;
+}
+    .approval-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+
+    .approval-table thead {
+        background: #0b3d2e;
+    }
+
+
+    .approval-table th {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 15px 14px;
+        white-space: nowrap;
+        text-align: left;
+    }
+
+
+    .approval-table td {
+        padding: 14px;
+        border-bottom: 1px solid #edf3f0;
+        font-size: 14px;
+        color: #315347;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+
+    .approval-table tbody tr {
+        transition: 0.2s;
+    }
+
+
+    .approval-table tbody tr:hover {
+        background: #f7fbf9;
+    }
+
+
+    .approval-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* ===============================
+       PROFILE IMAGE
+    =============================== */
+
+    .user-image {
+        width: 50px;
+        height: 55px;
+        border-radius: 25%;
+        object-fit: cover;
+        border: 2px solid #e1ece7;
+    }
+
+
+    .default-user-image {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #e8f4ef;
+        color: #0b3d2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+    }
+
+
+    /* ===============================
+       NAME
+    =============================== */
+
+    .user-name {
+        font-weight: 700;
+        color: #173e31;
+        font-size: 13px;
+    }
+
+
+    /* ===============================
+       STATUS
+    =============================== */
+
+    .status-badge {
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: capitalize;
+        display: inline-block;
+    }
+
+
+    .status-pending {
+        background: #fff4d6;
+        color: #a66d00;
+    }
+
+
+    .status-approved {
+        background: #dff5e8;
+        color: #16713a;
+    }
+
+
+    .status-rejected {
+        background: #fde4e4;
+        color: #b42318;
+    }
+
+
+    /* ===============================
+       ACTION BUTTONS
+    =============================== */
+
+    .action-buttons {
+        display: flex;
+        gap: 7px;
+    }
+
+
+    .approve-btn,
+    .reject-btn {
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+
+    .approve-btn {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+
+    .approve-btn:hover {
+        background: #176b50;
+        transform: translateY(-1px);
+    }
+
+
+    .reject-btn {
+        background: #fde4e4;
+        color: #b42318;
+    }
+
+
+    .reject-btn:hover {
+        background: #f7cccc;
+        transform: translateY(-1px);
+    }
+
+
+    /* ===============================
+       NO DATA
+    =============================== */
+
+    .no-data {
+        text-align: center;
+        padding: 50px !important;
+        color: #71877e !important;
+        font-size: 14px !important;
+    }
+
+
+    @media (max-width: 768px) {
+
+         .approval-page {
+        margin-left: 15px !important;
+        text-wrap: nowrap;
+    }
+
+        .approval-header {
+            display: block;
+        }
+
+
+        .approval-header h2 {
+            font-size: 24px;
+        }
+        .approval-table-card{
+            width: 330px !important;
+        }
+
+
+        .filter-section {
+            margin-top: 18px;
+        }
+
+    }
+.approved-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #16713a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.approved-action i {
+    font-size: 17px;
+}
+.django-messages {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    z-index: 999999;
+    width: 350px;
+}
+
+.message {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.message.success {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+.message.error {
+    background: #ffffff;
+    color: #b42318;
+    border-left: 4px solid #b42318;
+}
+</style>
+
+
+<div class="approval-page">
+
+
+    <!-- ===============================
+         PAGE HEADER
+    =============================== -->
+
+    <div class="approval-header">
+
+        <div>
+
+            <h2>Super Admin Approvals</h2>
+
+            <p>
+                Review and manage Super Admin registration requests.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ===============================
+         FILTER BUTTONS
+    =============================== -->
+
+    <div class="filter-section">
+
+        <a href="{% url 'super_admin_approval' %}"
+           class="filter-btn {% if not selected_status %}active{% endif %}">
+            All
+        </a>
+
+
+        <a href="{% url 'super_admin_approval' %}?status=pending"
+           class="filter-btn {% if selected_status == 'pending' %}active{% endif %}">
+            Pending
+        </a>
+
+
+        <a href="{% url 'super_admin_approval' %}?status=approved"
+           class="filter-btn {% if selected_status == 'approved' %}active{% endif %}">
+            Approved
+        </a>
+
+    </div>
+
+{% if messages %}
+
+<div class="django-messages">
+
+    {% for message in messages %}
+
+        <div class="message {{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+    <!-- ===============================
+         SUPER ADMIN TABLE
+    =============================== -->
+
+    <div class="approval-table-card">
+
+        <div class="table-responsive">
+
+            <table class="approval-table">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>S.No.</th>
+
+                        <th>Profile</th>
+
+                        <th>Name</th>
+
+                        <th>Email</th>
+
+                        <th>Phone</th>
+
+                        <th>Aadhaar Number</th>
+
+                        <th>Date of Birth</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for user in super_admins %}
+
+                    <tr>
+
+                        <!-- NUMBER -->
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+
+                        <!-- PROFILE IMAGE -->
+
+                        <td>
+
+                            {% if user.profile_image %}
+
+                                <img src="{{ user.profile_image.url }}"
+                                     class="user-image"
+                                     alt="{{ user.first_name }}">
+
+                            {% else %}
+
+                                <div class="default-user-image">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- NAME -->
+
+                        <td>
+
+                            <div class="user-name">
+
+                                {{ user.first_name }}
+                                {{ user.last_name }}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- EMAIL -->
+
+                        <td>
+                            {{ user.email }}
+                        </td>
+
+
+                        <!-- PHONE -->
+
+                        <td>
+                            {{ user.phone }}
+                        </td>
+
+
+                        <!-- AADHAAR -->
+
+                        <td>
+                            {{ user.aadhar_number }}
+                        </td>
+
+
+                        <!-- DATE OF BIRTH -->
+
+                        <td>
+                            {{ user.date_of_birth|date:"d M Y" }}
+                        </td>
+
+                       <td>
+
+    {% if user.status == "pending" %}
+
+        <div class="action-buttons">
+
+            <!-- APPROVE -->
+            <form method="POST"
+                  action="{% url 'approve_super_admin' user.id %}">
+
+                {% csrf_token %}
+
+                <button type="submit" class="approve-btn">
+
+                    <i class="fa-solid fa-check"></i>
+                    Approve
+
+                </button>
+
+            </form>
+
+
+            <!-- REJECT / DELETE -->
+            <form method="POST"
+                  action="{% url 'reject_super_admin' user.id %}">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="reject-btn"
+                        onclick="return confirm('Are you sure you want to reject and remove this Super Admin?');">
+
+                    <i class="fa-solid fa-xmark"></i>
+                    Reject
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+    {% elif user.status == "approved" %}
+
+        <span class="approved-action">
+
+            <i class="fa-solid fa-circle-check"></i>
+            Approved
+
+        </span>
+
+    {% endif %}
+
+</td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8"
+                            class="no-data">
+
+                            <i class="fa-solid fa-user-clock"
+                               style="font-size:30px; margin-bottom:10px;"></i>
+
+                            <br>
+
+                            No Super Admin registration requests found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

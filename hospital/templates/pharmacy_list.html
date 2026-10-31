@@ -1,0 +1,3217 @@
+{% extends base %}
+
+{% block content %}
+
+<style>
+
+
+
+.patient-page {
+    width: 100%;
+}
+
+
+
+
+.patient-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 28px;
+}
+
+
+
+
+.patient-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.patient-heading-icon {
+    width: 56px;
+    height: 56px;
+
+    border-radius: 15px;
+
+    background: #e5f3ed;
+    color: #0b3d2e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+.patient-heading-text h2 {
+    margin: 0 0 5px;
+
+    color: #0b3d2e;
+
+    font-size: 34px;
+    font-weight: 800;
+
+    letter-spacing: -0.6px;
+}
+
+.patient-heading-text p {
+    margin: 0;
+
+    color: #71877e;
+
+    font-size: 15px;
+    font-weight: 500;
+}
+
+
+
+
+.patient-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.patient-action-btn {
+    height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #c8d9d2;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #294f42;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-action-btn i {
+    font-size: 15px;
+}
+
+
+/* ONLY HOVER HAS COLOUR */
+
+.patient-add-btn:hover {
+    background: #f38c17;
+    border-color: #f38c17;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(243,140,23,0.25);
+}
+
+.patient-import-btn:hover {
+    background: #078a55;
+    border-color: #078a55;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(7,138,85,0.22);
+}
+
+.patient-delete-btn:hover {
+    background: #dc2638;
+    border-color: #dc2638;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(220,38,56,0.22);
+}
+
+.patient-disable-btn:hover {
+    background: #168c87;
+    border-color: #168c87;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(22,140,135,0.22);
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.patient-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #d7e5df;
+
+    border-radius: 17px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(11,61,46,0.08);
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.patient-toolbar {
+    min-height: 78px;
+
+    padding: 16px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e0ebe6;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.patient-search {
+    width: 420px;
+    max-width: 100%;
+
+    position: relative;
+}
+
+.patient-search i {
+    position: absolute;
+
+    left: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #6b887c;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+.patient-search input {
+    width: 100%;
+
+    height: 46px;
+
+    padding: 0 16px 0 46px;
+
+    border: 1px solid #c9dad3;
+
+    border-radius: 9px;
+
+    background: #f9fcfb;
+
+    color: #173e31;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: all 0.2s ease;
+}
+
+.patient-search input::placeholder {
+    color: #91a39b;
+}
+
+.patient-search input:focus {
+    background: #ffffff;
+
+    border-color: #176b50;
+
+    box-shadow:
+        0 0 0 3px rgba(23,107,80,0.10);
+}
+
+
+/* =========================================================
+   EXPORT BUTTONS
+========================================================= */
+
+.patient-export {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.patient-export-btn {
+    height: 42px;
+
+    padding: 0 17px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #c9dad3;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #34594c;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-export-btn i {
+    font-size: 15px;
+}
+
+
+
+.patient-excel:hover {
+    background: #05c49a;
+    border-color:  #0bbe98;
+    color: #ffffff;
+}
+
+.patient-pdf:hover {
+    background: #d40dd4;
+    border-color:  #be0bbe;
+    color: #ffffff;
+}
+
+.patient-print:hover {
+    background: #276baa;
+    border-color:#10589b;
+    color: #ffffff;
+}
+
+.patient-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 500px;
+    -webkit-overflow-scrolling: touch;
+}
+.patient-table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+}
+
+
+
+
+.patient-table thead {
+    background: #0b3d2e;
+}
+
+.patient-table thead th {
+    height: 58px;
+
+    padding: 0 15px;
+
+    background: #0b3d2e;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-align: left;
+
+    border: none;
+
+    border-bottom: 3px solid #176b50;
+
+    white-space: nowrap;
+
+    letter-spacing: 0.2px;
+}
+
+
+
+
+
+.patient-table tbody tr {
+    background: #ffffff;
+
+    transition: background 0.18s ease;
+}
+
+.patient-table tbody tr:hover {
+    background: #f0f8f5;
+}
+.patient-table tbody td {
+    height: 68px;
+
+    padding: 11px 15px;
+
+    border-bottom: 1px solid #dfe9e5;
+
+    color: #405b50;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    vertical-align: middle;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.patient-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+
+
+.patient-checkbox {
+    width: 18px;
+    height: 18px;
+
+    margin: 0;
+
+    accent-color: #176b50;
+
+    cursor: pointer;
+
+    vertical-align: middle;
+}
+
+
+
+
+.patient-name {
+    display: block;
+
+    color: #143f31;
+
+    font-size: 15px;
+
+    font-weight: 750;
+}
+
+.patient-id {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #84968f;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+
+
+.gender-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 65px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    background: #e3f1eb;
+
+    color: #176b50;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+
+
+.dead-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 48px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.dead-no {
+    background: #e5f4eb;
+    color: #167447;
+}
+
+.dead-yes {
+    background: #fde9eb;
+    color: #b4232f;
+}
+
+
+
+
+.patient-view {
+    height: 36px;
+
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 1px solid #c8d9d2;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #31594d;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.patient-view i {
+    font-size: 13px;
+}
+
+.patient-view:hover {
+    background: #176b50;
+
+    border-color: #176b50;
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px rgba(23,107,80,0.18);
+}
+
+
+.patient-empty {
+    height: 250px;
+
+    text-align: center !important;
+
+    vertical-align: middle !important;
+
+    color: #82948d !important;
+
+    font-size: 14px !important;
+}
+
+.patient-empty-icon {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 13px;
+
+    border-radius: 50%;
+
+    background: #eef6f2;
+
+    color: #72a18d;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+
+
+
+.patient-footer {
+    min-height: 72px;
+
+    padding: 14px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    background: #f9fcfb;
+
+    border-top: 1px solid #e0ebe6;
+}
+
+
+
+
+.entries-control {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #647a70;
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+.entries-select {
+    width: 78px;
+
+    height: 37px;
+
+    padding: 0 9px;
+
+    border: 1px solid #c8d9d2;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #31594d;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+.entries-select:focus {
+    border-color: #176b50;
+
+    box-shadow:
+        0 0 0 3px rgba(23,107,80,0.08);
+}
+
+
+
+
+
+
+
+@media (max-width: 1100px) {
+
+    .patient-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .patient-header-actions {
+        width: 100%;
+    }
+
+    .patient-table thead th {
+        font-size: 13px;
+    }
+
+    .patient-table tbody td {
+        font-size: 13px;
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .patient-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .patient-search {
+        width: 100%;
+    }
+
+    .patient-export {
+        justify-content: flex-end;
+    }
+
+    .patient-footer {
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .patient-heading-text h2 {
+        font-size: 27px;
+    }
+
+    .patient-heading-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .patient-header-actions {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        width: 100%;
+    }
+
+    .patient-action-btn {
+        width: 100%;
+    }
+
+    .patient-footer {
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+}
+
+
+
+@media (max-width: 500px) {
+
+    .patient-table {
+        min-width: 1100px;
+    }
+
+    .patient-table-wrapper {
+          width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+
+    .patient-table thead th {
+        height: 50px;
+
+        font-size: 12px;
+    }
+
+    .patient-table tbody td {
+        height: 58px;
+
+        font-size: 12px;
+    }
+
+    .patient-name {
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+    .patient-page-header,
+    .patient-toolbar,
+    .patient-footer {
+        display: none !important;
+    }
+
+    .patient-card {
+        border: none;
+        box-shadow: none;
+    }
+
+    .patient-table thead {
+        background: #eeeeee !important;
+    }
+
+    .patient-table thead th {
+        background: #eeeeee !important;
+        color: #000000 !important;
+    }
+
+    .patient-view {
+        border: none;
+        background: transparent;
+        color: #000000;
+    }
+
+}
+
+.django-messages {
+    position: fixed;
+    top: 100px;
+    right: 25px;
+    z-index: 999999;
+    width: 350px;
+}
+
+.message {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.message.success {
+    background: #0b3d2e;
+    color: #ffffff;
+}
+
+.message.error {
+    background: #ffffff;
+    color: #b42318;
+    border-left: 4px solid #b42318;
+}
+
+@media (max-width: 600px) {
+
+    .django-messages {
+        top: 310px !important;
+        right: 12px !important;
+        left: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .message {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px 14px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        border-radius: 8px !important;
+        word-break: break-word !important;
+    }
+}
+
+
+
+
+
+.patient-details-modal {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 999999;
+
+    padding: 25px;
+}
+
+.patient-details-modal.active {
+    display: flex;
+}
+
+
+
+
+.patient-details-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(5, 30, 22, 0.60);
+
+    backdrop-filter: blur(3px);
+}
+
+
+
+
+.patient-details-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 950px;
+
+    max-height: 90vh;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.25);
+
+    display: flex;
+    flex-direction: column;
+
+    animation: patientModalOpen 0.25s ease;
+}
+
+@keyframes patientModalOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+
+.patient-details-header {
+    min-height: 82px;
+
+    padding: 16px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #f9fcfb;
+
+    border-bottom: 1px solid #dfe9e5;
+}
+
+.patient-details-title {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+}
+
+.patient-modal-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 13px;
+
+    background: #e5f3ed;
+
+    color: #0b3d2e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+.patient-details-title h3 {
+    margin: 0;
+
+    color: #0b3d2e;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.patient-details-title p {
+    margin: 3px 0 0;
+
+    color: #81958d;
+
+    font-size: 12px;
+}
+
+
+.patient-modal-close {
+    width: 38px;
+    height: 38px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #6d8279;
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    transition: all 0.2s ease;
+}
+
+.patient-modal-close:hover {
+    background: #dc2638;
+
+    color: #ffffff;
+}
+
+
+
+
+.patient-details-body {
+
+    padding: 24px;
+
+    overflow-y: auto;
+
+    flex: 1;
+}
+
+
+
+
+.patient-profile-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 18px;
+
+    margin-bottom: 22px;
+
+    border: 1px solid #dce9e4;
+
+    border-radius: 12px;
+
+    background: #fbfefd;
+}
+
+.patient-modal-profile {
+
+    width: 72px;
+    height: 72px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    background: #e5f3ed;
+
+    color: #176b50;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+}
+
+.patient-modal-profile img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.patient-profile-info h4 {
+
+    margin: 0 0 5px;
+
+    color: #143f31;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+.patient-profile-info span {
+
+    display: inline-flex;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    background: #e3f1eb;
+
+    color: #176b50;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+
+
+.patient-modal-section {
+
+    margin-bottom: 22px;
+
+    padding: 20px;
+
+    border: 1px solid #dfe9e5;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+.patient-modal-section-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 18px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #e8efec;
+
+    color: #0b3d2e;
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+.patient-modal-section-title i {
+
+    color: #176b50;
+
+    font-size: 15px;
+}
+
+
+
+
+.patient-details-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.patient-detail-item {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.patient-detail-item.full {
+
+    grid-column: 1 / -1;
+}
+
+.patient-detail-item span {
+
+    color: #879a92;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+.patient-detail-item strong {
+
+    color: #294f42;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    word-break: break-word;
+}
+
+
+
+
+.patient-detail-text {
+
+    margin-bottom: 16px;
+}
+
+.patient-detail-text:last-child {
+    margin-bottom: 0;
+}
+
+.patient-detail-text span {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #879a92;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+.patient-detail-text p {
+
+    margin: 0;
+
+    padding: 12px 14px;
+
+    min-height: 45px;
+
+    border-radius: 8px;
+
+    background: #f7faf9;
+
+    color: #405b50;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.patient-details-footer {
+
+    min-height: 76px;
+
+    padding: 14px 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    background: #f9fcfb;
+
+    border-top: 1px solid #dfe9e5;
+}
+
+.patient-details-footer button {
+
+    height: 40px;
+
+    padding: 0 16px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 8px;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+
+/* DELETE */
+
+.modal-delete-btn {
+
+    border: 1px solid #f0c5ca;
+
+    background: #ffffff;
+
+    color: #c52232;
+}
+
+.modal-delete-btn:hover {
+
+    background: #dc2638;
+
+    border-color: #dc2638;
+
+    color: #ffffff;
+}
+
+
+/* DISABLE */
+
+.modal-disable-btn {
+
+    border: 1px solid #b9d9d6;
+
+    background: #ffffff;
+
+    color: #168c87;
+}
+
+.modal-disable-btn:hover {
+
+    background: #168c87;
+
+    border-color: #168c87;
+
+    color: #ffffff;
+}
+
+
+/* EDIT */
+
+.modal-edit-btn {
+
+    border: 1px solid #f0c57b;
+
+    background: #ffffff;
+
+    color: #d77b00;
+}
+
+.modal-edit-btn:hover {
+
+    background: #f38c17;
+
+    border-color: #f38c17;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .patient-details-modal {
+        padding: 10px;
+    }
+
+    .patient-details-box {
+        max-height: 95vh;
+
+        border-radius: 14px;
+    }
+
+    .patient-details-body {
+        padding: 15px;
+    }
+
+    .patient-details-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 15px;
+    }
+
+    .patient-details-footer {
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .patient-details-header {
+        padding: 13px 15px;
+    }
+
+    .patient-details-title h3 {
+        font-size: 17px;
+    }
+
+    .patient-modal-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .patient-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-modal-section {
+        padding: 15px;
+    }
+
+    .patient-details-footer {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        padding: 12px;
+    }
+
+    .patient-details-footer button {
+        width: 100%;
+
+        padding: 0 7px;
+
+        font-size: 11px;
+    }
+
+}
+.patient-status-badge {
+
+    display: inline-flex;
+
+    width: fit-content;
+
+    padding: 5px 12px;
+
+    border-radius: 20px;
+
+    font-size: 12px !important;
+
+    font-weight: 700 !important;
+
+}
+
+
+.patient-status-alive {
+
+    background: #e5f4eb;
+
+    color: #167447;
+
+}
+
+
+.patient-status-dead {
+
+    background: #fde9eb;
+
+    color: #b4232f;
+
+}
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background: #fff !important;
+
+        writing-mode: horizontal-tb !important;
+        direction: ltr !important;
+        transform: none !important;
+    }
+
+ 
+    body * {
+        visibility: hidden !important;
+    }
+
+    #patientPrintHeading,
+    #patientPrintHeading *,
+    #patientsTable,
+    #patientsTable * {
+        visibility: visible !important;
+    }
+
+    #patientPrintHeading {
+
+        display: block !important;
+
+        width: 100% !important;
+
+        text-align: center !important;
+
+        font-family: Arial, sans-serif !important;
+
+        font-size: 20px !important;
+
+        font-weight: bold !important;
+
+        margin: 0 0 8mm 0 !important;
+
+        padding: 0 !important;
+
+        writing-mode: horizontal-tb !important;
+
+        transform: none !important;
+    }
+
+    .patient-table-wrapper {
+
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        overflow: visible !important;
+
+        writing-mode: horizontal-tb !important;
+
+        transform: none !important;
+    }
+
+
+    #patientsTable {
+
+        display: table !important;
+
+        width: 100% !important;
+
+        margin: 0 auto !important;
+
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+
+        /* Complete outside border */
+        border: 1px solid #000 !important;
+         outline: 1px solid #000 !important;
+        outline-offset: -1px !important;
+
+          table-layout: auto !important;
+
+        font-family: Arial, sans-serif !important;
+
+        font-size: 16px !important;
+
+        writing-mode: horizontal-tb !important;
+
+        direction: ltr !important;
+
+        transform: none !important;
+    }
+
+    #patientsTable tr {
+
+        display: table-row !important;
+
+        writing-mode: horizontal-tb !important;
+
+        transform: none !important;
+
+        page-break-inside: avoid !important;
+    }
+
+    #patientsTable th,
+    #patientsTable td {
+
+        display: table-cell !important;
+
+        border: 1px solid #000 !important;
+
+        padding: 5px !important;
+
+        font-family: Arial, sans-serif !important;
+
+        font-size: 16px !important;
+
+        line-height: 1.2 !important;
+
+        color: #000 !important;
+
+        background: #fff !important;
+
+        vertical-align: middle !important;
+
+        white-space: normal !important;
+
+        word-break: normal !important;
+
+        writing-mode: horizontal-tb !important;
+
+        direction: ltr !important;
+
+        transform: none !important;
+    }
+
+    #patientsTable th {
+
+        font-size: 16px !important;
+
+        font-weight: bold !important;
+
+        text-align: center !important;
+    }
+
+    #patientsTable th:first-child,
+    #patientsTable td:first-child {
+        display: none !important;
+    }
+
+    #patientsTable th:last-child,
+    #patientsTable td:last-child {
+        display: none !important;
+    }
+
+    #patientsTable th:nth-child(2),
+    #patientsTable td:nth-child(2) {
+        width: 32mm !important;
+        text-align: left !important;
+    }
+
+    #patientsTable th:nth-child(3),
+    #patientsTable td:nth-child(3) {
+        width: 12mm !important;
+        text-align: center !important;
+    }
+
+    #patientsTable th:nth-child(4),
+    #patientsTable td:nth-child(4) {
+        width: 18mm !important;
+        text-align: center !important;
+    }
+
+    #patientsTable th:nth-child(5),
+    #patientsTable td:nth-child(5) {
+        width: 28mm !important;
+        text-align: center !important;
+    }
+
+    #patientsTable th:nth-child(6),
+    #patientsTable td:nth-child(6) {
+        width: 32mm !important;
+        text-align: left !important;
+    }
+
+    #patientsTable th:nth-child(7),
+    #patientsTable td:nth-child(7) {
+        width: 50mm !important;
+        text-align: left !important;
+    }
+
+    #patientsTable th:nth-child(8),
+    #patientsTable td:nth-child(8) {
+        width: 15mm !important;
+        text-align: center !important;
+    }
+
+    .patient-page-header,
+    .patient-toolbar,
+    .patient-footer,
+    .patient-search,
+    .patient-export,
+    .patient-header-actions,
+    .patient-action-btn,
+    .patient-export-btn {
+        display: none !important;
+    }
+
+    .patient-page,
+    .patient-card {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #fff !important;
+    }
+    .smallbox .modal-dialog {
+    width: 100%;
+    max-width: 500px;
+    margin: 0;
+}
+
+}
+.smallbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.smallbox .modal-dialog {
+    width: 900px;
+    max-width: 1000px;
+    margin: 0;
+}
+
+.smallbox .modal-content {
+    background: #fff;
+    opacity: 1;
+}
+.modal-content {
+        border-radius: 18px;
+        border: 1px solid #e1ece7;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(11, 61, 46, 0.1);
+    }
+
+    .modal-header {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        opacity: 0.85;
+        cursor: pointer;
+        transition: 0.2s;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-close-custom:hover {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-body label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #173e31;
+        margin-bottom: 6px;
+        display: inline-block;
+    }
+
+    .modal-body .form-control {
+        border-radius: 9px;
+        border: 1px solid #d8e7e0;
+        font-size: 13px;
+        color: #315347;
+    }
+
+    .modal-body .form-control:focus {
+        border-color: #0b3d2e;
+        box-shadow: none;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf3f0;
+        padding: 12px 20px;
+    }
+    .radiology-select {
+    width: 250px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    border: 1px solid #d8e7e0;
+    font-size: 13px;
+    color: #315347;
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+}
+ @media (max-width: 768px) {
+        .fo-setup-page {
+            margin-left: 0 !important;
+            margin-top: 80px !important;
+            padding: 15px !important;
+        }
+
+        .fo-setup-grid {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .fo-options-card {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            padding: 10px !important;
+        }
+
+        .fo-option-btn {
+            flex: 1 1 calc(33.333% - 8px);
+            min-width: 80px;
+            margin-bottom: 0 !important;
+            text-align: center !important;
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+        }
+
+        .fo-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px !important;
+        }
+
+        .fo-search-box {
+            width: 100% !important;
+        }
+
+        .btn-add-main {
+            width: 100% !important;
+            justify-content: center;
+        }
+        .radiology-select {
+    width: 310px !important;
+   
+    border-radius: 9px;
+    border: 1px solid #d8e7e0;
+    font-size: 13px;
+    color: #315347;
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+}}
+#componentTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#componentTable th,
+#componentTable td {
+    padding: 4px !important;
+    white-space: nowrap;
+}
+
+#componentTable input,
+#componentTable select {
+    width: 100%;
+    padding: 5px 6px !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+ .btn-add-main {
+        background: #0b3d2e;
+        color: #ffffff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-add-main:hover {
+        background: #176b50;
+        transform: translateY(-1px);
+    }
+@media (max-width: 500px) {
+
+    .smallbox {
+        width: 100%;
+        max-width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        align-items: center;
+    }
+
+    .smallbox .modal-dialog {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .smallbox .modal-content {
+        width: 100%;
+        max-height: 95vh;
+        overflow: hidden;
+    }
+
+    .smallbox .modal-body {
+        padding: 12px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .smallbox .row {
+        display: block;
+        margin: 0;
+    }
+
+    .smallbox .col-md-4 {
+        width: 100%;
+        padding: 0;
+        margin-bottom: 12px;
+    }
+
+    .smallbox .form-control,
+    .smallbox .radiology-select {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .smallbox .mb-3.mt-3 {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .smallbox #componentTable,
+    .smallbox #editComponentTable,
+    .smallbox #viewComponentTable {
+        min-width: 700px;
+        width: 700px;
+    }
+
+    .smallbox #componentTable th,
+    .smallbox #componentTable td,
+    .smallbox #editComponentTable th,
+    .smallbox #editComponentTable td,
+    .smallbox #viewComponentTable th,
+    .smallbox #viewComponentTable td {
+        white-space: nowrap;
+        padding: 5px !important;
+    }
+
+    .smallbox #componentTable input,
+    .smallbox #editComponentTable input {
+        min-width: 100px;
+    }
+
+    .smallbox .modal-footer {
+        padding: 10px;
+    }
+}
+</style>
+
+
+
+   
+  
+
+<main class="main-content">
+     {% if messages %}
+
+<div class="django-messages">
+
+    {% for message in messages %}
+
+        <div class="message {{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+<form style="display:none;">
+        {% csrf_token %}
+    </form>
+<div class="patient-page">
+
+
+
+    <div class="patient-page-header">
+
+        <div class="patient-heading">
+
+            <div class="patient-heading-icon">
+                <i class="fa-solid fa-dna"></i>
+            </div>
+
+            <div class="patient-heading-text">
+
+                <h2>
+Pharmacy                </h2>
+
+                <p>
+                    Manage and view registered medicines
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="patient-header-actions">
+
+            <button
+                type="button"
+                class="patient-action-btn patient-add-btn"
+                onclick="openaddmodal()">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                Add 
+
+            </button>
+            
+            <button
+                type="button"
+                class="patient-action-btn patient-add-btn"
+                onclick="purchase()">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                Purchase 
+
+            </button>
+             <!-- <button
+                type="button"
+                class="patient-action-btn patient-import-btn"
+                onclick="importPatients()">
+
+                <i class="fa-solid fa-file-import"></i>
+
+                Import
+
+            </button> -->
+
+
+            <button
+                type="button"
+                class="patient-action-btn patient-delete-btn"
+                onclick="deleteSelectedPatients()">
+
+                <i class="fa-solid fa-trash"></i>
+
+                Delete
+
+            </button>
+
+
+            
+
+        </div>
+
+    </div>
+
+
+   
+
+    <div class="patient-card">
+
+
+       
+
+        <div class="patient-toolbar">
+
+
+
+            <div class="patient-search">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    id="search1"
+                    placeholder="Search..."
+                    oninput="searchfunction()">
+
+            </div>
+
+
+
+            <div class="patient-export">
+
+
+                <button type="button" 
+                class="patient-export-btn patient-excel" 
+                onclick="Excel()"> 
+                <i class="fa-solid fa-file-excel"></i> Excel </button>
+
+
+              <button type="button" 
+              class="patient-export-btn patient-pdf" 
+              onclick="pdfpage()"> <i class="fa-solid fa-file-pdf"></i> 
+              PDF </button> 
+              
+              <button type="button" class="patient-export-btn patient-print" 
+              onclick="window.print()"> <i class="fa-solid fa-print"></i> Print </button>
+
+            </div>
+
+        </div>
+
+
+     
+
+     
+<div class="table-responsive">
+            <table
+                class="patient-table"
+                id="patientsTable">
+
+                <thead>
+
+                    <tr>
+
+                      
+
+                        <th style="text-align: center;">
+
+                           <input type="checkbox" name="" id="">
+
+                        </th>
+
+
+                        <th style="text-align: center;">
+                            Medicine Name
+                        </th>
+
+
+                        <th style="text-align: center;">
+                           Medicine Category
+                        </th>
+
+
+                        <th style="text-align: center;">
+                           Company
+                        </th>
+
+
+                        <th style="text-align: center;">
+                           Medicine Composition
+                        </th>
+
+
+                        <th style="text-align: center;">
+                           Medicine Group
+                        </th>
+
+                         <th style="text-align: center;">
+                           Unit
+                        </th>
+                        <th style="text-align: center;">
+                          Available Quantity
+                        </th>
+
+
+                      
+
+                      
+
+                        <th  class="colspan2" style="text-align: center; ">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="patientTableBody">
+
+                    {% for c in medicine %}
+
+                    <tr class="voucher-item">
+                        <td style="text-align: center;">
+
+                        <input type="checkbox" class="medicine-checkbox" value="{{c.id}}">
+
+                        </td>
+
+
+
+                        <td style="text-align: center;">
+
+                            <span class="patient-name">
+
+                                {{ c.medicine_name }}
+                                
+
+                            </span>
+
+
+                        </td>
+
+
+
+                        <td style="text-align: center;">
+
+                            {{ c.medicine_category }}
+
+                        </td>
+
+
+
+                        <td style="text-align: center;">
+
+                         
+
+                                {{ c.company.company_name }}
+
+                           
+
+                        </td>
+
+
+<td style="text-align: center;">
+    {{ c.medicine_composition }}
+</td>
+
+<td style="text-align: center;">
+    {{ c.medicine_group }}
+</td>
+
+<td style="text-align: center;">
+    {{c.unit}}
+</td>
+             <td style="text-align: center;">
+0</td>          
+
+                    
+                        <td style="text-align: center;" class="colspan-2">
+
+                            <button
+    type="button"
+    class="patient-view"
+    onclick='viewcompond(
+        "{{ c.id }}",
+"{{ c.medicine_name}}",
+"{{ c.medicine_category_id }}",
+"{{ c.company_id }}",
+"{{ c.medicine_composition}}",
+"{{ c.medicine_group_id }}",
+"{{ c.unit_id }}",
+"{{ c.medicine_level}}",
+"{{ c.reorder_level}}",
+"{{ c.tax}}",
+"{{ c.packing}}",
+"{{ c.vat}}",
+"{{ c.rac}}",
+"{{ c.note}}",
+"{{ c.image.url}}"
+        
+    )'>
+    <i class="fa-solid fa-eye"></i>
+    View
+</button>
+    <button
+        type="button"
+        class="patient-view"
+        onclick="badStock('{{ c.id }}')">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Bad Stock
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="patient-empty">
+
+                            <div class="patient-empty-icon">
+
+                                <i class="fa-solid fa-user-group"></i>
+
+                            </div>
+
+                            No medicine found
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+</div>
+        </div>
+
+<div class="smallbox" id="addcatmodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="unitid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Add Medicine
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('addcatmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                     <div class="row">
+
+        <div class="col-md-4">
+            <label for="pname">Medicine Name</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="pname">
+        </div>
+
+        <div class="col-md-4">
+            <label for="bloodgroup">
+                Medicine Category <span class="text-danger">*</span>
+            </label>
+
+            <select id="medicine_category" class="radiology-select">
+                <option value="">Select Medicine Category</option>
+
+                {% for u in bloodgroup %}
+                    <option value="{{ u.id }}">{{ u.category_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="bloodgroup">
+                Company <span class="text-danger">*</span>
+            </label>
+
+            <select id="company" class="radiology-select">
+                <option value="">Select Company</option>
+
+                {% for u in company %}
+                    <option value="{{ u.id }}">{{ u.company_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+    </div>
+<div class="row mt-3">
+             <div class="col-md-4">
+            <label for="pname">Medicine Composition</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="medicine_composition">
+        </div>
+    <div class="col-md-4">
+            <label for="bloodgroup">
+                 Medicine Group <span class="text-danger">*</span>
+            </label>
+
+            <select id="medicine_group" class="radiology-select">
+                <option value="">Select Medicine Group</option>
+
+                {% for u in group %}
+                    <option value="{{ u.id }}">{{ u.group_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+         <div class="col-md-4">
+            <label for="bloodgroup">
+                 Unit <span class="text-danger">*</span>
+            </label>
+
+            <select id="medicine_unit" class="radiology-select">
+                <option value="">Select Unit</option>
+
+                {% for u in unit %}
+                    <option value="{{ u.id }}">{{ u.unit_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label for="pname">Medicine Level</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="medicineLevel">
+        </div>
+         <div class="col-md-4">
+            <label for="pname">Reorder Level</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="reorderLevel">
+        </div>
+         <div class="col-md-4">
+            <label for="pname">Tax</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="tax">
+        </div>
+    </div>
+    <div class="row">
+         <div class="col-md-4">
+             <label for="pname">Packing</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="packing">
+        </div>
+        <div class="col-md-4">
+            <label for="pname">VAT</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="vat">
+        </div>
+         <div class="col-md-4">
+            <label for="pname">RAC Number</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="rac">
+        </div>
+    </div>
+        <div class="row mt-3">
+         <div class="col-md-6">
+            <label for="pname">Note</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="note">
+        </div>
+         <div class="col-md-6">
+            <label for="pname">Image</label><span class="text-danger">*</span>
+            <input type="file" class="form-control" id="image">
+        </div>
+        </div>     
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="saveparameter()">Save Details</button>
+                </div>
+
+               
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="smallbox" id="viewcompoundmodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="compid" value="">
+                <input type="hidden" name="category" id="bloodgroupid" >
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        View  Details
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('viewcompoundmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                      <div class="row">
+
+        <div class="col-md-4">
+            <label for="pname1">Medicine Name</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="pname1" readonly>
+        </div>
+
+        <div class="col-md-4">
+            <label for="bloodgroup">
+                Medicine Category <span class="text-danger">*</span>
+            </label>
+
+                       <input type="text" class="form-control" id="medicine_category1" readonly>
+
+        </div>
+        <div class="col-md-4">
+            <label for="bloodgroup">
+                Company <span class="text-danger">*</span>
+            </label>
+
+                        <input type="text" class="form-control" id="company1" readonly>
+
+        </div>
+
+    </div>
+<div class="row mt-3">
+             <div class="col-md-4">
+            <label for="pname">Medicine Composition</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="medicine_composition1" readonly>
+        </div>
+    <div class="col-md-4">
+            <label for="bloodgroup">
+                 Medicine Group <span class="text-danger">*</span>
+            </label>
+
+                       <input type="text" class="form-control" id="medicine_group1" readonly>
+
+        </div>
+         <div class="col-md-4">
+            <label for="bloodgroup">
+                 Unit <span class="text-danger">*</span>
+            </label>
+
+                     <input type="text" class="form-control" id="medicine_unit1" readonly>
+
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label for="pname">Medicine Level</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="medicineLevel1" readonly>
+        </div>
+         <div class="col-md-4">
+            <label for="pname">Reorder Level</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="reorderLevel1" readonly>
+        </div>
+         <div class="col-md-4">
+            <label for="pname">Tax</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="tax1" readonly>
+        </div>
+    </div>
+    <div class="row">
+         <div class="col-md-4">
+            <label for="pname">Packing</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="packing1" readonly>
+             
+        </div>
+        <div class="col-md-4">
+            <label for="pname">VAT</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="vat1" readonly>
+        </div>
+         <div class="col-md-4">
+            <label for="pname">RAC Number</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="rac1" readonly>
+        </div>
+    </div>
+        <div class="row mt-3">
+         <div class="col-md-6">
+            <label for="pname">Note</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="note1" readonly>
+        </div>
+         <div class="col-md-6">
+            <label for="pname">Image</label><span class="text-danger">*</span>
+            <img id="image1"
+     src=""
+     alt="Medicine Image"
+     style="width: 200px; height: 120px; object-fit: cover; border-radius: 8px; display: none;">
+        </div>
+        </div>     
+
+
+
+                <div class="modal-footer">
+                   
+            <button type="button" class="patient-action-btn modal-edit-btn"
+                 onclick="editparameter()"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button
+                type="button"
+                class="patient-action-btn patient-delete-btn"
+                onclick="deleteitem()"><i class="fa-solid fa-trash"></i>Delete
+
+            </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="smallbox" id="editparametermodal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="setupForm">
+                {% csrf_token %}
+                <input type="hidden" name="" id="editcompid" value="">
+                <input type="hidden" name="category" id="modalCategory" value="{{ active_category }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        Edit Medicine
+                    </h5>
+                    <button type="button" class="btn-close-custom" onclick="closeModal('editparametermodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                      <div class="row">
+
+        <div class="col-md-4">
+            <label for="pname">Medicine Name</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="pname2">
+        </div>
+
+        <div class="col-md-4">
+            <label for="bloodgroup">
+                Medicine Category <span class="text-danger">*</span>
+            </label>
+
+            <select id="medicine_category2" class="radiology-select">
+                <option value="">Select Medicine Category</option>
+
+                {% for u in bloodgroup %}
+                    <option value="{{ u.id }}">{{ u.category_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="bloodgroup">
+                Company <span class="text-danger">*</span>
+            </label>
+
+            <select id="company2" class="radiology-select">
+                <option value="">Select Company</option>
+
+                {% for u in company %}
+                    <option value="{{ u.id }}">{{ u.company_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+    </div>
+<div class="row mt-3">
+             <div class="col-md-4">
+            <label for="pname">Medicine Composition</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="medicine_composition2">
+        </div>
+    <div class="col-md-4">
+            <label for="bloodgroup">
+                 Medicine Group <span class="text-danger">*</span>
+            </label>
+
+            <select id="medicine_group2" class="radiology-select">
+                <option value="">Select Medicine Group</option>
+
+                {% for u in group %}
+                    <option value="{{ u.id }}">{{ u.group_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+         <div class="col-md-4">
+            <label for="bloodgroup">
+                 Unit <span class="text-danger">*</span>
+            </label>
+
+            <select id="medicine_unit2" class="radiology-select">
+                <option value="">Select Unit</option>
+
+                {% for u in unit %}
+                    <option value="{{ u.id }}">{{ u.unit_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label for="pname">Medicine Level</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="medicineLevel2">
+        </div>
+         <div class="col-md-4">
+            <label for="pname">Reorder Level</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="reorderLevel2">
+        </div>
+         <div class="col-md-4">
+            <label for="pname">Tax</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="tax2">
+        </div>
+    </div>
+    <div class="row">
+         <div class="col-md-4">
+             <label for="pname">Packing</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="packing2">
+        </div>
+        <div class="col-md-4">
+            <label for="pname">VAT</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="vat2">
+        </div>
+         <div class="col-md-4">
+            <label for="pname">RAC Number</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="rac2">
+        </div>
+    </div>
+        <div class="row mt-3">
+         <div class="col-md-6">
+            <label for="pname">Note</label><span class="text-danger">*</span>
+            <input type="text" class="form-control" id="note2">
+        </div>
+        <div class="col-md-6">
+    <label>Image</label>
+
+    <div style="margin-bottom: 10px;">
+        <img id="imagePreview2"
+             src=""
+             alt="Current Medicine Image"
+             style="width: 200px;
+                    height: 120px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    display: none;">
+    </div>
+
+    <input type="file" class="form-control" id="image2">
+</div>
+        </div>     
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-add-main" onclick="editparameters()">Save Details</button>
+                </div>
+
+               
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+  <div class="smallbox" id="excelmodal" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form method="POST"
+                  enctype="multipart/form-data"
+                  action="{% url 'excel_save' %}">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-file-excel"></i>
+                        Import Medicines
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close-custom"
+                            onclick="closeModal('excelmodal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="excel-import-content">
+
+                        <div class="excel-import-icon">
+                            <i class="fa-solid fa-file-excel"></i>
+                        </div>
+
+                        <h6>Import Medicine Data</h6>
+
+                        <p>
+                            Upload an Excel file containing your medicine
+                            details.
+                        </p>
+
+<button type="button"onclick="excel1()"
+                                 class="btn text-light btn-sm px-5" style="background: linear-gradient(180deg, #0F766E, #115E59);" >
+                            <i class="fa-solid fa-download"></i>
+Download                                </button>
+
+
+                        <div class="excel-file-section">
+
+                            <label for="medicineExcelFile">
+                                Choose Excel File
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="file"
+                                   class="form-control"
+                                   id="medicineExcelFile"
+                                   name="files"
+                                   accept=".xlsx,.xls">
+
+                            <small>
+                                Supported formats: .xlsx, .xls
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+              
+                <div class="modal-footer">
+
+                   
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn-add-main">
+
+                        <i class="fa-solid fa-upload"></i>
+
+                        Import Medicines
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+      <table id="tableid" style="display:none;">
+    <tr>
+        <th>Medicine Name</th>
+        <th>Medicine Category</th>
+        <th>Company</th>
+        <th>Medicine Composition</th>
+        <th>Medicine Group</th>
+        <th>Unit</th>
+        <th>Medicine Level</th>
+        <th>Reorder Level</th>
+        <th>Tax</th>
+        <th>Packing</th>
+        <th>VAT</th>
+        <th>RAC Number</th>
+        <th>Note</th>
+    </tr>
+</table>
+    </tr>
+</table>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+
+
+function searchfunction(){
+   var  v=document.getElementById('search1').value.trim().replace(/ +/g, ' ').toLowerCase();
+     var item=document.querySelectorAll('.voucher-item')
+    item.forEach(function(i){
+        items=i.textContent.replace(/\s+/g, ' ').toLowerCase();
+      i.style.display = items.includes(v) ? '' : 'none';
+    
+})}
+
+
+function openaddmodal() {
+   document.getElementById('addcatmodal').style.display='flex'
+}
+
+function openEditModal(a, b, c) {
+    document.getElementById('title1').value=a
+    document.getElementById('desc1').value=b
+  document.getElementById('catid').value=c
+document.getElementById('editcatmodal').style.display='flex'
+}
+function deleteitem() {
+     var id=$('#compid').val()
+            if (confirm("Are you sure you want to delete this medicine?")) {
+                $.ajax({
+                    type: 'POST',
+                   url: "{% url 'delete_medicine' %}",
+                    data: {
+                        'id': id,
+                          
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(r) {
+                          if(r.success){
+                    location.reload()
+                }
+
+                    }
+                });
+            }
+        } 
+
+  
+
+function Excel() {
+    const Table =document.getElementById("patientsTable").cloneNode(true);
+
+    Table.querySelectorAll("tr").forEach(function(row) {
+        if (row.lastElementChild) {
+            row.lastElementChild.remove();
+        }
+    });
+    const ws = XLSX.utils.table_to_sheet(Table);
+   
+     ws['!cols'] = [
+        { wch: 10 }, 
+        { wch: 15 },
+    { wch: 10 }, ]
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb,  "Components.xlsx");
+  } 
+ 
+function pdfpage() {
+  
+       var element = document.getElementById("patientsTable");
+
+    element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+        cell.style.display = "none";
+    });
+
+    var opt = {
+        margin: 1,
+        filename: "Components.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    };
+    html2pdf().set(opt).from(element).save().then(function() {
+        element.querySelectorAll("th:last-child, td:last-child").forEach(function(cell) {
+            cell.style.display = "";
+        });
+
+    });}
+
+function openaddparametermodal() {
+   document.getElementById('addparametermodal').style.display='flex'
+}
+function editparameter() {
+
+    var id = $('#compid').val();
+
+    $('#editcompid').val(id);
+
+    $('#pname2').val($('#pname1').val());
+    $('#medicine_category2').val($('#medicine_category1').val());
+    $('#company2').val($('#company1').val());
+    $('#medicine_composition2').val($('#medicine_composition1').val());
+    $('#medicine_group2').val($('#medicine_group1').val());
+    $('#medicine_unit2').val($('#medicine_unit1').val());
+    $('#medicineLevel2').val($('#medicineLevel1').val());
+    $('#reorderLevel2').val($('#reorderLevel1').val());
+    $('#tax2').val($('#tax1').val());
+    $('#packing2').val($('#packing1').val());
+    $('#vat2').val($('#vat1').val());
+    $('#rac2').val($('#rac1').val());
+    $('#note2').val($('#note1').val());
+    var imageSrc = $('#image1').attr('src');
+
+    if (imageSrc && imageSrc !== '') {
+        $('#imagePreview2')
+            .attr('src', imageSrc)
+            .show();
+    } else {
+        $('#imagePreview2')
+            .attr('src', '')
+            .hide();
+    }
+
+    document.getElementById('editparametermodal').style.display = 'flex';
+}
+function deleteparameteritem(id) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    type: 'POST',
+                   url: "{% url 'delete_radioparameter' %}",
+                    data: {
+                        'id': id,
+                          
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(r) {
+                          if(r.success){
+                    location.reload()
+                }
+
+                    }
+                });
+            }
+        } 
+ function saveparameter() {
+
+    var pname = $('#pname').val();
+    var category = $('#medicine_category').val();
+    var company = $('#company').val();
+    var composition = $('#medicine_composition').val();
+    var group = $('#medicine_group').val();
+    var unit = $('#medicine_unit').val();
+    var medicineLevel = $('#medicineLevel').val();
+    var reorderLevel = $('#reorderLevel').val();
+    var tax = $('#tax').val();
+    var packing = $('#packing').val();
+    var vat = $('#vat').val();
+    var rac = $('#rac').val();
+    var note = $('#note').val();
+    var image = $('#image')[0].files[0];
+
+    var formData = new FormData();
+
+    formData.append('name', pname);
+    formData.append('category', category);
+    formData.append('company', company);
+    formData.append('composition', composition);
+    formData.append('group', group);
+    formData.append('unit', unit);
+    formData.append('medicine_level', medicineLevel);
+    formData.append('reorder_level', reorderLevel);
+    formData.append('tax', tax);
+    formData.append('packing', packing);
+    formData.append('vat', vat);
+    formData.append('rac', rac);
+    formData.append('note', note);
+
+    if (image) {
+        formData.append('image', image);
+    }
+
+    formData.append(
+        'csrfmiddlewaretoken',
+        '{{ csrf_token }}'
+    );
+
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'save_medicine' %}",
+        data: formData,
+        processData: false,
+        contentType: false,
+
+        success: function(r) {
+            if (r.success) {
+                location.reload();
+            }
+        },
+
+        
+    });
+}
+function editparameters(){
+    var id=$('#editcompid').val();
+    var pname = $('#pname2').val();
+    var category = $('#medicine_category2').val();
+    var company = $('#company2').val();
+    var composition = $('#medicine_composition2').val();
+    var group = $('#medicine_group2').val();
+    var unit = $('#medicine_unit2').val();
+    var medicineLevel = $('#medicineLevel2').val();
+    var reorderLevel = $('#reorderLevel2').val();
+    var tax = $('#tax2').val();
+    var packing = $('#packing2').val();
+    var vat = $('#vat2').val();
+    var rac = $('#rac2').val();
+    var note = $('#note2').val();
+    var image = $('#image2')[0].files[0];
+
+    var formData = new FormData();
+
+    formData.append('name', pname);
+    formData.append('id', id);
+    formData.append('category', category);
+    formData.append('company', company);
+    formData.append('composition', composition);
+    formData.append('group', group);
+    formData.append('unit', unit);
+    formData.append('medicine_level', medicineLevel);
+    formData.append('reorder_level', reorderLevel);
+    formData.append('tax', tax);
+    formData.append('packing', packing);
+    formData.append('vat', vat);
+    formData.append('rac', rac);
+    formData.append('note', note);
+
+    if (image) {
+        formData.append('image', image);
+    }
+
+    formData.append(
+        'csrfmiddlewaretoken',
+        '{{ csrf_token }}'
+    );
+          
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'edit_medicine' %}",
+                  traditional: true,
+                  data: formData,
+        processData: false,
+        contentType: false,
+
+                
+                success: function(r) {
+                        if(r.success){
+                    location.reload()}
+                }
+            });
+          }
+  function openModal(mid){
+    document.getElementById(mid).style.display='flex';
+  }
+  function closeModal(mid){
+    document.getElementById(mid).style.display='none';
+  }
+
+
+function viewcompond(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o) {
+ 
+
+    document.getElementById('compid').value = a;
+
+    document.getElementById('pname1').value = b;
+
+    document.getElementById('medicine_category1').value = c;
+
+    document.getElementById('company1').value = d;
+
+    document.getElementById('medicine_composition1').value = e;
+
+    document.getElementById('medicine_group1').value = f;
+
+    document.getElementById('medicine_unit1').value = g;
+
+    document.getElementById('medicineLevel1').value = h;
+
+    document.getElementById('reorderLevel1').value = i;
+
+    document.getElementById('tax1').value = j;
+
+    document.getElementById('packing1').value = k;
+
+    document.getElementById('vat1').value = l;
+
+    document.getElementById('rac1').value = m;
+
+    document.getElementById('note1').value = n;
+    if (o) {
+        document.getElementById('image1').src = o;
+        document.getElementById('image1').style.display = 'block';
+    } else {
+        document.getElementById('image1').style.display = 'none';
+    }
+document.getElementById('viewcompoundmodal').style.display = 'flex';
+}
+function deleteSelectedPatients() {
+
+    let selected = [];
+
+    document.querySelectorAll('.medicine-checkbox:checked').forEach(function (checkbox) {
+        selected.push(checkbox.value);
+    });
+
+    if (selected.length === 0) {
+        alert("Please select at least one medicine.");
+        return;
+    }
+
+    if (!confirm("Are you sure you want to delete the selected medicine(s)?")) {
+        return;
+    }
+
+    $.ajax({
+        url: "{% url 'delete_medicine' %}",
+        type: "POST",
+        traditional: true,
+        data: {
+            id: selected,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+
+        success: function(response) {
+
+            if (response.success) {
+                location.reload();
+            } 
+        },
+
+        
+        
+    });
+}
+function importPatients(){
+document.getElementById('excelmodal').style.display='flex'
+}
+function excel1() {
+        
+
+    const Table = document.getElementById("tableid");
+    const ws = XLSX.utils.table_to_sheet(Table);
+     ws['!cols'] = [
+        { wch: 10 }, 
+        { wch: 15 }, ]
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb,"Medicine.xlsx");
+  }
+
+function purchase(){
+    window.location.href="{% url 'purchase' %}"
+}
+</script>
+{% endblock %}

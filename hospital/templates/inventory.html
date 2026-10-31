@@ -1,0 +1,1398 @@
+{% extends base_template %}
+
+{% block content %}
+
+<!-- Load jsPDF, AutoTable, and SheetJS for real downloadable PDF & XLSX export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+    /* ===============================
+       PAGE LAYOUT & CONTAINER (MATCHING FRONT OFFICE 1:1)
+    =============================== */
+    .fo-setup-page {
+        margin-top: 90px;
+        margin-left: 255px;
+        padding: 24px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    /* HEADER */
+    .fo-setup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .fo-setup-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #173e31;
+    }
+
+    .fo-setup-header p {
+        margin: 6px 0 0;
+        color: #71877e;
+        font-size: 13px;
+    }
+
+    /* LAYOUT GRID */
+    .fo-setup-grid {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    /* Left Side Menu Options */
+    .fo-options-card {
+        width: 240px;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        flex-shrink: 0;
+    }
+
+    .fo-option-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        text-align: left;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid #d8e7e0;
+        background: #ffffff;
+        color: #315347;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: all 0.25s ease;
+    }
+
+    .fo-option-btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .fo-option-btn:hover {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        text-decoration: none;
+    }
+
+    .fo-option-btn.active {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.15);
+    }
+
+    /* Right Side Content Card */
+    .fo-content-card {
+        flex-grow: 1;
+        background: #ffffff;
+        border: 1px solid #e1ece7;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+        min-width: 0;
+    }
+
+    /* TOOLBAR & CONTROLS */
+    .fo-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .fo-toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+
+    .fo-search-box {
+        display: flex;
+        gap: 6px;
+    }
+
+    .fo-search-box input {
+        border-radius: 10px;
+        border: 1.5px solid #cce0d7;
+        padding: 8px 14px;
+        font-size: 13px;
+        width: 200px;
+        transition: 0.2s;
+    }
+
+    .fo-search-box input:focus {
+        border-color: #0b3d2e;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.12);
+    }
+
+    .btn-search {
+        background: #0b3d2e;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-search:hover {
+        background: #176b50;
+    }
+
+    /* Export buttons */
+    .export-btn-group {
+        display: flex;
+        gap: 6px;
+    }
+
+    .btn-export {
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1.5px solid #cce0d7;
+        background: #f4faf7;
+        color: #173e31;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-export:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 10px rgba(11, 61, 46, 0.12);
+    }
+
+    .btn-add-main {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.25s;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.15);
+    }
+
+    .btn-add-main:hover {
+        background: #176b50;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(11, 61, 46, 0.2);
+    }
+
+    .btn-add-main:disabled {
+        background: #a3c4b8 !important;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* CUSTOM INTERACTIVE DROPDOWN COMPONENT */
+    .custom-select-wrapper {
+        position: relative;
+        user-select: none;
+        width: 100%;
+    }
+
+    .custom-select-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1.5px solid #cce0d7;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #173e31;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 6px rgba(11, 61, 46, 0.04);
+    }
+
+    .custom-select-trigger:hover {
+        border-color: #0b3d2e;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.08);
+        background: #fbfdfe;
+    }
+
+    .custom-select-wrapper.open .custom-select-trigger {
+        border-color: #0b3d2e;
+        box-shadow: 0 0 0 3.5px rgba(11, 61, 46, 0.15);
+        background: #ffffff;
+    }
+
+    .custom-select-trigger .select-arrow {
+        font-size: 12px;
+        color: #0b3d2e;
+        transition: transform 0.25s ease;
+    }
+
+    .custom-select-wrapper.open .select-arrow {
+        transform: rotate(180deg);
+    }
+
+    .custom-select-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border: 1px solid #d4e5dd;
+        border-radius: 14px;
+        box-shadow: 0 12px 35px rgba(11, 61, 46, 0.22);
+        z-index: 1055;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+    }
+
+    .custom-select-wrapper.open .custom-select-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .custom-select-options {
+        max-height: 180px;
+        overflow-y: auto;
+        padding: 6px;
+    }
+
+    .custom-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #27473b;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+
+    .custom-option:hover {
+        background: #eaf5f0;
+        color: #0b3d2e;
+        font-weight: 600;
+    }
+
+    .custom-option.selected {
+        background: #0b3d2e;
+        color: #ffffff;
+    }
+
+    .custom-option .check-icon {
+        font-size: 12px;
+        opacity: 0;
+    }
+
+    .custom-option.selected .check-icon {
+        opacity: 1;
+    }
+
+    /* TABLE STYLING */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 14px;
+        border: 1px solid #edf3f0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fo-table {
+        width: 100%;
+        min-width: 680px;
+        border-collapse: collapse;
+    }
+
+    .actions-cell {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    .action-btn-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+
+    .fo-table thead {
+        background: #0b3d2e;
+    }
+
+    .fo-table th {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px 16px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .fo-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #315347;
+        vertical-align: middle;
+    }
+
+    .fo-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .fo-table tbody tr:hover {
+        background: #f7fbf9;
+    }
+
+    .btn-edit {
+        background: #e8f4ef;
+        color: #0b3d2e;
+        border: 1px solid #c3e2d5;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-edit:hover {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+    }
+
+    .btn-delete {
+        background: #fde4e4;
+        color: #b42318;
+        border: 1px solid #f9b8b8;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-delete:hover {
+        background: #b42318;
+        color: #ffffff;
+        border-color: #b42318;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px !important;
+        color: #8fa39b;
+        font-size: 14px;
+    }
+
+    .supplier-card-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .supplier-card-meta .main-title {
+        font-weight: 700;
+        color: #173e31;
+        font-size: 13.5px;
+    }
+
+    .supplier-card-meta .sub-text {
+        font-size: 12px;
+        color: #557267;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* MODAL STYLING */
+    .modal-dialog {
+        overflow: visible !important;
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 50px rgba(11, 61, 46, 0.18);
+        overflow: visible !important;
+    }
+
+    .modal-header {
+        background: #0b3d2e;
+        color: #ffffff;
+        padding: 18px 24px;
+        border: none;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    .btn-close-custom:hover {
+        opacity: 1;
+    }
+
+    .modal-body {
+        padding: 24px;
+        overflow: visible !important;
+        position: relative;
+    }
+
+    .modal-body label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #173e31;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .modal-body .form-control {
+        border-radius: 10px;
+        border: 1.5px solid #cce0d7;
+        padding: 10px 14px;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+
+    .modal-body .form-control:focus {
+        border-color: #0b3d2e;
+        outline: none;
+        box-shadow: 0 0 0 3.5px rgba(11, 61, 46, 0.12);
+    }
+
+    .modal-body .form-control.is-invalid {
+        border-color: #d32f2f;
+        background-color: #fff8f8;
+    }
+
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #edf3f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        background: #fafdfc;
+    }
+
+    .field-feedback {
+        font-size: 11.5px;
+        font-weight: 600;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* PAGINATION FOOTER */
+    .fo-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #edf3f0;
+        font-size: 13px;
+        color: #617d72;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .pagination-arrows {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-arrow-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1.5px solid #cce0d7;
+        background: #ffffff;
+        color: #173e31;
+        font-size: 13px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(11, 61, 46, 0.04);
+        cursor: pointer;
+    }
+
+    .page-arrow-btn:hover:not(.disabled) {
+        background: #0b3d2e;
+        color: #ffffff;
+        border-color: #0b3d2e;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(11, 61, 46, 0.15);
+    }
+
+    .page-arrow-btn.disabled {
+        background: #f4faf7;
+        color: #b0c4bc;
+        border-color: #e1ece7;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    /* RESPONSIVE DESIGN BREAKPOINTS */
+    @media (max-width: 768px) {
+        .fo-setup-page {
+            margin-left: 0 !important;
+            margin-top: 80px !important;
+            padding: 15px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .fo-setup-grid {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .fo-options-card {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            padding: 10px !important;
+        }
+
+        .fo-option-btn {
+            flex: 1 1 calc(33.33% - 8px);
+            min-width: 80px;
+            margin-bottom: 0 !important;
+            text-align: center !important;
+            justify-content: center !important;
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+        }
+
+        .fo-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px !important;
+        }
+
+        .fo-toolbar-left {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .fo-search-box {
+            width: 100% !important;
+        }
+
+        .fo-search-box input {
+            width: 100% !important;
+        }
+
+        .export-btn-group {
+            width: 100%;
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-export {
+            flex: 1;
+            padding: 8px 4px;
+            font-size: 11px;
+            justify-content: center;
+        }
+
+        .btn-add-main {
+            width: 100% !important;
+            justify-content: center;
+        }
+
+        .modal-dialog {
+            margin: 10px auto !important;
+            max-width: calc(100vw - 24px) !important;
+            width: calc(100vw - 24px) !important;
+        }
+
+        .modal-content {
+            border-radius: 14px !important;
+            width: 100% !important;
+        }
+
+        .modal-body {
+            padding: 16px !important;
+        }
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #printableTable, #printableTable * {
+            visibility: visible;
+        }
+        #printableTable {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        .fo-table {
+            border: 1px solid #b0c9be !important;
+            border-collapse: collapse !important;
+            width: 100% !important;
+        }
+        .fo-table th, .fo-table td {
+            border: 1px solid #b0c9be !important;
+            padding: 10px 14px !important;
+            color: #173e31 !important;
+        }
+        .actions-cell, .btn-edit, .btn-delete {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="fo-setup-page">
+    <div class="fo-setup-header">
+        <div>
+            <h2>Inventory Setup</h2>
+            <p>Manage inventory categories, item stores, and suppliers.</p>
+        </div>
+    </div>
+
+    <div class="fo-setup-grid">
+        <!-- Left Side Menu Options -->
+        <div class="fo-options-card">
+            <a href="{% url 'inventory' %}?tab=category" class="fo-option-btn {% if active_tab == 'category' %}active{% endif %}">
+                <i class="fa-solid fa-boxes-stacked"></i> Inventory Category
+            </a>
+            <a href="{% url 'inventory' %}?tab=store" class="fo-option-btn {% if active_tab == 'store' %}active{% endif %}">
+                <i class="fa-solid fa-warehouse"></i> Inventory Store
+            </a>
+            <a href="{% url 'inventory' %}?tab=supplier" class="fo-option-btn {% if active_tab == 'supplier' %}active{% endif %}">
+                <i class="fa-solid fa-truck-field"></i> Inventory Supplier
+            </a>
+        </div>
+
+        <!-- Right Side Content Card -->
+        <div class="fo-content-card">
+            <div class="fo-toolbar">
+                <div class="fo-toolbar-left">
+                    <!-- Search Box -->
+                    <form method="GET" action="{% url 'inventory' %}" class="fo-search-box">
+                        <input type="hidden" name="tab" value="{{ active_tab }}">
+                        <input type="hidden" name="per_page" value="{{ per_page }}">
+                        <input type="text" name="q" value="{{ search_query }}" placeholder="Search...">
+                        <button type="submit" class="btn-search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+
+                    <!-- Export Buttons -->
+                    <div class="export-btn-group">
+                        <button type="button" class="btn-export" onclick="exportToExcel()">
+                            <i class="fa-solid fa-file-excel text-success"></i> Excel
+                        </button>
+                        <button type="button" class="btn-export" onclick="exportToPDF()">
+                            <i class="fa-solid fa-file-pdf text-danger"></i> PDF
+                        </button>
+                        <button type="button" class="btn-export" onclick="printTable()">
+                            <i class="fa-solid fa-print text-primary"></i> Print
+                        </button>
+                    </div>
+
+                    <!-- Per Page Select Dropdown -->
+                    <div style="width: 130px;">
+                        <div class="custom-select-wrapper" id="perPageSelectWrapper">
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect('perPageSelectWrapper')">
+                                <span id="perPageSelectLabel">{{ per_page|title }} per page</span>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <div class="custom-select-options">
+                                    <div class="custom-option {% if per_page == '10' %}selected{% endif %}" onclick="changePerPage('10')">
+                                        <span>10 per page</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                    <div class="custom-option {% if per_page == '50' %}selected{% endif %}" onclick="changePerPage('50')">
+                                        <span>50 per page</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                    <div class="custom-option {% if per_page == '100' %}selected{% endif %}" onclick="changePerPage('100')">
+                                        <span>100 per page</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                    <div class="custom-option {% if per_page == 'all' %}selected{% endif %}" onclick="changePerPage('all')">
+                                        <span>All</span>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Button -->
+                <div>
+                    {% if active_tab == "store" %}
+                        <button class="btn-add-main" onclick="openStoreModal()">
+                            <i class="fa-solid fa-plus"></i> Add Inventory Store
+                        </button>
+                    {% elif active_tab == "supplier" %}
+                        <button class="btn-add-main" onclick="openSupplierModal()">
+                            <i class="fa-solid fa-plus"></i> Add Inventory Supplier
+                        </button>
+                    {% else %}
+                        <button class="btn-add-main" onclick="openCategoryModal()">
+                            <i class="fa-solid fa-plus"></i> Add Inventory Category
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Table Content -->
+            <div class="table-responsive" id="printableTable">
+                <table class="fo-table">
+                    <thead>
+                        {% if active_tab == "store" %}
+                            <tr>
+                                <th>Store Name</th>
+                                <th>Store Code</th>
+                                <th>Description</th>
+                                <th class="actions-cell">Action</th>
+                            </tr>
+                        {% elif active_tab == "supplier" %}
+                            <tr>
+                                <th>Supplier Details</th>
+                                <th>Contact Person</th>
+                                <th>Address</th>
+                                <th class="actions-cell">Action</th>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th>Category Name</th>
+                                <th class="actions-cell">Action</th>
+                            </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            {% if active_tab == "store" %}
+                                <tr id="row-store-{{ item.id }}">
+                                    <td><strong>{{ item.name }}</strong></td>
+                                    <td><span class="badge bg-light text-dark border px-2 py-1">{{ item.code }}</span></td>
+                                    <td>{{ item.description|default:"-" }}</td>
+                                    <td class="actions-cell">
+                                        <div class="action-btn-group">
+                                            <button class="btn-edit" data-id="{{ item.id }}" data-name="{{ item.name }}" data-code="{{ item.code }}" data-description="{{ item.description|default:'' }}" onclick="handleEditStoreClick(this)">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </button>
+                                            <button class="btn-delete" onclick="deleteStore('{{ item.id }}')">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% elif active_tab == "supplier" %}
+                                <tr id="row-supplier-{{ item.id }}">
+                                    <td>
+                                        <div class="supplier-card-meta">
+                                            <span class="main-title">{{ item.name }}</span>
+                                            <span class="sub-text"><i class="fa-solid fa-phone"></i> {{ item.phone }}</span>
+                                            {% if item.email %}<span class="sub-text"><i class="fa-solid fa-envelope"></i> {{ item.email }}</span>{% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if item.contact_person_name or item.contact_person_phone or item.contact_person_email %}
+                                            <div class="supplier-card-meta">
+                                                <span class="main-title">{{ item.contact_person_name|default:"-" }}</span>
+                                                {% if item.contact_person_phone %}<span class="sub-text"><i class="fa-solid fa-phone"></i> {{ item.contact_person_phone }}</span>{% endif %}
+                                                {% if item.contact_person_email %}<span class="sub-text"><i class="fa-solid fa-envelope"></i> {{ item.contact_person_email }}</span>{% endif %}
+                                            </div>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.address|default:"-" }}</td>
+                                    <td class="actions-cell">
+                                        <div class="action-btn-group">
+                                            <button class="btn-edit"
+                                                data-id="{{ item.id }}"
+                                                data-name="{{ item.name }}"
+                                                data-phone="{{ item.phone }}"
+                                                data-email="{{ item.email|default:'' }}"
+                                                data-cname="{{ item.contact_person_name|default:'' }}"
+                                                data-cphone="{{ item.contact_person_phone|default:'' }}"
+                                                data-cemail="{{ item.contact_person_email|default:'' }}"
+                                                data-address="{{ item.address|default:'' }}"
+                                                data-description="{{ item.description|default:'' }}"
+                                                onclick="handleEditSupplierClick(this)">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </button>
+                                            <button class="btn-delete" onclick="deleteSupplier('{{ item.id }}')">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr id="row-cat-{{ item.id }}">
+                                    <td><strong>{{ item.name }}</strong></td>
+                                    <td class="actions-cell">
+                                        <div class="action-btn-group">
+                                            <button class="btn-edit" data-id="{{ item.id }}" data-name="{{ item.name }}" onclick="handleEditCategoryClick(this)">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </button>
+                                            <button class="btn-delete" onclick="deleteCategory('{{ item.id }}')">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="no-data">
+                                    <i class="fa-solid fa-boxes-stacked" style="font-size:30px; margin-bottom:10px;"></i>
+                                    <br>
+                                    No records found.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="fo-pagination d-flex justify-content-end align-items-center">
+                <div class="pagination-arrows">
+                    {% if page_obj and page_obj.has_previous %}
+                        <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.previous_page_number }}" class="page-arrow-btn" title="Previous Page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    {% else %}
+                        <span class="page-arrow-btn disabled" title="Previous Page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    {% endif %}
+
+                    {% if page_obj and page_obj.has_next %}
+                        <a href="?tab={{ active_tab }}&q={{ search_query }}&per_page={{ per_page }}&page={{ page_obj.next_page_number }}" class="page-arrow-btn" title="Next Page">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    {% else %}
+                        <span class="page-arrow-btn disabled" title="Next Page">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODALS
+========================================== -->
+
+<!-- Inventory Category Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="categoryForm" onsubmit="submitCategoryForm(event)">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="cat_id">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="categoryModalTitle">Add Inventory Category</h5>
+                    <button type="button" class="btn-close-custom" onclick="hideModal('categoryModal')" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark text-white"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cat_name" style="font-weight: 600; color: #27473b; font-size: 13px;">Category Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="cat_name" class="form-control" required placeholder="e.g. Medical Supplies" oninput="liveValidateField(this, 'inventory_category', 'cat_id')">
+                        <div class="field-feedback mt-1 small" id="cat_name_feedback"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background: #fafdfc; border-top: 1px solid #edf3f0;">
+                    <button type="button" class="btn btn-secondary px-4" onclick="hideModal('categoryModal')" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" id="cat_save_btn" class="btn-add-main"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Store Modal -->
+<div class="modal fade" id="storeModal" tabindex="-1" aria-labelledby="storeModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="storeForm" onsubmit="submitStoreForm(event)">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="store_id">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="storeModalTitle">Add Inventory Store</h5>
+                    <button type="button" class="btn-close-custom" onclick="hideModal('storeModal')" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark text-white"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="store_name" style="font-weight: 600; color: #27473b; font-size: 13px;">Store Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="store_name" class="form-control" required placeholder="e.g. Main Pharmacy Store">
+                    </div>
+                    <div class="mb-3">
+                        <label for="store_code" style="font-weight: 600; color: #27473b; font-size: 13px;">Store Code <span class="text-danger">*</span></label>
+                        <input type="text" name="code" id="store_code" class="form-control" required placeholder="e.g. STR-001" oninput="liveValidateField(this, 'inventory_store_code', 'store_id')">
+                        <div class="field-feedback mt-1 small" id="store_code_feedback"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="store_description" style="font-weight: 600; color: #27473b; font-size: 13px;">Description</label>
+                        <textarea name="description" id="store_description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background: #fafdfc; border-top: 1px solid #edf3f0;">
+                    <button type="button" class="btn btn-secondary px-4" onclick="hideModal('storeModal')" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" id="store_save_btn" class="btn-add-main"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Supplier Modal -->
+<div class="modal fade" id="supplierModal" tabindex="-1" aria-labelledby="supplierModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="supplierForm" onsubmit="submitSupplierForm(event)">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" id="supplier_id">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="supplierModalTitle">Add Inventory Supplier</h5>
+                    <button type="button" class="btn-close-custom" onclick="hideModal('supplierModal')" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark text-white"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="supplier_name">Supplier Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" id="supplier_name" class="form-control" required placeholder="e.g. Apex Healthcare Ltd" oninput="liveValidateField(this, 'inventory_supplier_name', 'supplier_id')">
+                            <div class="field-feedback mt-1 small" id="supplier_name_feedback"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="supplier_phone">Phone Number (10 Digits) <span class="text-danger">*</span></label>
+                            <input type="text" name="phone" id="supplier_phone" class="form-control" required pattern="[0-9]{10}" maxlength="10" placeholder="e.g. 9876543210" oninput="validatePhonePattern(this)">
+                            <div class="field-feedback mt-1 small" id="supplier_phone_feedback"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="supplier_email">Email Address</label>
+                            <input type="email" name="email" id="supplier_email" class="form-control" placeholder="e.g. contact@apex.com" oninput="validateEmailPattern(this)">
+                            <div class="field-feedback mt-1 small" id="supplier_email_feedback"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="contact_person_name">Contact Person Name</label>
+                            <input type="text" name="contact_person_name" id="contact_person_name" class="form-control" placeholder="e.g. Rajesh Kumar">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="contact_person_phone">Contact Person Phone (10 Digits)</label>
+                            <input type="text" name="contact_person_phone" id="contact_person_phone" class="form-control" pattern="[0-9]{10}" maxlength="10" placeholder="e.g. 9876543211" oninput="validatePhonePattern(this)">
+                            <div class="field-feedback mt-1 small" id="contact_person_phone_feedback"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="contact_person_email">Contact Person Email</label>
+                            <input type="email" name="contact_person_email" id="contact_person_email" class="form-control" placeholder="e.g. rajesh@apex.com" oninput="validateEmailPattern(this)">
+                            <div class="field-feedback mt-1 small" id="contact_person_email_feedback"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="supplier_address">Address</label>
+                        <textarea name="address" id="supplier_address" class="form-control" rows="2" placeholder="Full business address..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="supplier_description">Description</label>
+                        <textarea name="description" id="supplier_description" class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background: #fafdfc; border-top: 1px solid #edf3f0;">
+                    <button type="button" class="btn btn-secondary px-4" onclick="hideModal('supplierModal')" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" id="supplier_save_btn" class="btn-add-main"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function changePerPage(val) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('per_page', val);
+        urlParams.set('page', '1');
+        window.location.search = urlParams.toString();
+    }
+
+    function toggleCustomSelect(wrapperId) {
+        const wrapper = document.getElementById(wrapperId);
+        const isOpen = wrapper.classList.contains('open');
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+        if (!isOpen) wrapper.classList.add('open');
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-wrapper')) {
+            document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+        }
+    });
+
+    function showModal(modalId) {
+        const elem = document.getElementById(modalId);
+        if (window.bootstrap && bootstrap.Modal) {
+            let instance = bootstrap.Modal.getInstance(elem) || new bootstrap.Modal(elem);
+            instance.show();
+        } else if (typeof $ !== 'undefined') {
+            $(elem).modal('show');
+        } else {
+            elem.style.display = 'block';
+            elem.classList.add('show');
+        }
+    }
+
+    function hideModal(modalId) {
+        const elem = document.getElementById(modalId);
+        if (window.bootstrap && bootstrap.Modal) {
+            let instance = bootstrap.Modal.getInstance(elem);
+            if (instance) instance.hide();
+        } else if (typeof $ !== 'undefined') {
+            $(elem).modal('hide');
+        } else {
+            elem.style.display = 'none';
+            elem.classList.remove('show');
+        }
+    }
+
+    // PHONE PATTERN CHECK
+    function validatePhonePattern(inputElem) {
+        const val = inputElem.value.trim();
+        const feedbackElem = document.getElementById(inputElem.id + '_feedback');
+        if (val && !/^\d{10}$/.test(val)) {
+            if (feedbackElem) {
+                feedbackElem.textContent = 'Phone number must be exactly 10 digits';
+                feedbackElem.className = 'field-feedback mt-1 small text-danger font-weight-bold';
+            }
+            inputElem.classList.add('is-invalid');
+        } else {
+            if (feedbackElem) feedbackElem.textContent = '';
+            inputElem.classList.remove('is-invalid');
+        }
+    }
+
+    // STRICT EMAIL PATTERN & DOMAIN CHECK
+    function validateEmailPattern(inputElem) {
+        const val = inputElem.value.trim().toLowerCase();
+        const feedbackElem = document.getElementById(inputElem.id + '_feedback');
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const typoDomains = ['@gmil.com', '@gmal.com', '@yaho.com', '@hotmial.com', '@gamil.com', '@gnail.com'];
+
+        if (val) {
+            const hasTypo = typoDomains.some(td => val.endsWith(td));
+            if (!emailRegex.test(val) || hasTypo) {
+                if (feedbackElem) {
+                    feedbackElem.textContent = hasTypo ? 'Invalid domain (did you mean @gmail.com?)' : 'Invalid email format (e.g. user@gmail.com)';
+                    feedbackElem.className = 'field-feedback mt-1 small text-danger font-weight-bold';
+                }
+                inputElem.classList.add('is-invalid');
+            } else {
+                if (feedbackElem) feedbackElem.textContent = '';
+                inputElem.classList.remove('is-invalid');
+            }
+        } else {
+            if (feedbackElem) feedbackElem.textContent = '';
+            inputElem.classList.remove('is-invalid');
+        }
+    }
+
+    // LIVE DUPLICATE CHECK
+    let valTimer = null;
+    function liveValidateField(inputElem, modelType, idElemId) {
+        clearTimeout(valTimer);
+        const val = inputElem.value.trim();
+        const itemId = document.getElementById(idElemId) ? document.getElementById(idElemId).value : '';
+        const feedbackElem = document.getElementById(inputElem.id + '_feedback');
+
+        if (!val) {
+            if (feedbackElem) feedbackElem.textContent = '';
+            inputElem.classList.remove('is-invalid');
+            return;
+        }
+
+        valTimer = setTimeout(() => {
+            fetch(`{% url "check_setup_field" %}?model_type=${modelType}&value=${encodeURIComponent(val)}&item_id=${itemId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        if (feedbackElem) {
+                            feedbackElem.textContent = 'This entry already exists!';
+                            feedbackElem.className = 'field-feedback mt-1 small text-danger font-weight-bold';
+                        }
+                        inputElem.classList.add('is-invalid');
+                    } else {
+                        if (feedbackElem) {
+                            feedbackElem.textContent = 'Available';
+                            feedbackElem.className = 'field-feedback mt-1 small text-success font-weight-bold';
+                        }
+                        inputElem.classList.remove('is-invalid');
+                    }
+                });
+        }, 300);
+    }
+
+    // CATEGORY HANDLERS
+    function openCategoryModal() {
+        document.getElementById('categoryForm').reset();
+        document.getElementById('cat_id').value = '';
+        document.getElementById('categoryModalTitle').textContent = 'Add Inventory Category';
+        document.getElementById('cat_name_feedback').textContent = '';
+        document.getElementById('cat_name').classList.remove('is-invalid');
+        showModal('categoryModal');
+    }
+
+    function handleEditCategoryClick(btn) {
+        document.getElementById('categoryForm').reset();
+        document.getElementById('cat_id').value = btn.getAttribute('data-id');
+        document.getElementById('cat_name').value = btn.getAttribute('data-name');
+        document.getElementById('categoryModalTitle').textContent = 'Edit Inventory Category';
+        document.getElementById('cat_name_feedback').textContent = '';
+        document.getElementById('cat_name').classList.remove('is-invalid');
+        showModal('categoryModal');
+    }
+
+    function submitCategoryForm(e) {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById('categoryForm'));
+        fetch("{% url 'save_inventory_category' %}", {
+            method: 'POST', body: formData, headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') location.reload();
+            else alert(data.message || 'Error saving category.');
+        });
+    }
+
+    function deleteCategory(id) {
+        if (confirm('Are you sure you want to delete this Category?')) {
+            fetch(`/inventory/category/delete/${id}/`, {
+                method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') location.reload();
+                else alert(data.message || 'Error deleting category.');
+            });
+        }
+    }
+
+    // STORE HANDLERS
+    function openStoreModal() {
+        document.getElementById('storeForm').reset();
+        document.getElementById('store_id').value = '';
+        document.getElementById('storeModalTitle').textContent = 'Add Inventory Store';
+        document.getElementById('store_code_feedback').textContent = '';
+        document.getElementById('store_code').classList.remove('is-invalid');
+        showModal('storeModal');
+    }
+
+    function handleEditStoreClick(btn) {
+        document.getElementById('storeForm').reset();
+        document.getElementById('store_id').value = btn.getAttribute('data-id');
+        document.getElementById('store_name').value = btn.getAttribute('data-name');
+        document.getElementById('store_code').value = btn.getAttribute('data-code');
+        document.getElementById('store_description').value = btn.getAttribute('data-description');
+        document.getElementById('storeModalTitle').textContent = 'Edit Inventory Store';
+        document.getElementById('store_code_feedback').textContent = '';
+        document.getElementById('store_code').classList.remove('is-invalid');
+        showModal('storeModal');
+    }
+
+    function submitStoreForm(e) {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById('storeForm'));
+        fetch("{% url 'save_inventory_store' %}", {
+            method: 'POST', body: formData, headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') location.reload();
+            else alert(data.message || 'Error saving store.');
+        });
+    }
+
+    function deleteStore(id) {
+        if (confirm('Are you sure you want to delete this Store?')) {
+            fetch(`/inventory/store/delete/${id}/`, {
+                method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') location.reload();
+                else alert(data.message || 'Error deleting store.');
+            });
+        }
+    }
+
+    // SUPPLIER HANDLERS
+    function openSupplierModal() {
+        document.getElementById('supplierForm').reset();
+        document.getElementById('supplier_id').value = '';
+        document.getElementById('supplierModalTitle').textContent = 'Add Inventory Supplier';
+        document.getElementById('supplier_name_feedback').textContent = '';
+        document.getElementById('supplier_phone_feedback').textContent = '';
+        document.getElementById('supplier_name').classList.remove('is-invalid');
+        document.getElementById('supplier_phone').classList.remove('is-invalid');
+        showModal('supplierModal');
+    }
+
+    function handleEditSupplierClick(btn) {
+        document.getElementById('supplierForm').reset();
+        document.getElementById('supplier_id').value = btn.getAttribute('data-id');
+        document.getElementById('supplier_name').value = btn.getAttribute('data-name');
+        document.getElementById('supplier_phone').value = btn.getAttribute('data-phone');
+        document.getElementById('supplier_email').value = btn.getAttribute('data-email');
+        document.getElementById('contact_person_name').value = btn.getAttribute('data-cname');
+        document.getElementById('contact_person_phone').value = btn.getAttribute('data-cphone');
+        document.getElementById('contact_person_email').value = btn.getAttribute('data-cemail');
+        document.getElementById('supplier_address').value = btn.getAttribute('data-address');
+        document.getElementById('supplier_description').value = btn.getAttribute('data-description');
+        document.getElementById('supplierModalTitle').textContent = 'Edit Inventory Supplier';
+        showModal('supplierModal');
+    }
+
+    function submitSupplierForm(e) {
+        e.preventDefault();
+        const form = document.getElementById('supplierForm');
+        if (form.querySelectorAll('.is-invalid').length > 0) {
+            alert('Please fix the validation errors (e.g. phone or email format) before saving.');
+            return;
+        }
+        const formData = new FormData(form);
+        fetch("{% url 'save_inventory_supplier' %}", {
+            method: 'POST', body: formData, headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') location.reload();
+            else alert(data.message || 'Error saving supplier.');
+        });
+    }
+
+    function deleteSupplier(id) {
+        if (confirm('Are you sure you want to delete this Supplier?')) {
+            fetch(`/inventory/supplier/delete/${id}/`, {
+                method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') location.reload();
+                else alert(data.message || 'Error deleting supplier.');
+            });
+        }
+    }
+
+    // EXPORT & PRINT
+    function exportToExcel() {
+        if (typeof XLSX === 'undefined') { alert('Excel library loading...'); return; }
+        let origTable = document.querySelector("#printableTable table");
+        let cloneTable = origTable.cloneNode(true);
+        cloneTable.querySelectorAll('.actions-cell, th:last-child').forEach(el => el.remove());
+        let wb = XLSX.utils.table_to_book(cloneTable, { sheet: "Inventory" });
+        XLSX.writeFile(wb, "inventory_export.xlsx");
+    }
+
+    function exportToPDF() {
+        if (!window.jspdf) { alert('PDF library loading...'); return; }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFont("helvetica", "bold"); doc.setFontSize(16); doc.setTextColor(11, 61, 46);
+        doc.text("Inventory Setup Report", 14, 18);
+        doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(100, 100, 100);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
+
+        let origTable = document.querySelector('#printableTable table');
+        let cloneTable = origTable.cloneNode(true);
+        cloneTable.querySelectorAll('.actions-cell, th:last-child').forEach(el => el.remove());
+
+        doc.autoTable({
+            html: cloneTable, startY: 32,
+            styles: { fontSize: 10, cellPadding: 5 },
+            headStyles: { fillColor: [11, 61, 46], textColor: [255, 255, 255], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [247, 251, 249] }
+        });
+        doc.save("inventory_report.pdf");
+    }
+
+    function printTable() { window.print(); }
+</script>
+
+{% endblock %}
